@@ -122,7 +122,7 @@ export function TourProvider({ mainId }: { mainId?: string }) {
 
   if (!onPage) {
     return (
-      <div className="no-print fixed bottom-4 right-4 z-[9999] flex items-center gap-3 rounded-2xl bg-ink-900 px-4 py-3 text-sm text-white shadow-lift">
+      <div className="no-print fixed bottom-4 left-1/2 z-[9999] flex -translate-x-1/2 items-center gap-3 rounded-2xl bg-ink-900 px-4 py-3 text-sm text-white shadow-lift">
         <Sparkles className="h-4 w-4 text-brand-300" />
         <span>Tour “{tour.title}” · stap {state!.index + 1}/{tour.steps.length}</span>
         <button className="btn btn-sm bg-white text-ink-900" onClick={() => router.push(resolve(step.path))}>Ga verder</button>

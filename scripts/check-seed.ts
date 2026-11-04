@@ -1,3 +1,4 @@
+export {};
 process.env.PGLITE_MEMORY = "1";
 const { getDb, schema } = await import("@/lib/db");
 const t = Date.now();

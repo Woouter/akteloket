@@ -83,7 +83,7 @@ export function Notice({ tone = "info", title, children, icon, className }: { to
       {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
       <div className="min-w-0">
         {title && <p className="font-semibold text-ink-900">{title}</p>}
-        {children && <div className={cn(title && "mt-1", "text-ink-700")}>{children}</div>}
+        {children && <div className={cn(title ? "mt-1" : "", "text-ink-700")}>{children}</div>}
       </div>
     </div>
   );

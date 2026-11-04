@@ -235,30 +235,42 @@ export async function vorigeAktePdf(): Promise<Buffer> {
   return w.save();
 }
 
-export async function bankinstructiePdf(): Promise<Buffer> {
+export interface BankPdfInput {
+  geldverstrekker: string; kenmerk: string; notaris: string;
+  geldnemers: { naam: string; geboortedatum?: string }[];
+  onderpand: string; hoofdsom: number; inschrijving: number;
+  leningdelen: { soort: string; bedrag: number }[]; voorwaarden: string; passeerdatum?: string; nhg?: boolean;
+}
+
+export async function bankinstructiePdf(input?: BankPdfInput): Promise<Buffer> {
   const d = demoDates();
   const b = DEMO.bank;
+  const x: BankPdfInput = input ?? {
+    geldverstrekker: b.naam, kenmerk: b.kenmerk, notaris: DEMO.notarisInKo,
+    geldnemers: DEMO.kopers.map((k) => ({ naam: `${k.voornamen} ${k.achternaam}`, geboortedatum: k.geboortedatum })),
+    onderpand: `${DEMO.property.straat} ${DEMO.property.huisnummer}, ${DEMO.property.postcode} ${DEMO.property.plaats}, kadastraal ${DEMO.property.kadastraal.gemeente} ${DEMO.property.kadastraal.sectie} ${DEMO.property.kadastraal.perceel}`,
+    hoofdsom: b.hypotheekbedrag, inschrijving: b.inschrijving, leningdelen: b.leningdelen, voorwaarden: b.voorwaarden, passeerdatum: d.levering, nhg: false,
+  };
   const w = await new Writer("Hypotheekinstructie geldverstrekker").init();
-  w.text(b.naam, { size: 14, bold: true, gap: 2 });
+  w.text(x.geldverstrekker, { size: 14, bold: true, gap: 2 });
   w.text("Afdeling Notariële Zaken · Postbus 1000, 9700 AA Groningen (fictief)", { size: 8.5, color: [0.4, 0.42, 0.55], gap: 16 });
   w.text("HYPOTHEEKINSTRUCTIE / OPDRACHT TOT HET OPMAKEN VAN DE HYPOTHEEKAKTE", { size: 12, bold: true, gap: 10 });
-  w.kv("Aan", `${DEMO.notarisInKo}`);
-  w.kv("Ons kenmerk", b.kenmerk);
+  w.kv("Aan", x.notaris);
+  w.kv("Ons kenmerk", x.kenmerk);
   w.kv("Datum", dateNl(new Date()));
   w.rule();
-  w.kv("Geldnemer 1", `${DEMO.kopers[0].voornamen} ${DEMO.kopers[0].achternaam}, geboren ${dateNl(DEMO.kopers[0].geboortedatum)}`);
-  w.kv("Geldnemer 2", `${DEMO.kopers[1].voornamen} ${DEMO.kopers[1].achternaam}, geboren ${dateNl(DEMO.kopers[1].geboortedatum)}`);
-  w.kv("Hypotheekgever(s)", "Geldnemer 1 en geldnemer 2");
-  w.kv("Onderpand", `${DEMO.property.straat} ${DEMO.property.huisnummer}, ${DEMO.property.postcode} ${DEMO.property.plaats}, kadastraal ${DEMO.property.kadastraal.gemeente} ${DEMO.property.kadastraal.sectie} ${DEMO.property.kadastraal.perceel}`);
+  x.geldnemers.forEach((g, i) => w.kv(`Geldnemer ${i + 1}`, `${g.naam}${g.geboortedatum ? `, geboren ${dateNl(g.geboortedatum)}` : ""}`));
+  w.kv("Hypotheekgever(s)", x.geldnemers.length > 1 ? x.geldnemers.map((_, i) => `geldnemer ${i + 1}`).join(" en ").replace(/^g/, "G") : "Geldnemer 1");
+  w.kv("Onderpand", x.onderpand);
   w.rule();
-  w.kv("Hoofdsom lening", euro(b.hypotheekbedrag));
-  b.leningdelen.forEach((l, i) => w.kv(`Leningdeel ${i + 1}`, `${l.soort}: ${euro(l.bedrag)}`));
-  w.kv("Inschrijvingsbedrag", `${euro(b.inschrijving)} (hoofdsom vermeerderd met renten en kosten)`);
+  w.kv("Hoofdsom lening", euro(x.hoofdsom));
+  x.leningdelen.forEach((l, i) => w.kv(`Leningdeel ${i + 1}`, `${l.soort}: ${euro(l.bedrag)}`));
+  w.kv("Inschrijvingsbedrag", `${euro(x.inschrijving)} (hoofdsom vermeerderd met renten en kosten)`);
   w.kv("Rangorde", "Eerste in rang");
-  w.kv("Nationale Hypotheek Garantie", "Nee");
+  w.kv("Nationale Hypotheek Garantie", x.nhg ? "Ja" : "Nee");
   w.kv("Bouwdepot", "Geen");
-  w.kv("Toepasselijke voorwaarden", b.voorwaarden);
-  w.kv("Geplande passeerdatum", dateNl(d.levering));
+  w.kv("Toepasselijke voorwaarden", x.voorwaarden);
+  if (x.passeerdatum) w.kv("Geplande passeerdatum", dateNl(x.passeerdatum));
   w.rule();
   w.heading("Bijzondere voorwaarden", 11);
   w.text("1. In de akte dient te worden opgenomen dat het hypotheekrecht mede strekt tot zekerheid voor al hetgeen de geldverstrekker uit welken hoofde ook van de schuldenaar te vorderen heeft of zal hebben (bankhypotheek).");

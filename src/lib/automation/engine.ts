@@ -34,7 +34,7 @@ export async function runAutomations(dossierId: string, reason = "wijziging"): P
   if (locks.get(dossierId) === next) locks.delete(dossierId);
 }
 
-async function run(dossierId: string, reason: string) {
+async function run(dossierId: string, _reason: string) {
   let view = await loadDossierView(dossierId);
   if (!view || view.dossier.status === "concept" || view.dossier.status === "geannuleerd") return;
   await ensureChecks(dossierId, [...CHECK_KEYS]);
@@ -43,7 +43,7 @@ async function run(dossierId: string, reason: string) {
   for (const rule of rules) {
     view = (await loadDossierView(dossierId))!;
     try {
-      await rule(view, reason);
+      await rule(view);
     } catch (e) {
       console.error(`[automation] ${rule.name} faalde voor ${dossierId}`, e);
       await logEvent({ dossierId, actorType: "systeem", type: "automation.error", message: `Automatische stap "${rule.name}" kon niet worden uitgevoerd: ${String(e).slice(0, 200)}` });

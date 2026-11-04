@@ -6,3 +6,9 @@ export function siteUrl(): string {
   if (process.env.NODE_ENV !== "production") return `http://localhost:${process.env.PORT ?? 3000}`;
   return isDemo() ? BRAND.demoUrl : BRAND.url;
 }
+
+/** Alleen interne paden toestaan (voorkomt open redirects zoals //evil.example). */
+export function safePath(p: string | null | undefined, fallback = "/"): string {
+  if (!p || !p.startsWith("/") || p.startsWith("//") || p.startsWith("/\\")) return fallback;
+  return p;
+}

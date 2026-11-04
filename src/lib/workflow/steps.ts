@@ -47,6 +47,7 @@ export function needsLevering(view: DossierView) {
 }
 export function needsHypotheek(view: DossierView) {
   if (view.data.service === "hypotheek") return true;
+  if (view.data.service === "koopovereenkomst") return false;
   if (view.data.service === "levering") return false;
   return view.data.financing.hypotheek !== "nee";
 }
@@ -479,4 +480,27 @@ export function stateTone(s: StepState): { bg: string; text: string; dot: string
     case "na": return { bg: "bg-ink-50", text: "text-ink-400", dot: "bg-ink-200", label: "n.v.t." };
     default: return { bg: "bg-white", text: "text-ink-700", dot: "bg-ink-400", label: "Te doen" };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Product koopovereenkomst opstellen
+// ---------------------------------------------------------------------------
+
+export function koopovereenkomstSteps(view: DossierView): Step[] {
+  const ko = view.data.koopovereenkomst ?? { status: "concept" as const };
+  const order = ["concept", "ter_controle", "verzonden", "getekend", "bedenktijd", "definitief"] as const;
+  const at = order.indexOf(ko.status);
+  const signed = view.parties.filter((p) => p.data.meta?.koGetekend).length;
+  const mk = (key: string, nr: string, title: string, description: string, from: number, label: [string, string], owner: StepOwner, platform: string): Step => {
+    const state: StepState = at > from ? "done" : at === from ? (owner === "klant" ? "todo" : "in_progress") : "locked";
+    return { key, nr, title, description, state, label: state === "done" ? label[1] : label[0], owner, platform, actionable: state === "todo" };
+  };
+  return [
+    { key: "vragenlijst", nr: "1", title: "Vragenlijst", description: "Woning, partijen, prijs, leveringsdatum, waarborgsom en ontbindende voorwaarden.", state: "done", label: "Ingevuld", owner: "klant", platform: "Gegevens structureren en kadastrale aanduiding opzoeken.", actionable: false },
+    mk("concept", "2", "Concept-koopovereenkomst", "Wij stellen de overeenkomst op volgens een vaste structuur.", 0, ["In voorbereiding", "Opgesteld"], "platform", "Concept genereren uit de vragenlijst."),
+    mk("controle", "3", "Juridische controle", "Een jurist controleert het concept en de bijzondere afspraken.", 1, ["Ter controle", "Gecontroleerd"], "platform", "Juridische controle en eventuele vragen aan partijen."),
+    { ...mk("ondertekenen", "4", "Ondertekenen", "Koper en verkoper ondertekenen digitaal.", 2, [`${signed}/${view.parties.length} getekend`, "Door alle partijen getekend"], "klant", "Digitale ondertekening registreren en exemplaren uitreiken."), actionable: at === 2 },
+    mk("bedenktijd", "5", "Bedenktijd koper", "De koper heeft drie dagen bedenktijd na terhandstelling.", 3, [view.data.transaction.bedenktijdEinde ? `Loopt tot ${view.data.transaction.bedenktijdEinde}` : "Loopt", "Verstreken"], "platform", "Bedenktijd en termijnen (waarborgsom, voorbehouden) bewaken."),
+    { key: "akte", nr: "6", title: "Door naar de akte van levering", description: "Start met één klik de notariële afhandeling; alle gegevens staan al klaar.", state: at >= 3 ? "todo" : "locked", label: at >= 3 ? "Beschikbaar" : "Na ondertekening", owner: "klant", platform: "Dossier omzetten naar levering (+ hypotheek) zonder dubbele uitvraag.", actionable: at >= 3 },
+  ];
 }

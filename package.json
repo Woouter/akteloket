@@ -8,8 +8,9 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "db:reset": "node --experimental-strip-types scripts/reset-db.ts",
-    "demo:docs": "node --experimental-strip-types scripts/generate-demo-docs.ts"
+    "check:seed": "tsx --conditions=react-server scripts/check-seed.ts",
+    "db:reset": "rm -rf .data",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.4.0",
@@ -47,5 +48,8 @@
     "tailwindcss": "^4.3.4",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=22.13"
   }
 }

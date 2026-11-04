@@ -6,7 +6,7 @@ import { CHECK_KEYS, koperSteps, needsHypotheek, needsLevering } from "@/lib/wor
 import { kadasterProvider, compareOwners } from "@/lib/integrations/kadaster";
 import { saveDocument } from "@/lib/integrations/storage";
 import { sendMail } from "@/lib/integrations/email";
-import { buildHypotheekakte, buildLeveringsakte, buildStartersVerklaring, buildVolmachtKoper, buildVolmachtVerkoper, buildAflosnotaVerzoek } from "@/lib/docgen/templates";
+import { buildKoopovereenkomst, buildHypotheekakte, buildLeveringsakte, buildStartersVerklaring, buildVolmachtKoper, buildVolmachtVerkoper, buildAflosnotaVerzoek } from "@/lib/docgen/templates";
 import { irToDocx } from "@/lib/docgen/docx";
 import type { DocIR } from "@/lib/docgen/ir";
 import { notaKoper, notaVerkoper, startersPreselectie } from "@/lib/domain/calc";
@@ -39,6 +39,13 @@ async function run(dossierId: string, _reason: string) {
   if (!view || view.dossier.status === "concept" || view.dossier.status === "geannuleerd") return;
   await ensureChecks(dossierId, [...CHECK_KEYS]);
 
+  if (view.data.service === "koopovereenkomst") {
+    for (const rule of [fetchKadaster, koProduct]) {
+      view = (await loadDossierView(dossierId))!;
+      try { await rule(view); } catch (e) { console.error(`[automation] ${rule.name}`, e); }
+    }
+    return;
+  }
   const rules = [statusFromKo, inviteSellers, fetchKadaster, starters, financing, leveringsakte, hypotheekakte, volmachten, startersVerklaringen, notas, aflosnotaVerzoeken, handover, datumCheck, readyForPassing];
   for (const rule of rules) {
     view = (await loadDossierView(dossierId))!;
@@ -97,6 +104,23 @@ async function inviteSellers(view: DossierView) {
     await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "verkoper.uitgenodigd", message: `Uitnodiging verkopersportaal verstuurd aan ${v.displayName} (${v.email}).` });
   }
   if (!view.data.verkoperGestartOp && view.verkopers.length) await updateDossier(view.dossier.id, (d) => { d.verkoperGestartOp = new Date().toISOString(); });
+}
+
+// 0. Product koopovereenkomst: concept genereren en actueel houden
+async function koProduct(view: DossierView) {
+  const ko = view.data.koopovereenkomst ?? { status: "concept" as const };
+  if (ko.status === "bedenktijd" && view.data.transaction.bedenktijdEinde && daysBetween(view.data.transaction.bedenktijdEinde, todayIso()) > 0) {
+    await updateDossier(view.dossier.id, (x) => { x.koopovereenkomst = { ...ko, status: "definitief" }; });
+    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "ko.definitief", message: "Bedenktijd verstreken — koopovereenkomst is definitief.", visibleTo: "partijen" });
+    return;
+  }
+  if (!["concept", "ter_controle"].includes(ko.status)) return;
+  const h = hashOf({ p: view.parties.map((p) => [p.side, p.data.person, p.data.eigendom]), t: view.data.transaction, prop: view.data.property });
+  if (ko.documentId && view.data.koopovereenkomstHash === h) return;
+  const ir = buildKoopovereenkomst(view);
+  const id = await saveIr(view, ir, "concept_koopovereenkomst", "concept-koopovereenkomst", "partijen");
+  await updateDossier(view.dossier.id, (x) => { x.koopovereenkomst = { ...ko, status: "ter_controle", documentId: id }; x.koopovereenkomstHash = h; });
+  await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "ko.concept", message: `Concept-koopovereenkomst opgesteld (${ir.controlepunten.length} controlepunten) en ter juridische controle aangeboden.`, visibleTo: "partijen" });
 }
 
 // 3. Kadastrale stukken ophalen

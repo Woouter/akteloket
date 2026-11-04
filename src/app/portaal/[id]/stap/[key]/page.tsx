@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireParty } from "@/lib/auth/guards";
-import { koperSteps, verkoperSteps } from "@/lib/workflow/steps";
+import { koopovereenkomstSteps, koperSteps, verkoperSteps } from "@/lib/workflow/steps";
+import { KoProductStep } from "@/components/portal/steps/ko-product";
 import { StepFrame } from "@/components/portal/steps/frame";
 import { GegevensStep, IbanStep, IdStep, VolmachtStep } from "@/components/portal/steps/shared";
 import { AanmeldenStep, DossierStep, HypotheekStep, KoStep, LaatsteCheckStep, StartersStep, WoningStep, WwftStep } from "@/components/portal/steps/koper";
@@ -12,13 +13,15 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const { id, key } = await params;
   const { fout } = await searchParams;
   const a = await requireParty(id);
-  const steps = a.side === "koper" ? koperSteps(a.view) : verkoperSteps(a.view);
+  const isKo = a.view.data.service === "koopovereenkomst";
+  const steps = isKo ? koopovereenkomstSteps(a.view) : a.side === "koper" ? koperSteps(a.view) : verkoperSteps(a.view);
   const step = steps.find((s) => s.key === key);
   if (!step) notFound();
   const base = `/portaal/${id}`;
   if (step.state === "locked") return <StepFrame step={step} base={base}><Notice tone="info" icon={<Lock className="h-4 w-4 text-brand-600" />} title="Deze stap komt later">{step.label}.</Notice></StepFrame>;
   let body: React.ReactNode = null;
-  if (a.side === "koper") {
+  if (isKo) body = <KoProductStep a={a} stepKey={key} />;
+  else if (a.side === "koper") {
     switch (key) {
       case "aanmelden": body = <AanmeldenStep a={a} />; break;
       case "koopovereenkomst": body = <KoStep a={a} />; break;

@@ -18,7 +18,7 @@ export async function DemoBar() {
           <details className="group relative">
             <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-lg px-2 py-1 hover:bg-white/10" data-tour="demo-persona">
               <UserRound className="h-3.5 w-3.5" />
-              <span className="max-w-[9rem] truncate">{persona ? `${persona.name} · ${persona.label}` : user ? user.name : "Niet ingelogd"}</span>
+              <span className="max-w-[5.5rem] truncate sm:max-w-[9rem]">{persona ? `${persona.name} · ${persona.label}` : user ? user.name : "Niet ingelogd"}</span>
               <ChevronDown className="h-3.5 w-3.5 opacity-60" />
             </summary>
             <div className="absolute right-0 mt-1 w-72 rounded-xl bg-white p-1.5 text-ink-800 shadow-lift ring-1 ring-ink-900/10">

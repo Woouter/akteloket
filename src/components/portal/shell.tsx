@@ -37,7 +37,7 @@ export function DossierHeader({ view, side, pct }: { view: DossierView; side: Si
               <Badge>{SERVICES[d.service].name}</Badge>
               <span className="font-mono text-xs text-ink-400">{view.dossier.reference}</span>
             </div>
-            <h1 className="mt-3 flex items-center gap-2 truncate text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl"><Home className="h-6 w-6 shrink-0 text-ink-300" />{propertyLine(d.property) || "Je nieuwe woning"}</h1>
+            <h1 className="mt-3 flex items-start gap-2 text-2xl font-extrabold tracking-tight text-ink-900 sm:items-center sm:text-3xl"><Home className="mt-1 h-6 w-6 shrink-0 text-ink-300 sm:mt-0" />{propertyLine(d.property) || "Je nieuwe woning"}</h1>
             <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink-600">
               {lev && <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-ink-400" />Overdracht {dateNl(lev, { weekday: true })}{days !== undefined && days >= 0 && <strong className="text-ink-900">· nog {days} dagen</strong>}</span>}
               {d.property.kadastraal?.perceel && <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-ink-400" />{d.property.kadastraal.gemeente} {d.property.kadastraal.sectie} {d.property.kadastraal.perceel}</span>}

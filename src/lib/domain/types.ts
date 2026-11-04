@@ -336,6 +336,7 @@ export interface DossierData {
   volmachtKoperHash?: string;
   volmachtVerkoperDocId?: string;
   volmachtVerkoperHash?: string;
+  koopovereenkomstHash?: string;
 }
 
 export type DossierStatus =

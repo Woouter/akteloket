@@ -1,0 +1,101 @@
+# Beslissingen
+
+Dit document legt alle keuzes vast die tijdens de bouw zijn gemaakt zonder ruggespraak, met de reden en wat er nog gevalideerd moet worden. Uitgangspunten waren je toelichting, de procesafbeelding (*Klantproces – Online notariële afhandeling*) en het procesdocument *Online aanvraag leveringsakte en hypotheekakte*. Waar het procesdocument iets expliciet regelt, is dat gevolgd. De paragraafnummers (§) verwijzen naar dat document.
+
+Status per beslissing: **Vast** = bewuste keuze. **Pilot** = werkbare keuze voor de pilot, bijstellen na feedback. **Valideren** = moet de notaris of een jurist bevestigen voordat het live gaat.
+
+---
+
+## A. Product en businessmodel
+
+| # | Beslissing | Waarom | Status |
+|---|---|---|---|
+| A-01 | **Merknaam "Akteloket"**, domein `akte-loket.nl`. Demo op `demo.akte-loket.nl`. | Repo- en domeinnaam. Het logo is een "A" met een accent dat als vinkje werkt. | Vast |
+| A-02 | **Rolverdeling:** de notaris is opdrachtnemer en verwerkingsverantwoordelijke. Akteloket is platform en verwerker en geeft geen juridisch advies. Dit staat zo in de DVO, de privacyverklaring en de footer. | §1 en §12: "De website verzamelt, structureert en signaleert; de notaris identificeert, beoordeelt, controleert, stelt akten op en passeert." Dit voorkomt ook dat Akteloket als notaris overkomt. | Valideren (jurist) |
+| A-03 | **Prijzen all-in incl. btw en kadasterinschrijving:** levering + hypotheek € 895, alleen levering € 649, alleen hypotheek € 449, koopovereenkomst € 395. Opties: spoed € 195, tweede hypotheekakte € 225, inschrijving koopovereenkomst € 125. | Gepositioneerd onder traditionele kantoren en concurrerend met online aanbieders. All-in, omdat de kadastertarieven 2026 per bron verschillen (€ 103,50 tot € 181) en klanten all-in prijzen beter begrijpen. Het bedrag staat centraal in `src/lib/config.ts`. | Pilot (afstemmen met notaris) |
+| A-04 | **Geen betaling vooraf.** Alles loopt via de nota van afrekening. Annuleren is kosteloos tot de concept-akte er is, daarna € 195. | Laagste drempel bij de start. Past bij hoe notarissen afrekenen. Geen payment provider nodig voor de aktes. | Pilot |
+| A-05 | **Geen doorverwijsvergoedingen** aan makelaars en adviseurs. Het partnerprogramma bestaat uit een doorverwijslink en een statusweergave die de klant kan delen. | Beschermt de onafhankelijkheid van de notaris. Beroepsregels staan provisieconstructies niet zonder meer toe. Staat expliciet op de partnerpagina. | Valideren (KNB-regels) |
+| A-06 | **Focus op de standaard particuliere aankoop.** Uitzonderingen (koop via een onderneming, meerdere geldverstrekkers, overbrugging) worden gesignaleerd als aandachtspunt en niet geautomatiseerd. | §1 ("uitzonderingsroutes buiten scope") en §5 ("zakelijke route markeren voor beoordeling"). | Vast |
+| A-07 | **Belofte op de website: "bijna nooit langskomen".** Er is één volmachtafspraak van ongeveer 15 minuten via video of op kantoor. Daarna tekent een kantoormedewerker namens de klant. | §8 schrijft een volmacht en een afspraak voor. "Nooit langskomen" kunnen we niet hard beloven, want een kantoorafspraak blijft mogelijk. | Pilot |
+| A-08 | **Koopovereenkomst opstellen** als apart product: begeleide vragenlijst, eigen model, juridische controle, digitaal tekenen, bewaking van de bedenktijd, en daarna met één klik door naar de akte van levering. | Jouw wens. Het eigen model neemt geen NVM/VEH-modeltekst over, vanwege het auteursrecht. Werkt als instap voor de akte. | Pilot (model laten toetsen) |
+| A-09 | **SEO-opzet:** vier landingspagina's (één per zoekintentie), 20 kennisbankartikelen, FAQ als structured data, Service-, LegalService- en Breadcrumb-JSON-LD en een sitemap. De demo staat op noindex. | Jouw wens voor landingspagina's per zoekwoord. Artikelen zijn geschreven met gecontroleerde cijfers voor 2026. Onzekere feiten zijn algemeen geformuleerd. | Pilot |
+| A-10 | **Demodata volledig fictief:** Bloesemlaan 14 Amersfoort, Sanne de Vries (29) en Daan Bakker (36) als kopers, Henk Jansen en Marijke Visser als verkopers. Geldverstrekkers "Noorderlicht Hypotheken (fictief)" en "Westbank (fictief)". Alle documenten dragen de kop "DEMO — FICTIEF". | Er worden geen echte personen, banken of Kadaster-huisstijl nagebootst. De twee kopers laten zien dat de startersvrijstelling per aandeel verschilt. | Vast |
+
+## B. Klantproces
+
+| # | Beslissing | Bron | Status |
+|---|---|---|---|
+| B-01 | **Aanvraag in 4 stappen:** (1) dienst kiezen plus de vraag of er al een getekende KO is, (2) KO uploaden en scannen, (3) uitgelezen gegevens controleren en aanvullen, (4) contactgegevens, rol (koper, mede-koper of vertegenwoordiger), vier verklaringen en een digitale handtekening (getypte naam). | Jouw wens (eerst uploaden, dan contact) gecombineerd met §3. | Vast |
+| B-02 | **Zonder getekende KO** vraagt het formulier alleen het adres (PDOK-autocomplete met kadastraal perceel) en een paar optionele gegevens. Het dossier krijgt de status "Wachten op getekende koopovereenkomst". De verdere uitvraag start pas na de upload. | §1 en §3 | Vast |
+| B-03 | **Het DVO-akkoord legt vast:** versie, tijdstip, IP-adres, user agent, aangevinkte verklaringen en de SHA-256-hash van de DVO-tekst. Dit wordt als document in het dossier opgeslagen. | §3 ("registreert versie, datum, tijdstip en akkoordbewijs") | Vast |
+| B-04 | **Na het afronden is de koper direct ingelogd.** De e-mail met de magic link dient als verificatie. | Snelheid. Identiteit wordt sowieso vastgesteld bij de ID-check. | Pilot |
+| B-05 | **De 12 koperstappen en 7 verkoperstappen** volgen de procesafbeelding. Statuslabels komen letterlijk uit §10, bijvoorbeeld "Wwft-informatie aangeleverd" (niet "goedgekeurd") en "Volmacht: te plannen / gepland / ondertekend / door notaris verwerkt". | Afbeelding en §10 | Vast |
+| B-06 | **De inhoudelijke stappen zijn vergrendeld zolang de KO ontbreekt** (behalve bij alleen een hypotheekakte). | §1 | Vast |
+| B-07 | **Meerdere kopers:** ieder krijgt een eigen profiel. De hoofdaanvrager kan gegevens van de mede-koper invullen. ID-check en volmacht doet ieder zelf, via een uitnodiging. | §5 | Vast |
+| B-08 | **Startersvrijstelling:** toets per koper op leeftijd op de leveringsdatum en op de woningwaardegrens van dat kalenderjaar: 2025 € 525.000, 2026 € 555.000, 2027 € 615.000 (al vastgesteld). Daarna drie vragen (§5A) en een verklaring om te tekenen. Ligt de WOZ-waarde boven de grens, dan komt er een controlepunt. Uitkomsten: vrijstelling, 2%, 8% of controle door de notaris. | §5A. Bronnen: SRA, Hypotheker, overheid.nl (bijstellingsregeling). | Vast. Tabel jaarlijks bijwerken. |
+| B-09 | **Overdrachtsbelasting 2026:** 2% bij hoofdverblijf, 8% bij overige woningen, 10,4% bij niet-woningen. Voor 2027 is 7% (overige woningen) opgenomen als "onder voorbehoud", omdat het Belastingplan 2027 nog in behandeling is. | Bronnen SRA en ABN AMRO. | Vast |
+| B-10 | **IBAN:** we controleren het formaat (mod-97) en registreren de tenaamstelling. Wijkt de naam af, dan krijgt de notaris een signaal. We verifiëren het rekeninghouderschap niet zelf. | §5B | Vast |
+| B-11 | **Identificatie** loopt via een provider: iDIN of een ID-app die de NFC-chip uitleest. We slaan geen kopieën van ID-bewijzen op. Het resultaat (naam, geboortedatum, documenttype, gemaskeerd nummer) wordt automatisch vergeleken met de KO. | §5 ("geen kopieën … zonder vastgesteld beveiligd proces") | Valideren (provider kiezen) |
+| B-12 | **Wwft-tool:** dynamische vragen per bron precies volgens §7.1 t/m §7.8, uploads per verplicht document volgens de matrix, de som van de bronnen tegenover een indicatie van het benodigde eigen geld (berekend uit de nota), en signalen bij geld van derden of een ondernemingsrekening. PEP-vraag per koper. | §7 | Vast |
+| B-13 | **Voorlopige drempels in de documentmatrix:** spaargeld € 50.000, schenking en lening € 25.000. Boven de drempel wordt aanvullende onderbouwing gevraagd. De notaris past dit aan onder *Instellingen*. | §7.9a noemt drempels als te bepalen. | **Valideren** (het belangrijkste validatiepunt) |
+| B-14 | **Volmacht koper:** één gecombineerde volmacht voor levering en hypotheek, aan iedere kantoormedewerker, met recht van selbsteintritt. Omdat de geldverstrekker bij het tekenen vaak nog niet definitief is, verwijst de tekst naar "de geldverstrekker die blijkt uit de hypotheekinstructie, tot een maximale hoofdsom". Dat is als controlepunt gemarkeerd. | §8 ("afspraak kan plaatsvinden vóór de hypotheekofferte") | **Valideren** |
+| B-15 | **Volmachtafspraak:** slots komen uit de instellingen (werkdagen, 09:00–17:00, 15 minuten). Keuze tussen video en kantoor. Er is een .ics-download en een bevestigingsmail. | §8 | Pilot (later koppelen aan de agenda van de notaris) |
+| B-16 | **Volmacht verkoper:** via een video-afspraak of via legalisatie (downloaden, laten legaliseren, uploaden en het origineel per post sturen). Per kantoor instelbaar: "niet vereist", "keuze" of "altijd". | §10C | Valideren |
+| B-17 | **Uitnodiging verkopers** gebeurt pas na DVO-akkoord én verwerkte KO. We nemen niet aan dat het e-mailadres in de KO klopt: de koper bevestigt het of vult het aan in het controlescherm. | §10C | Vast |
+| B-18 | **Aflosnota's:** hypotheekinschrijvingen uit het Kadaster worden automatisch omgezet in aflosnota's met status "op te vragen". De verkoper vult het leningnummer aan en geeft toestemming. Het platform zet een verzoekbrief klaar, die de notaris met één klik verstuurt. Statussen: op te vragen, aangevraagd, ontvangen, gecontroleerd. | §10C stap 5 | Vast |
+| B-19 | **Datumcheck:** 14 dagen vooraf, met de vraag en antwoordopties uit §9. Na 3 dagen volgt een herinnering, na nog 2 dagen een signaal aan de notaris. Bij een nieuwe datum blijven de oorspronkelijke datum en de wijzigingshistorie bewaard. | §9 | Pilot (termijnen afstemmen op het opvragen van hypotheekgelden) |
+| B-20 | **Herinneringen** zijn specifiek ("We missen nog je digitale identificatie") en gaan maximaal eens per 3 dagen naar dezelfde persoon. | §10 | Pilot |
+| B-21 | **Aanvullingsverzoek van de notaris:** één gerichte vraag of één gevraagd document per verzoek. De klant hoeft het formulier niet opnieuw in te vullen. | §13 | Vast |
+
+## C. Notaris en documenten
+
+| # | Beslissing | Status |
+|---|---|---|
+| C-01 | **Controlepunten N1–N7** komen letterlijk uit de notarisrij van de procesafbeelding. Per punt is te zien: is alles aangeleverd, welke signaleringen zijn er, en de knoppen Akkoord, Vraag aanvulling en Heropenen. N7 (passeren) wordt pas actief als N1–N6 akkoord zijn én de datum is bevestigd. | Vast |
+| C-02 | **Concept-leveringsakte** volgens een eigen standaardmodel: comparitie met gevolmachtigde, koopovereenkomst, levering, koopprijs en kwijting, verkrijgingstitel, lasten en beperkingen uit de vorige akte (incl. kettingbeding), bepalingen uit de KO, ontbindende voorwaarden, overdrachtsbelasting per koper en slot. **Elk gegeven heeft een bron. Ontbrekende gegevens worden rood gemarkeerd en niet aangenomen. Controlepunten komen in een bijlage.** | **Valideren** (model en clausulebibliotheek) |
+| C-03 | **Concept-hypotheekakte** bevat alleen bankteksten uit de instructie. De akte wordt automatisch vergeleken met het dossier op geldnemers, inschrijvingsbedrag en passeerdatum. Er staat een controlepunt om het verplichte model van de geldverstrekker te gebruiken. | Valideren (model per bank) |
+| C-04 | **Formaat:** intern één tussenformaat. Op het scherm wordt dat HTML met markeringen, voor de notaris een **bewerkbaar Word-bestand**. | Vast |
+| C-05 | **Een akte wordt opnieuw gegenereerd** als de onderliggende gegevens veranderen (bepaald via een hash), tenzij de notaris hem al heeft goedgekeurd. | Vast |
+| C-06 | **Dossieroverdracht 1** volgt als de koperskant compleet is (gegevens, Wwft, ID, volmacht gepland of getekend) en de concept-leveringsakte er is. Komt de hypotheekakte later, dan volgt automatisch een **aanvullende overdracht**. De onderdelen komen uit §11. Alles is als ZIP te downloaden, inclusief manifest en JSON. | Vast |
+| C-07 | **Nota's van afrekening** worden automatisch opgesteld: koopprijs, roerende zaken, overdrachtsbelasting per koper, OZB- en waterschapsverrekening pro rata, de vaste prijs, hypotheekgelden en de gestorte waarborgsom. Voor de verkoper: aflossingen en doorhalingskosten (€ 95 per inschrijving, instelbaar). De notaris kiest tussen "delen" (concept) en "definitief vaststellen". | Pilot (posten afstemmen) |
+| C-08 | **Instellingen voor de notaris:** de Wwft-documentmatrix (per regel "voorlopig" of "goedgekeurd"), de volmachtvormen, de legalisatie-eis voor verkopers, de ID-methoden en de agenda. | Vast |
+
+## D. Techniek
+
+| # | Beslissing | Waarom |
+|---|---|---|
+| D-01 | **Next.js 16 (App Router), TypeScript en Tailwind CSS 4.** Eén codebase voor website, portalen, werkplekken en demo. | Snel, SEO-vriendelijk (server rendering) en één deploy. |
+| D-02 | **`APP_MODE=demo|production`**, standaard `demo`. In de demo zijn de demobalk, tours, rollenwisselaar, simulaties, mailbox en reset actief, en staat de site op noindex. In productie is dit allemaal uit en geven de demoroutes een 404. | Eén codebase voor `demo.` en `www.`. Een verse checkout laat meteen alles zien. |
+| D-03 | **PostgreSQL via Drizzle ORM.** Zonder `DATABASE_URL` draait PGlite (embedded Postgres in WASM) in `.data/`. Met `DATABASE_URL` wordt het een echte Postgres. Migraties draaien automatisch. | Geen installatie nodig voor de demo, wel hetzelfde SQL-dialect en schema als in productie. |
+| D-04 | **Dossier- en partijgegevens als JSONB**, getypeerd in TypeScript. Documenten, controles, verzoeken, afspraken, aflosnota's, events, e-mails, overdrachten en instellingen staan in relationele tabellen. | Het model kan tijdens de pilot snel meebewegen met de feedback van de notaris. |
+| D-05 | **Statussen worden afgeleid** uit de gegevens en niet apart opgeslagen. | Ze zijn daardoor altijd consistent. |
+| D-06 | **Automatisering als idempotente regels.** Ze draaien na elke wijziging en periodiek via `/api/cron` (met `CRON_SECRET`), met een mutex per dossier. | Voorspelbaar, opnieuw uitvoerbaar en goed te auditen. |
+| D-07 | **Documenten versleuteld (AES-256-GCM) in de database.** In productie is `ENCRYPTION_KEY` verplicht. | Werkt op elke hosting. Voor grotere aantallen later S3-compatibele EU-opslag (open punt). |
+| D-08 | **Inloggen via magic link** (15 minuten, eenmalig), sessies in een httpOnly-cookie, een rate limit op het aanvragen van een link. Geen wachtwoorden. | Gebruiksvriendelijk voor consumenten. Voor medewerkers is 2FA of SSO een open punt (zie E). |
+| D-09 | **Scanner:** met `ANTHROPIC_API_KEY` leest Claude (Opus 5.5) de PDF of foto via gestructureerde uitvoer, met server-side fallback bij een weigering. Zonder sleutel gebruikt het systeem een regelgebaseerde parser op de tekstlaag (unpdf). | AI leest ook scans en foto's. De terugvaloptie werkt zonder externe partij en zonder kosten. AI staat bewust uit tot er een verwerkersafspraak is (zie E). |
+| D-10 | **Kadaster via een adapter.** In de demo levert een mock fictieve PDF's en registraties. In productie gebruikt een HTTP-adapter jouw eigen Kadaster-API (`KADASTER_API_URL` en `KADASTER_API_KEY`). Het contract staat in `docs/INTEGRATIES.md`. | Je hebt al een API. Alleen de mapping hoeft nog afgestemd. |
+| D-11 | **PDOK Locatieserver** (publiek en gratis) voor adres-autocomplete en het gekoppelde kadastrale perceel. | Gratis, officieel en zonder sleutel. Bij uitval vult de klant het adres handmatig in. |
+| D-12 | **E-mail via een outbox-tabel.** Met `SMTP_URL` wordt echt verzonden. In de demo zijn de berichten te zien in de mailbox. | Auditbaar en zonder verzendrisico in de demo. |
+| D-13 | **Fonts zelf gehost** via fontsource. Geen Google Fonts, geen tracking-cookies, geen externe scripts. | AVG, en het is ook een vertrouwensargument op de site. |
+| D-14 | **Eigen tour-engine** (spotlight en popover, loopt door over pagina's, start via `/demo/start/<tour>`, logt automatisch in met de juiste rol). | Volledige controle over de Nederlandse teksten en over de flow tussen rollen. |
+| D-15 | **Hosting:** een container in de EU. Voor de demo één instance met een persistent volume voor PGlite. Voor productie een managed Postgres in de EU, een cron die elk uur draait en een versleutelde back-up. | Er zitten notariële gegevens in, dus EU-hosting. Zie `docs/DEPLOY.md`. |
+
+## E. Open punten (vóór livegang)
+
+1. **Documentmatrix Wwft** laten goedkeuren door de notaris: documenten, periodes, alternatieven en drempels (B-13).
+2. **Aktemodellen en clausulebibliotheek** voor de leveringsakte en per geldverstrekker laten goedkeuren (C-02, C-03).
+3. **Tekst, reikwijdte en formaliteiten van de volmachten** (B-14, B-16), inclusief de vraag of ondertekening via video volstaat.
+4. **DVO, algemene voorwaarden en privacyverklaring** laten toetsen door een jurist. De rolverdeling met de notaris vastleggen in een samenwerkings- en verwerkersovereenkomst.
+5. **AI-extractie:** verwerkersovereenkomst en data-afspraken met de AI-leverancier (EU-verwerking, geen training op data), en vermelding in de privacyverklaring. Tot die tijd draait de regelgebaseerde scanner.
+6. **Providers kiezen** voor iDIN of de ID-app en voor e-signing. De adapters zijn voorbereid.
+7. **Kadaster-API koppelen:** de mapping in `src/lib/integrations/kadaster.ts` afstemmen op jouw API, inclusief gebruiksrechten en kosten per raadpleging (§10A).
+8. **Medewerkers-login** uitbreiden met 2FA of SSO, plus IP-allowlisting voor de notariswerkplek.
+9. **Prijzen** definitief maken met de notaris, inclusief de verdeling van de vergoeding tussen platform en notaris (A-03, A-05).
+10. **Koppeling met het notariële dossiersysteem** (fase 5 in §14): exporteren naar het systeem dat de notaris gebruikt.
+11. **Kwaliteitsrekening:** de echte IBAN en de procedure voor het opvragen van hypotheekgelden.
+
+## F. Afwijkingen van het procesdocument
+
+- **Volgorde in de aanvraag:** het procesdocument vraagt eerst de contactgegevens en dan de upload. Op jouw verzoek komt de upload eerst en de contactgegevens daarna. Het DVO-akkoord blijft vóór de uitgebreide intake staan, en er wordt niets inhoudelijk behandeld vóór het akkoord.
+- **Notariskeuze:** als de KO een andere notaris noemt dan de pilotnotaris, ontstaat er een aandachtspunt ("notariskeuze bevestigen"). Het dossier wordt niet automatisch doorgestuurd (§1: "de in de KO genoemde notaris is het uitgangspunt"). In de pilot is er maar één notaris.
+- **Toevoegingen:** de startersverklaring wordt automatisch klaargezet, de aflosnota-brief wordt voorbereid, er is een beoordelingskader voor de pilot en het product "koopovereenkomst opstellen" is erbij gekomen.

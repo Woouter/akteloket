@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarClock, CheckCircle2, Cpu, MessageSquareWarning, PartyPopper, Phone, Scale, Sparkles } from "lucide-react";
 import { requireParty } from "@/lib/auth/guards";
-import { koperSteps, verkoperSteps } from "@/lib/workflow/steps";
+import { koopovereenkomstSteps, koperSteps, verkoperSteps } from "@/lib/workflow/steps";
 import { StepsList } from "@/components/portal/steps-list";
 import { Card, Notice, StateIcon } from "@/components/ui";
 import { eventsFor } from "@/lib/domain/dossier";
@@ -15,7 +15,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const a = await requireParty(id);
   const { view, side } = a;
   const d = view.data;
-  const steps = side === "koper" ? koperSteps(view) : verkoperSteps(view);
+  const isKo = d.service === "koopovereenkomst";
+  const steps = isKo ? koopovereenkomstSteps(view) : side === "koper" ? koperSteps(view) : verkoperSteps(view);
   const next = steps.find((s) => s.actionable && (s.state === "attention" || s.state === "todo" || s.state === "in_progress") && s.owner === "klant");
   const requests = view.requests.filter((r) => r.side === side && r.status === "open");
   const events = (await eventsFor(id, 60)).filter((e) => e.visibleTo === "partijen" || e.visibleTo === side).slice(0, 8);
@@ -34,7 +35,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         {sp.opgeslagen && <Notice tone="ok" icon={<CheckCircle2 className="h-5 w-5 text-ok-600" />} title="Opgeslagen">Bedankt! We hebben je gegevens verwerkt.</Notice>}
         {gepasseerd && <Notice tone="ok" icon={<PartyPopper className="h-5 w-5 text-ok-600" />} title={side === "koper" ? "Gefeliciteerd met je nieuwe woning!" : "De woning is overgedragen"}>De akte is gepasseerd op {dateNl(d.gepasseerdOp)} en ingeschreven in het Kadaster{d.ingeschrevenOp ? ` (${dateNl(d.ingeschrevenOp)})` : ""}.</Notice>}
 
-        {d.koStatus === "ontbreekt" && side === "koper" && d.service !== "hypotheek" && (
+        {d.koStatus === "ontbreekt" && side === "koper" && d.service !== "hypotheek" && !isKo && (
           <Card className="border-brand-200 bg-brand-50/50 p-6">
             <p className="text-sm font-semibold text-brand-700">Status: wachten op getekende koopovereenkomst</p>
             <p className="mt-1 text-lg font-bold text-ink-900">Upload je getekende koopovereenkomst om te starten</p>
@@ -61,12 +62,12 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             <Link href={`/portaal/${id}/stap/${next.key}`} className="btn btn-primary mt-5">Ga verder <ArrowRight className="h-4 w-4" /></Link>
           </div>
         )}
-        {!next && !gepasseerd && d.koStatus !== "ontbreekt" && (
+        {!next && !gepasseerd && (d.koStatus !== "ontbreekt" || isKo) && (
           <Notice tone="info" icon={<CheckCircle2 className="h-5 w-5 text-brand-600" />} title="Je bent helemaal bij">Er staat op dit moment niets voor je klaar. Wij en de notaris ronden de rest af — je hoort het zodra er iets van je nodig is.</Notice>
         )}
 
         <div>
-          <h2 className="mb-3 text-lg font-bold text-ink-900">{side === "koper" ? "Jouw 12 stappen" : "Jouw stappen als verkoper"}</h2>
+          <h2 className="mb-3 text-lg font-bold text-ink-900">{isKo ? "Jouw koopovereenkomst" : side === "koper" ? "Jouw 12 stappen" : "Jouw stappen als verkoper"}</h2>
           <StepsList steps={steps} base={`/portaal/${id}`} side={side} />
         </div>
       </div>

@@ -82,6 +82,11 @@ export function TourProvider({ mainId }: { mainId?: string }) {
       setPop({ top: mobile ? h - ph - 16 : h / 2 - ph / 2, left: mobile ? 16 : w / 2 - pw / 2, mobile });
       return;
     }
+    // Hoge doelen: popover vast rechtsonder, zodat hij de inhoud niet afdekt
+    if (rect.height > h * 0.55) {
+      setPop({ top: h - ph - 20, left: w - pw - 24, mobile });
+      return;
+    }
     let top = rect.bottom + 14, left = rect.left;
     const pl = step?.placement ?? "bottom";
     if (pl === "top") top = rect.top - ph - 14;

@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const demo = isDemo();
   const mainId = demo ? await mainDemoDossierId() : undefined;
   return (
-    <html lang="nl">
+    <html lang="nl" data-scroll-behavior="smooth">
       <body className="min-h-screen antialiased">
         {demo && <DemoBar />}
         {children}

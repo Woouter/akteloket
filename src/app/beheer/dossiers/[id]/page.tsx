@@ -6,6 +6,7 @@ import { koperSteps, notaryChecks, verkoperSteps } from "@/lib/workflow/steps";
 import { eventsFor } from "@/lib/domain/dossier";
 import { getDb, schema } from "@/lib/db";
 import { runForDossier } from "../../actions";
+import { koApprove } from "@/app/portaal/ko-actions";
 import { PageTitle } from "@/components/staff/shell";
 import { Badge, Card, StateChip, StateIcon } from "@/components/ui";
 import { DemoActions } from "@/components/demo/actions";
@@ -23,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const cols = [{ title: "Koper (1–12)", steps: koperSteps(view) }, ...(view.verkopers.length ? [{ title: "Verkoper (A–G)", steps: verkoperSteps(view) }] : [])];
   return (
     <>
-      <PageTitle title={propertyLine(view.data.property) || view.dossier.reference} sub={<>{view.dossier.reference} · <Badge>{STATUS_LABEL[view.dossier.status]}</Badge></>} actions={<form action={runForDossier.bind(null, id)}><button className="btn btn-secondary btn-sm"><Play className="h-4 w-4" />Automatisering nu draaien</button></form>} />
+      <PageTitle title={propertyLine(view.data.property) || view.dossier.reference} sub={<>{view.dossier.reference} · <Badge>{STATUS_LABEL[view.dossier.status]}</Badge></>} actions={<>{view.data.service === "koopovereenkomst" && view.data.koopovereenkomst?.status === "ter_controle" && <form action={koApprove.bind(null, id)}><button className="btn btn-ok btn-sm">Juridische controle akkoord</button></form>}<form action={runForDossier.bind(null, id)}><button className="btn btn-secondary btn-sm"><Play className="h-4 w-4" />Automatisering nu draaien</button></form></>} />
       <div className="grid gap-6 xl:grid-cols-3">
         {cols.map((c) => (
           <Card key={c.title} className="p-0"><p className="border-b border-ink-100 p-4 font-semibold text-ink-900">{c.title}</p><ul className="divide-y divide-ink-100">{c.steps.map((s) => <li key={s.key} className="flex items-center justify-between gap-3 p-3 text-sm"><span className="flex min-w-0 items-center gap-2"><StateIcon state={s.state} size="sm" /><span className="truncate">{s.nr}. {s.title}</span></span><StateChip state={s.state} label={s.label.length > 30 ? s.label.slice(0, 30) + "…" : s.label} /></li>)}</ul></Card>

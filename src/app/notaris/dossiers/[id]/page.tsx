@@ -40,11 +40,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       </div>
       <DossierSummary view={view} isNotary={isNotary} />
       <div className="mt-8 grid gap-6 xl:grid-cols-[1fr_22rem]">
-        <div className="space-y-5" data-tour="n-checks">
+        <div className="min-w-0 space-y-5" data-tour="n-checks">
           <h2 className="text-lg font-bold text-ink-900">Controlepunten</h2>
           {checks.map((c) => <CheckCard key={c.key} view={view} c={c} matrix={matrix} isNotary={isNotary} />)}
         </div>
-        <aside className="space-y-5">
+        <aside className="min-w-0 space-y-5">
           <Card className="p-5">
             <p className="flex items-center gap-2 font-semibold text-ink-900"><FileStack className="h-4 w-4 text-brand-600" />Documenten ({view.documents.length})</p>
             <ul className="mt-3 space-y-2.5">

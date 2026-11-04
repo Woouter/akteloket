@@ -20,7 +20,7 @@ export function StepFrame({ step, base, children, aside }: { step: Step; base: s
         </div>
         <div className="mt-8 space-y-6">{children}</div>
       </div>
-      <aside className="space-y-4">
+      <aside className="min-w-0 space-y-4">
         <div className="rounded-2xl border border-platform-100 bg-platform-50/60 p-5 text-sm">
           <p className="flex items-center gap-2 font-semibold text-ink-900"><Cpu className="h-4 w-4 text-platform-600" />Wat wij doen</p>
           <p className="mt-2 text-ink-700">{step.platform}</p>

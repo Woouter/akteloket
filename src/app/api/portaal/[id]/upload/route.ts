@@ -6,6 +6,7 @@ import { attachKoopovereenkomst } from "@/lib/domain/intake";
 import { runAutomations } from "@/lib/automation/engine";
 import { getDb, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { safePath } from "@/lib/util/site";
 
 export const maxDuration = 120;
 const ALLOWED = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
@@ -56,5 +57,5 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   await runAutomations(id, "upload");
   const accept = req.headers.get("accept") ?? "";
   if (accept.includes("application/json")) return NextResponse.json({ ok: true });
-  return NextResponse.redirect(new URL(back.startsWith("/") ? back : `/portaal/${id}`, req.url), 303);
+  return NextResponse.redirect(new URL(safePath(back, `/portaal/${id}`), req.url), 303);
 }

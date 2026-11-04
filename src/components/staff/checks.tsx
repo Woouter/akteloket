@@ -207,7 +207,7 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
       return (
         <div className="space-y-3 text-sm">
           <ul className="space-y-1.5">
-            {view.checks.filter((x) => x.key !== "passeren").map((x) => <li key={x.key} className="flex items-center gap-2"><StateIcon state={x.status === "akkoord" ? "done" : "todo"} size="sm" />{CHECK_NAMES[x.key] ?? x.key}</li>)}
+            {view.checks.filter((x) => x.key !== "passeren").sort((a, b) => Object.keys(CHECK_NAMES).indexOf(a.key) - Object.keys(CHECK_NAMES).indexOf(b.key)).map((x) => <li key={x.key} className="flex items-center gap-2"><StateIcon state={x.status === "akkoord" ? "done" : "todo"} size="sm" />{CHECK_NAMES[x.key] ?? x.key}</li>)}
             <li className="flex items-center gap-2"><StateIcon state={d.datumCheck.antwoord === "ja" || d.datumCheck.antwoord === "nee_nieuwe_datum" ? "done" : "todo"} size="sm" />Overdrachtsdatum bevestigd door koper ({dateNl(d.transaction.leveringsdatum)})</li>
             <li className="flex items-center gap-2"><StateIcon state="waiting" size="sm" />Her-recherche Kadaster en ontvangst gelden op kwaliteitsrekening (buiten platform)</li>
           </ul>

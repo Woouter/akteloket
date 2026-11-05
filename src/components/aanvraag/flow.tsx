@@ -8,6 +8,7 @@ import { AddressSearch } from "./address";
 import { RField, type FState } from "./fields";
 import type { ReviewPayload } from "@/lib/domain/aanvraag";
 import type { DvoSection } from "@/lib/docgen/dvo";
+import { appendFile } from "@/lib/client/upload";
 
 type Service = "beide" | "levering" | "hypotheek";
 type Step = "dienst" | "upload" | "scan" | "controle" | "handmatig" | "afronden";
@@ -65,7 +66,11 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
     const minWait = new Promise((r) => setTimeout(r, SCAN_STAGES.length * 650 + 200));
     let res: Response;
     if (file === "demo") res = await fetch("/api/aanvraag/upload", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ demo: true }) });
-    else { const fd = new FormData(); fd.append("file", file); res = await fetch("/api/aanvraag/upload", { method: "POST", body: fd }); }
+    else {
+      const fd = new FormData();
+      try { await appendFile(fd, file); } catch (e) { window.clearInterval(iv); setError(String((e as Error).message)); setStep("upload"); return; }
+      res = await fetch("/api/aanvraag/upload", { method: "POST", body: fd });
+    }
     await minWait;
     window.clearInterval(iv);
     const j = await res.json();
@@ -117,12 +122,12 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
           <p className="mt-3 text-lg text-ink-600">Het formulier past zich aan op je keuze. Je kunt dit later nog wijzigen.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {SERVICE_CARDS.map((c) => (
-              <button key={c.key} type="button" onClick={() => setService(c.key)} className={cn("relative flex flex-col rounded-2xl border-2 bg-white p-5 text-left transition", service === c.key ? "border-brand-500 shadow-[0_0_0_4px_rgb(95_85_238/0.12)]" : "border-ink-100 hover:border-ink-200")} aria-pressed={service === c.key}>
+              <button key={c.key} type="button" onClick={() => setService(c.key)} className={cn("relative flex flex-col rounded-2xl border-2 bg-white p-5 text-left transition", service === c.key ? "border-brand-500 shadow-[0_0_0_4px_rgb(31_63_110/0.12)]" : "border-ink-100 hover:border-ink-200")} aria-pressed={service === c.key}>
                 {c.badge && <span className="absolute -top-2.5 right-4 chip bg-brand-600 text-white">{c.badge}</span>}
                 <span className="flex items-center justify-between"><span className={cn("flex h-10 w-10 items-center justify-center rounded-xl", service === c.key ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-600")}><c.icon className="h-5 w-5" /></span><span className={cn("flex h-5 w-5 items-center justify-center rounded-full border-2", service === c.key ? "border-brand-600 bg-brand-600" : "border-ink-300")}>{service === c.key && <Check className="h-3 w-3 text-white" strokeWidth={3} />}</span></span>
                 <span className="mt-4 font-bold text-ink-900">{c.title}</span>
                 <span className="mt-1 flex-1 text-sm text-ink-600">{c.text}</span>
-                <span className="mt-4 text-lg font-extrabold text-ink-900">€ {c.price} <span className="text-xs font-medium text-ink-500">all-in</span></span>
+                <span className="mt-4 font-serif text-xl font-semibold text-ink-900 tabular">€ {c.price} <span className="text-xs font-medium text-ink-500">all-in</span></span>
               </button>
             ))}
           </div>

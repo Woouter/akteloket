@@ -76,7 +76,7 @@ export async function createLoginLink(email: string, redirectTo?: string): Promi
     expiresAt: new Date(Date.now() + 15 * 60_000),
   });
   const { BRAND } = await import("@/lib/config");
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.APP_MODE === "production" ? BRAND.url : "");
+  const base = process.env.NEXT_PUBLIC_SITE_URL || (process.env.APP_MODE === "production" ? BRAND.url : "");
   return `${base}/inloggen/link?token=${raw}`;
 }
 

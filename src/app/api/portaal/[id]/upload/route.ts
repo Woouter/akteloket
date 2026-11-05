@@ -7,8 +7,9 @@ import { runAutomations } from "@/lib/automation/engine";
 import { getDb, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { safePath } from "@/lib/util/site";
+import { fileFromForm } from "@/lib/integrations/inbox";
 
-export const maxDuration = 120;
+export const maxDuration = 60;
 const ALLOWED = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -19,15 +20,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const me = view?.parties.find((p) => p.userId === user.id);
   if (!view || !me) return NextResponse.json({ error: "Geen toegang" }, { status: 403 });
   const fd = await req.formData();
-  const file = fd.get("file");
   const kind = String(fd.get("kind") ?? "");
   const back = String(fd.get("back") ?? `/portaal/${id}`);
-  if (!(file instanceof File) || file.size === 0) return NextResponse.json({ error: "Geen bestand" }, { status: 400 });
-  if (file.size > 25 * 1024 * 1024) return NextResponse.json({ error: "Maximaal 25 MB" }, { status: 400 });
-  const mime = file.type || "application/pdf";
+  const f = await fileFromForm(fd);
+  if (!f) return NextResponse.json({ error: "Geen bestand" }, { status: 400 });
+  if (f.size > 25 * 1024 * 1024) return NextResponse.json({ error: "Maximaal 25 MB" }, { status: 400 });
+  const mime = f.mime;
   if (!ALLOWED.includes(mime)) return NextResponse.json({ error: "Upload een PDF of foto" }, { status: 400 });
-  const buf = Buffer.from(await file.arrayBuffer());
-  const filename = file.name.replace(/[^\w.\- ]+/g, "_").slice(0, 120);
+  const buf = f.buf;
+  const filename = f.filename.replace(/[^\w.\- ]+/g, "_").slice(0, 120);
 
   if (kind === "koopovereenkomst" && me.side === "koper") {
     await attachKoopovereenkomst(id, { buf, filename, mime }, user);

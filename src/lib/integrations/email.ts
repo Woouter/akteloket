@@ -5,9 +5,11 @@ import { uid } from "@/lib/util/ids";
 import { BRAND, isDemo } from "@/lib/config";
 
 /**
- * E-mail: alles gaat via de outbox-tabel (auditbaar). Met SMTP_URL wordt daadwerkelijk
- * verzonden via nodemailer; in demo-modus worden e-mails gesimuleerd en zijn ze
- * zichtbaar in de demo-mailbox en in Beheer → Uitgaande e-mail.
+ * E-mail: alles gaat via de outbox-tabel (auditbaar).
+ * - RESEND_API_KEY → verzenden via de Resend API (aanbevolen, EU-regio).
+ * - SMTP_URL → verzenden via SMTP (nodemailer).
+ * - In demo-modus worden e-mails gesimuleerd en zijn ze zichtbaar in de demo-mailbox
+ *   en in Beheer → Uitgaande e-mail (er gaat nooit een echte mail naar fictieve adressen).
  */
 export interface MailInput {
   to: string;
@@ -45,14 +47,29 @@ export async function sendMail(m: MailInput): Promise<string> {
   const { html, text } = renderMail(m);
   const id = uid();
   await db.insert(schema.emails).values({ id, dossierId: m.dossierId ?? null, to: m.to, subject: m.subject, text, html, template: m.template, status: "wachtrij" });
-  if (isDemo() || !process.env.SMTP_URL) {
+  if (isDemo() || (!process.env.SMTP_URL && !process.env.RESEND_API_KEY)) {
     await db.update(schema.emails).set({ status: "gesimuleerd", sentAt: new Date() }).where(eq(schema.emails.id, id));
+    return id;
+  }
+  const from = process.env.MAIL_FROM || `${BRAND.name} <${BRAND.email}>`;
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "content-type": "application/json" },
+        body: JSON.stringify({ from, to: [m.to], subject: m.subject, html, text, reply_to: process.env.MAIL_REPLY_TO || undefined }),
+      });
+      if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      await db.update(schema.emails).set({ status: "verzonden", sentAt: new Date() }).where(eq(schema.emails.id, id));
+    } catch (err) {
+      await db.update(schema.emails).set({ status: "mislukt", error: String(err) }).where(eq(schema.emails.id, id));
+    }
     return id;
   }
   try {
     const nodemailer = await import("nodemailer");
     const transport = nodemailer.default.createTransport(process.env.SMTP_URL);
-    await transport.sendMail({ from: process.env.MAIL_FROM ?? `${BRAND.name} <${BRAND.email}>`, to: m.to, subject: m.subject, text, html });
+    await transport.sendMail({ from, to: m.to, subject: m.subject, text, html });
     await db.update(schema.emails).set({ status: "verzonden", sentAt: new Date() }).where(eq(schema.emails.id, id));
   } catch (err) {
     await db.update(schema.emails).set({ status: "mislukt", error: String(err) }).where(eq(schema.emails.id, id));

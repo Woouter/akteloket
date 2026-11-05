@@ -15,7 +15,7 @@ export default function Page() {
     <>
       <section className="border-b border-ink-100">
         <div className="container-page py-16 lg:py-20">
-          <p className="text-sm font-semibold text-brand-600">Kennisbank</p>
+          <p className="eyebrow">Kennisbank</p>
           <h1 className="mt-2 max-w-3xl text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">Snap precies wat er gebeurt als je een huis koopt</h1>
           <p className="mt-5 max-w-2xl text-lg text-ink-600">{arts.length} artikelen in gewone taal, geschreven voor kopers en verkopers. Bijgewerkt voor 2026.</p>
         </div>

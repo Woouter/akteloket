@@ -48,15 +48,12 @@ export default function HomePage() {
       <JsonLd data={{ "@context": "https://schema.org", "@type": "LegalService", name: BRAND.name, url: BRAND.url, description: "Online notariële afhandeling van de akte van levering en hypotheekakte bij aankoop van een woning.", areaServed: "NL", priceRange: `€${SERVICES.hypotheek.price}–€${SERVICES.beide.price}`, provider: { "@type": "Organization", name: NOTARY_OFFICE.officeName } }} />
       <FaqJsonLd items={faq} />
 
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-grid mask-fade-b" />
+      <section className="relative overflow-hidden border-b border-ink-200 bg-white">
         <div className="container-page relative grid items-center gap-14 pb-20 pt-14 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
           <div data-tour="home-hero">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-medium text-ink-700 shadow-card ring-1 ring-ink-100">
-              <span className="h-2 w-2 rounded-full bg-ok-600" />Online notaris voor je nieuwe woning
-            </p>
-            <h1 className="mt-6 text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-ink-900 sm:text-6xl">
-              Je akte van levering en hypotheekakte, <span className="text-brand-600">volledig online</span> geregeld.
+            <p className="eyebrow">Notariële akten voor je woning · volledig online</p>
+            <h1 className="mt-5 text-[2.6rem] text-ink-900 sm:text-[3.6rem]">
+              Je akte van levering en hypotheekakte, <span className="italic text-brass-600">volledig online</span> geregeld
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-600 sm:text-xl">
               Upload je getekende koopovereenkomst. Wij lezen alles uit, regelen de stukken met het Kadaster en je bank, en de notaris controleert en passeert. Jij hoeft bijna nergens heen.
@@ -77,7 +74,7 @@ export default function HomePage() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {usps.map((u) => (
             <div key={u.title} className="card p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><u.icon className="h-5 w-5" /></span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-md bg-brass-50 text-brass-700 ring-1 ring-brass-200"><u.icon className="h-5 w-5" /></span>
               <h3 className="mt-5 text-lg font-bold text-ink-900">{u.title}</h3>
               <p className="mt-2 leading-relaxed text-ink-600">{u.text}</p>
             </div>
@@ -94,8 +91,8 @@ export default function HomePage() {
           {phases.map((p) => (
             <div key={p.nr} className="relative rounded-3xl border border-ink-100 bg-white p-6">
               <div className="flex items-center justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white"><p.icon className="h-5 w-5" /></span>
-                <span className="font-mono text-sm font-semibold text-ink-300">{p.nr}</span>
+                <span className="flex h-11 w-11 items-center justify-center rounded-md bg-ink-900 text-white"><p.icon className="h-5 w-5" /></span>
+                <span className="font-serif text-2xl font-semibold text-brass-500">{p.nr}</span>
               </div>
               <h3 className="mt-5 text-lg font-bold text-ink-900">{p.title}</h3>
               <ul className="mt-3 space-y-2 text-sm text-ink-600">
@@ -115,7 +112,7 @@ export default function HomePage() {
           <ul className="grid gap-3 sm:grid-cols-2">
             {automation.map((a) => (
               <li key={a.text} className="flex gap-3 rounded-2xl border border-ink-100 bg-paper p-4">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-platform-100 text-platform-600"><a.icon className="h-4.5 w-4.5" /></span>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-ink-900 text-brass-300"><a.icon className="h-4.5 w-4.5" /></span>
                 <span className="text-sm font-medium leading-snug text-ink-800">{a.text}</span>
               </li>
             ))}
@@ -147,12 +144,12 @@ export default function HomePage() {
 
       <section className="container-page mt-28 grid gap-5 md:grid-cols-2">
         <div className="rounded-3xl bg-verkoper-50 p-8 ring-1 ring-verkoper-600/10">
-          <p className="text-sm font-semibold text-verkoper-700">Voor verkopers</p>
+          <p className="eyebrow !text-verkoper-700">Voor verkopers</p>
           <h3 className="mt-2 text-2xl font-bold text-ink-900">Jouw kant is in een kwartier klaar</h3>
           <p className="mt-3 leading-relaxed text-ink-600">Als verkoper krijg je automatisch een eigen portaal: gegevens bevestigen, identificeren, rekeningnummer opgeven en een eenvoudige volmacht tekenen. De notaris regelt de aflossing van je hypotheek.</p>
         </div>
         <div className="rounded-3xl bg-ink-900 p-8 text-white">
-          <p className="text-sm font-semibold text-brand-300">Voor makelaars en hypotheekadviseurs</p>
+          <p className="eyebrow !text-brass-300">Voor makelaars en hypotheekadviseurs</p>
           <h3 className="mt-2 text-2xl font-bold">Minder bellen, meer zekerheid voor je klant</h3>
           <p className="mt-3 leading-relaxed text-ink-300">Verwijs je klant door en volg met toestemming de status mee. Geen losse e-mails meer over waar de hypotheekinstructie blijft.</p>
           <Link href="/voor-makelaars-en-adviseurs" className="btn mt-6 bg-white text-ink-900 hover:bg-ink-100"><Store className="h-4 w-4" />Word partner</Link>
@@ -172,7 +169,7 @@ export default function HomePage() {
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((a) => a && (
             <Link key={a.slug} href={`/kennisbank/${a.slug}`} className="card group p-6 transition hover:-translate-y-0.5 hover:shadow-lift">
-              <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">{a.category}</p>
+              <p className="eyebrow">{a.category}</p>
               <p className="mt-2 text-lg font-bold leading-snug text-ink-900 group-hover:text-brand-700">{a.title}</p>
               <p className="mt-2 line-clamp-2 text-sm text-ink-600">{a.description}</p>
               <p className="mt-4 text-xs text-ink-400">{a.readingTime} min lezen</p>

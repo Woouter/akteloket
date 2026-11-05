@@ -3,8 +3,9 @@ import { currentDraft, toReviewPayload } from "@/lib/domain/aanvraag";
 import { attachKoopovereenkomst } from "@/lib/domain/intake";
 import { loadDossierView } from "@/lib/domain/dossier";
 import { isDemo } from "@/lib/config";
+import { fileFromForm } from "@/lib/integrations/inbox";
 
-export const maxDuration = 120;
+export const maxDuration = 60;
 const MAX = 25 * 1024 * 1024;
 const ALLOWED = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
@@ -22,13 +23,13 @@ export async function POST(req: Request) {
     mime = "application/pdf";
   } else {
     const fd = await req.formData();
-    const file = fd.get("file");
-    if (!(file instanceof File)) return NextResponse.json({ error: "Geen bestand ontvangen" }, { status: 400 });
-    if (file.size > MAX) return NextResponse.json({ error: "Bestand is groter dan 25 MB" }, { status: 400 });
-    mime = file.type || "application/pdf";
+    const f = await fileFromForm(fd);
+    if (!f) return NextResponse.json({ error: "Geen bestand ontvangen" }, { status: 400 });
+    if (f.size > MAX) return NextResponse.json({ error: "Bestand is groter dan 25 MB" }, { status: 400 });
+    mime = f.mime;
     if (!ALLOWED.includes(mime)) return NextResponse.json({ error: "Upload een PDF of foto (JPG/PNG)" }, { status: 400 });
-    buf = Buffer.from(await file.arrayBuffer());
-    filename = file.name.replace(/[^\w.\- ]+/g, "_").slice(0, 120) || "koopovereenkomst.pdf";
+    buf = f.buf;
+    filename = f.filename.replace(/[^\w.\- ]+/g, "_").slice(0, 120) || "koopovereenkomst.pdf";
   }
   const scan = await attachKoopovereenkomst(draft.dossier.id, { buf, filename, mime });
   const view = (await loadDossierView(draft.dossier.id))!;

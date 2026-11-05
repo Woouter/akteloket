@@ -28,7 +28,13 @@ async function connect(): Promise<DB> {
     const { drizzle } = await import("drizzle-orm/node-postgres");
     const { migrate } = await import("drizzle-orm/node-postgres/migrator");
     const pg = await import("pg");
-    const pool = new pg.default.Pool({ connectionString: process.env.DATABASE_URL, max: 10 });
+    // Serverless (Vercel): kleine pool per instance; Supabase-pooler (Supavisor, transactiemodus) vangt de rest op.
+    // TLS: met DATABASE_CA_CERT (PEM, bijv. Supabase "prod-ca-2021.crt") volledig geverifieerd; anders versleuteld
+    // zonder CA-verificatie, zoals gebruikelijk bij de Supabase-pooler.
+    const url = process.env.DATABASE_URL;
+    const isLocal = /@(localhost|127\.0\.0\.1|db|postgres)(:|\/)/.test(url);
+    const ssl = isLocal ? undefined : process.env.DATABASE_CA_CERT ? { ca: process.env.DATABASE_CA_CERT.replace(/\\n/g, "\n") } : { rejectUnauthorized: false };
+    const pool = new pg.default.Pool({ connectionString: url.replace(/[?&]sslmode=[^&]*/g, ""), max: process.env.VERCEL ? 3 : 10, idleTimeoutMillis: 10_000, ssl });
     const db = drizzle(pool, { schema });
     await migrate(db, { migrationsFolder });
     return db;

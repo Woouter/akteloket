@@ -35,7 +35,16 @@ export async function ensureDemoSeed() {
   const any = await db.select({ id: schema.dossiers.id }).from(schema.dossiers).limit(1);
   await ensureBaseSettings();
   if (any.length) return;
-  await seedDemo();
+  // Claim: op serverless kunnen meerdere instances tegelijk starten — maar één mag seeden.
+  const claimed = await db.insert(schema.settings).values({ key: "demo_seed", value: { status: "bezig", op: new Date().toISOString() } }).onConflictDoNothing().returning({ key: schema.settings.key });
+  if (!claimed.length) return;
+  try {
+    await seedDemo();
+    await db.update(schema.settings).set({ value: { status: "klaar", op: new Date().toISOString() } }).where(eq(schema.settings.key, "demo_seed"));
+  } catch (e) {
+    await db.delete(schema.settings).where(eq(schema.settings.key, "demo_seed"));
+    throw e;
+  }
 }
 
 export async function resetDemo() {

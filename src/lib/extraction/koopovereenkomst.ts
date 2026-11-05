@@ -187,7 +187,7 @@ async function aiExtract(buf: Buffer, mime: string): Promise<KoExtraction> {
     : ({ type: "document", source: { type: "base64", media_type: "application/pdf", data: buf.toString("base64") } } as const);
 
   const response = await client.beta.messages.parse({
-    model: process.env.ANTHROPIC_MODEL ?? "claude-opus-5-5",
+    model: process.env.ANTHROPIC_MODEL || "claude-opus-5-5",
     max_tokens: 16000,
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",

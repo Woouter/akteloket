@@ -21,7 +21,7 @@ export default function Page() {
   return (
     <section className="container-page grid gap-14 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:py-20">
       <div>
-        <p className="text-sm font-semibold text-brand-600">Partners</p>
+        <p className="eyebrow">Partners</p>
         <h1 className="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Voor makelaars en hypotheekadviseurs</h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-600">Je klant wil snel en zonder gedoe de sleutel. Jij wilt zekerheid dat de overdracht op tijd en foutloos verloopt. Daar is Akteloket voor gebouwd.</p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">

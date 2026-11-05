@@ -32,9 +32,27 @@ Productie-build:
 npm run build && npm start
 ```
 
+## Live zetten (Vercel + Supabase + Resend)
+
+Vul drie API-sleutels in en laat het script de rest doen:
+
+```bash
+cp .env.example .env.local
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run setup
+```
+
+Het script maakt de databases (Supabase, Frankfurt), de upload-opslag, het e-maildomein (Resend, EU), de Vercel-projecten voor `akte-loket.nl` en `demo.akte-loket.nl`, alle omgevingsvariabelen en de domeinkoppelingen aan, en start de eerste deploy. Daarna krijg je de DNS-records in `setup-resultaat.md`. Stap voor stap: [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Configuratie
 
-Zie [`.env.example`](.env.example). De belangrijkste variabelen:
+Zie [`.env.example`](.env.example). Blok 1 (drie sleutels en het domein) is alles wat je zelf invult. De app-variabelen hieronder zet het setup-script in Vercel:
 
 | Variabele | Betekenis |
 |---|---|
@@ -42,9 +60,10 @@ Zie [`.env.example`](.env.example). De belangrijkste variabelen:
 | `DATABASE_URL` | PostgreSQL. Zonder deze variabele wordt PGlite gebruikt. |
 | `ENCRYPTION_KEY` | 32 bytes base64 voor documentversleuteling (verplicht in productie) |
 | `NEXT_PUBLIC_SITE_URL` | Basis-URL voor links in e-mails |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Upload-inbox voor bestanden groter dan 4 MB (Vercel-limiet) |
+| `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_REPLY_TO` | E-mailverzending via Resend (alternatief: `SMTP_URL`) |
 | `ANTHROPIC_API_KEY` | Zet AI-extractie aan (koopovereenkomst en bankinstructie). Zonder sleutel draait de regelgebaseerde scanner. |
 | `KADASTER_API_URL`, `KADASTER_API_KEY` | Jouw Kadaster-API. Zonder deze variabelen wordt de demo-koppeling gebruikt. |
-| `SMTP_URL`, `MAIL_FROM` | Echte e-mailverzending |
 | `CRON_SECRET` | Beveiliging van `/api/cron` (termijnbewaking, herinneringen) |
 | `STAFF_NOTARY_EMAILS`, `STAFF_OPS_EMAILS` | Medewerkeraccounts in productie (komma-gescheiden) |
 | `NOTARY_*` | Naam, kantoor en adres van de aangesloten notaris |
@@ -54,7 +73,7 @@ Zie [`.env.example`](.env.example). De belangrijkste variabelen:
 - [Beslissingen](docs/BESLISSINGEN.md): alle keuzes, met onderbouwing en open punten
 - [Architectuur](docs/ARCHITECTUUR.md): opbouw, datamodel, workflow en automatisering
 - [Integraties](docs/INTEGRATIES.md): Kadaster-API-contract, PDOK, AI, ID, e-mail, cron
-- [Deploy](docs/DEPLOY.md): `demo.akte-loket.nl` en productie
+- [Deploy](docs/DEPLOY.md): Vercel, Supabase en Resend met `npm run setup`, DNS, abonnementen
 - In de app: `/demo/uitleg` (hoe alles werkt) en `/demo/validatie` (beoordelingskader voor de notaris)
 
 ## Scripts
@@ -63,6 +82,8 @@ Zie [`.env.example`](.env.example). De belangrijkste variabelen:
 |---|---|
 | `npm run dev` | Ontwikkelserver |
 | `npm run build` / `npm start` | Productie-build en server |
+| `npm run setup` | Richt Supabase, Resend en Vercel in (zie docs/DEPLOY.md) |
+| `npm run db:init` | Migraties draaien op `DATABASE_URL` (en in demo-modus het voorbeelddossier) |
 | `npm run typecheck` | TypeScript-controle |
 | `npm run check:seed` | Bouwt de demo-seed in-memory op en print de status van alle stappen (rooktest van de hele pijplijn) |
 | `npm run db:reset` | Verwijdert de lokale demo-database |

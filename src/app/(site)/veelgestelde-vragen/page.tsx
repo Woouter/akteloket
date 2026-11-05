@@ -16,7 +16,7 @@ export default function Page() {
     <>
       <FaqJsonLd items={FAQ} />
       <section className="container-page max-w-3xl py-16 lg:py-20">
-        <p className="text-sm font-semibold text-brand-600">Veelgestelde vragen</p>
+        <p className="eyebrow">Veelgestelde vragen</p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">Alles wat je wilt weten</h1>
         {groups.map(([tag, label]) => {
           const items = FAQ.filter((f) => f.tags[0] === tag || (f.tags.includes(tag as never) && !seen.has(f.q))).filter((f) => !seen.has(f.q));

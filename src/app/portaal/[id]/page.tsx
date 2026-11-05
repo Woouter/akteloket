@@ -55,11 +55,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
 
         {next && !gepasseerd && (
           <div className="relative overflow-hidden rounded-2xl bg-ink-900 p-6 text-white" data-tour="portal-next">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-500/30 blur-2xl" />
-            <p className="flex items-center gap-2 text-sm font-semibold text-brand-300"><Sparkles className="h-4 w-4" />Jouw volgende stap</p>
-            <p className="mt-2 text-xl font-bold">{next.nr}. {next.title}</p>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brass-400/70 to-transparent" />
+            <p className="eyebrow flex items-center gap-2 !text-brass-300"><Sparkles className="h-3.5 w-3.5" />Jouw volgende stap</p>
+            <p className="mt-2 font-serif text-2xl font-semibold">{next.nr}. {next.title}</p>
             <p className="mt-1 text-sm text-ink-300">{next.description}</p>
-            <Link href={`/portaal/${id}/stap/${next.key}`} className="btn btn-primary mt-5">Ga verder <ArrowRight className="h-4 w-4" /></Link>
+            <Link href={`/portaal/${id}/stap/${next.key}`} className="btn btn-brass mt-5">Ga verder <ArrowRight className="h-4 w-4" /></Link>
           </div>
         )}
         {!next && !gepasseerd && (d.koStatus !== "ontbreekt" || isKo) && (

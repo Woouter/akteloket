@@ -5,7 +5,7 @@ import { scanBankinstructie } from "@/lib/extraction/bankinstructie";
 import { logEvent, updateDossier } from "@/lib/domain/dossier";
 import { runAutomations } from "@/lib/automation/engine";
 
-export const maxDuration = 120;
+export const maxDuration = 60;
 
 /** De notaris deelt de rechtstreeks ontvangen hypotheekinstructie veilig met het platform. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {

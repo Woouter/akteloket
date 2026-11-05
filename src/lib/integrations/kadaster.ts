@@ -145,7 +145,7 @@ function mapHttp(r: HttpKadasterResponse, bron: string): KadasterResult {
 }
 
 export function kadasterProvider(): KadasterProvider {
-  const p = process.env.KADASTER_PROVIDER ?? (process.env.KADASTER_API_URL ? "http" : "mock");
+  const p = process.env.KADASTER_PROVIDER || (process.env.KADASTER_API_URL ? "http" : "mock");
   return p === "http" ? new HttpKadaster() : new MockKadaster();
 }
 

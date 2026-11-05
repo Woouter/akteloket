@@ -1,77 +1,90 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Ink — diep marineblauw, voor tekst en donkere vlakken */
-  --color-ink-950: #070b24;
-  --color-ink-900: #0d1438;
-  --color-ink-800: #18214f;
-  --color-ink-700: #2a3466;
-  --color-ink-600: #434d80;
-  --color-ink-500: #636c99;
-  --color-ink-400: #8d94b8;
-  --color-ink-300: #b7bcd5;
-  --color-ink-200: #d9dcea;
-  --color-ink-100: #eceef6;
-  --color-ink-50: #f6f7fb;
+  /* Ink — notarieel marineblauw (tekst, donkere vlakken) met warme lichte tinten (randen, vlakken) */
+  --color-ink-950: #07152a;
+  --color-ink-900: #0b1f3a;
+  --color-ink-800: #16294a;
+  --color-ink-700: #2b3a52;
+  --color-ink-600: #434f63;
+  --color-ink-500: #5a6572;
+  --color-ink-400: #858d97;
+  --color-ink-300: #bdb7ab;
+  --color-ink-200: #ddd8cf;
+  --color-ink-100: #ebe7de;
+  --color-ink-50: #f3f1eb;
 
-  /* Merk — helder indigo */
-  --color-brand-900: #231a7a;
-  --color-brand-800: #2e2399;
-  --color-brand-700: #3a2fc0;
-  --color-brand-600: #4b3fe0;
-  --color-brand-500: #5f55ee;
-  --color-brand-400: #8a83f5;
-  --color-brand-300: #b3aefa;
-  --color-brand-200: #d6d3fd;
-  --color-brand-100: #ebe9ff;
-  --color-brand-50: #f5f4ff;
+  /* Merk — heritage blauw voor interactieve accenten */
+  --color-brand-900: #0b1f3a;
+  --color-brand-800: #12294b;
+  --color-brand-700: #1a355e;
+  --color-brand-600: #1f3f6e;
+  --color-brand-500: #2f5689;
+  --color-brand-400: #5d7fae;
+  --color-brand-300: #9db3d1;
+  --color-brand-200: #c9d6e8;
+  --color-brand-100: #e3e9f2;
+  --color-brand-50: #f1f4f9;
 
-  /* Rollen (consistent met het procesdiagram) */
-  --color-koper-600: #6d28d9;
-  --color-koper-500: #7c3aed;
-  --color-koper-100: #ede9fe;
-  --color-koper-50: #f5f3ff;
-  --color-verkoper-700: #15803d;
-  --color-verkoper-600: #16a34a;
-  --color-verkoper-100: #dcfce7;
-  --color-verkoper-50: #f0fdf4;
-  --color-notaris-700: #8a5a12;
-  --color-notaris-600: #a86d16;
-  --color-notaris-100: #fbeed5;
-  --color-notaris-50: #fdf8ee;
-  --color-platform-600: #0e7fb8;
-  --color-platform-100: #dff1fb;
-  --color-platform-50: #f0f8fd;
+  /* Messing — het notariële accent (eyebrows, lijnen, kenmerken) */
+  --color-brass-700: #7d6136;
+  --color-brass-600: #96753f;
+  --color-brass-500: #b08d57;
+  --color-brass-400: #c6a676;
+  --color-brass-300: #dcc6a1;
+  --color-brass-200: #ebdec7;
+  --color-brass-100: #f4ecdf;
+  --color-brass-50: #faf6ef;
+
+  /* Rollen (consistent met het procesdiagram, gedempt) */
+  --color-koper-600: #5b4a8b;
+  --color-koper-500: #6c5a9e;
+  --color-koper-100: #ebe7f3;
+  --color-koper-50: #f5f3f9;
+  --color-verkoper-700: #24654a;
+  --color-verkoper-600: #2e7d5b;
+  --color-verkoper-100: #dcede4;
+  --color-verkoper-50: #eef6f2;
+  --color-notaris-700: #7d6136;
+  --color-notaris-600: #96753f;
+  --color-notaris-100: #f4ecdf;
+  --color-notaris-50: #faf6ef;
+  --color-platform-600: #3b6584;
+  --color-platform-100: #e2ebf2;
+  --color-platform-50: #f1f5f9;
 
   /* Status */
-  --color-ok-700: #047857;
-  --color-ok-600: #059669;
-  --color-ok-100: #d1fae5;
-  --color-ok-50: #ecfdf5;
-  --color-warn-700: #b45309;
-  --color-warn-600: #d97706;
-  --color-warn-100: #fef3c7;
-  --color-warn-50: #fffbeb;
-  --color-bad-700: #b91c1c;
-  --color-bad-600: #dc2626;
-  --color-bad-100: #fee2e2;
-  --color-bad-50: #fef2f2;
+  --color-ok-700: #24654a;
+  --color-ok-600: #2e7d5b;
+  --color-ok-100: #dcede4;
+  --color-ok-50: #eef6f2;
+  --color-warn-700: #92560f;
+  --color-warn-600: #c27a1c;
+  --color-warn-100: #f8e8cc;
+  --color-warn-50: #fcf6ea;
+  --color-bad-700: #a2301f;
+  --color-bad-600: #c0392b;
+  --color-bad-100: #f6dedb;
+  --color-bad-50: #fbefed;
 
-  --color-paper: #fbfaf7;
-  --color-sand-100: #f3f1ea;
-  --color-sand-200: #e8e4d8;
+  --color-paper: #f7f5f0;
+  --color-sand-100: #efece4;
+  --color-sand-200: #e4dfd4;
 
-  --radius-xl: 0.875rem;
-  --radius-2xl: 1.125rem;
-  --radius-3xl: 1.5rem;
+  /* Kleinere, formelere afrondingen */
+  --radius-md: 0.3125rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.625rem;
 
-  --shadow-card: 0 1px 2px rgb(13 20 56 / 0.04), 0 4px 16px -4px rgb(13 20 56 / 0.08);
-  --shadow-lift: 0 2px 4px rgb(13 20 56 / 0.05), 0 18px 40px -12px rgb(13 20 56 / 0.22);
-  --shadow-focus: 0 0 0 4px rgb(95 85 238 / 0.22);
+  --shadow-card: 0 1px 2px rgb(11 31 58 / 0.06), 0 8px 24px rgb(11 31 58 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(11 31 58 / 0.06), 0 16px 36px -12px rgb(11 31 58 / 0.22);
+  --shadow-focus: 0 0 0 3px rgb(31 63 110 / 0.22);
 
   --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-pulse-soft: pulse-soft 2.2s ease-in-out infinite;
@@ -104,7 +117,7 @@
     background: var(--color-paper);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
+    font-feature-settings: "cv11";
   }
   ::selection {
     background: var(--color-brand-200);
@@ -116,7 +129,8 @@
     border-radius: 0.5rem;
   }
   h1, h2, h3, h4 {
-    letter-spacing: -0.02em;
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
     text-wrap: balance;
   }
   p { text-wrap: pretty; }
@@ -142,11 +156,12 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
+    border-radius: 0.3125rem;
+    font-weight: 500;
     font-size: 0.9375rem;
     line-height: 1.25rem;
     padding: 0.6875rem 1.125rem;
+    border: 1px solid transparent;
     transition: background-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.05s, border-color 0.15s;
     white-space: nowrap;
     user-select: none;
@@ -154,28 +169,40 @@
   .btn:active { transform: translateY(1px); }
   .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
   .btn-primary {
-    background: var(--color-brand-600);
+    background: var(--color-ink-900);
     color: white;
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.15) inset, 0 6px 16px -6px rgb(75 63 224 / 0.6);
+    box-shadow: 0 1px 2px rgb(11 31 58 / 0.18);
   }
-  .btn-primary:hover { background: var(--color-brand-700); }
-  .btn-dark { background: var(--color-ink-900); color: white; }
+  .btn-primary:hover { background: var(--color-ink-800); }
+  .btn-dark { background: var(--color-ink-950); color: white; }
   .btn-dark:hover { background: var(--color-ink-800); }
+  .btn-brass { background: var(--color-brass-500); color: var(--color-ink-950); }
+  .btn-brass:hover { background: var(--color-brass-400); }
   .btn-secondary {
     background: white;
     color: var(--color-ink-900);
-    border: 1px solid var(--color-ink-200);
-    box-shadow: 0 1px 2px rgb(13 20 56 / 0.05);
+    border-color: var(--color-ink-900);
   }
-  .btn-secondary:hover { border-color: var(--color-ink-300); background: var(--color-ink-50); }
+  .btn-secondary:hover { background: var(--color-ink-50); }
   .btn-ghost { color: var(--color-ink-700); }
   .btn-ghost:hover { background: var(--color-ink-100); color: var(--color-ink-900); }
   .btn-ok { background: var(--color-ok-600); color: white; }
   .btn-ok:hover { background: var(--color-ok-700); }
   .btn-warn { background: white; color: var(--color-warn-700); border: 1px solid var(--color-warn-100); }
   .btn-warn:hover { background: var(--color-warn-50); }
-  .btn-sm { padding: 0.4375rem 0.75rem; font-size: 0.8125rem; border-radius: 0.625rem; }
-  .btn-lg { padding: 0.9375rem 1.5rem; font-size: 1rem; border-radius: 0.875rem; }
+  .btn-sm { padding: 0.4375rem 0.75rem; font-size: 0.8125rem; }
+  .btn-lg { padding: 0.9375rem 1.5rem; font-size: 1rem; }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-brass-600);
+  }
+  .rule-brass { display: block; width: 2.5rem; height: 2px; background: var(--color-brass-500); }
 
   .card {
     background: white;
@@ -188,7 +215,7 @@
     width: 100%;
     background: white;
     border: 1px solid var(--color-ink-200);
-    border-radius: 0.75rem;
+    border-radius: 0.3125rem;
     padding: 0.625rem 0.875rem;
     font-size: 0.9375rem;
     color: var(--color-ink-900);
@@ -229,16 +256,16 @@
   .prose-akte p { margin: 0.5rem 0; }
 
   .prose-site { color: var(--color-ink-700); font-size: 1.0625rem; line-height: 1.75; }
-  .prose-site h2 { color: var(--color-ink-900); font-size: 1.625rem; font-weight: 700; margin: 2.5rem 0 0.875rem; line-height: 1.25; }
-  .prose-site h3 { color: var(--color-ink-900); font-size: 1.1875rem; font-weight: 700; margin: 2rem 0 0.5rem; }
+  .prose-site h2 { color: var(--color-ink-900); font-size: 1.75rem; margin: 2.5rem 0 0.875rem; line-height: 1.25; }
+  .prose-site h3 { color: var(--color-ink-900); font-size: 1.25rem; margin: 2rem 0 0.5rem; }
   .prose-site p { margin: 0.875rem 0; }
   .prose-site ul { list-style: disc; padding-left: 1.25rem; margin: 0.875rem 0; }
   .prose-site ol { list-style: decimal; padding-left: 1.25rem; margin: 0.875rem 0; }
   .prose-site li { margin: 0.375rem 0; }
-  .prose-site li::marker { color: var(--color-brand-500); }
-  .prose-site a { color: var(--color-brand-700); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .prose-site li::marker { color: var(--color-brass-500); }
+  .prose-site a { color: var(--color-ink-900); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .prose-site strong { color: var(--color-ink-900); font-weight: 650; }
-  .prose-site blockquote { border-left: 3px solid var(--color-brand-300); background: var(--color-brand-50); padding: 0.875rem 1.125rem; border-radius: 0 0.75rem 0.75rem 0; margin: 1.25rem 0; color: var(--color-ink-800); }
+  .prose-site blockquote { border-left: 3px solid var(--color-brass-500); background: var(--color-brass-50); padding: 0.875rem 1.125rem; border-radius: 0 0.75rem 0.75rem 0; margin: 1.25rem 0; color: var(--color-ink-800); }
   .prose-site table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; margin: 1.25rem 0; }
   .prose-site th { text-align: left; font-weight: 650; color: var(--color-ink-900); border-bottom: 2px solid var(--color-ink-200); padding: 0.5rem 0.75rem 0.5rem 0; }
   .prose-site td { border-bottom: 1px solid var(--color-ink-100); padding: 0.5rem 0.75rem 0.5rem 0; vertical-align: top; }
@@ -259,8 +286,8 @@
 .tour-spotlight {
   position: fixed;
   z-index: 9998;
-  border-radius: 0.875rem;
-  box-shadow: 0 0 0 9999px rgb(7 11 36 / 0.62), 0 0 0 3px var(--color-brand-400);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 9999px rgb(7 21 42 / 0.62), 0 0 0 3px var(--color-brass-400);
   transition: all 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
   pointer-events: none;
 }
@@ -274,3 +301,11 @@
   .no-print { display: none !important; }
   body { background: white; }
 }
+
+/* Koppen in serif met gelijkmatig, rustig gewicht — bewust buiten @layer zodat dit
+   de gewicht-/tracking-utilities op koppen overstemt (autoritaire, consistente typografie). */
+h1, h2, h3 {
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+h1 { line-height: 1.12; }

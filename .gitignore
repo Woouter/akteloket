@@ -10,3 +10,7 @@ next-env.d.ts
 .DS_Store
 /test-results
 /screenshots-tmp
+# npm run setup: gegenereerde geheimen en overzicht (nooit committen)
+.akteloket-setup.json
+setup-resultaat.md
+.vercel

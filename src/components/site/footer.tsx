@@ -11,33 +11,33 @@ const cols = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 bg-ink-950 text-ink-300">
+    <footer className="mt-24 border-t border-ink-200 bg-sand-100 text-ink-600">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_repeat(3,1fr)]">
         <div>
-          <Logo tone="light" />
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-400">{BRAND.tagline} De notariële werkzaamheden worden uitgevoerd door {NOTARY_OFFICE.officeName}, een onafhankelijk notariskantoor.</p>
+          <Logo />
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-500">{BRAND.tagline} De notariële werkzaamheden worden uitgevoerd door {NOTARY_OFFICE.officeName}, een onafhankelijk notariskantoor.</p>
           <div className="mt-6 flex flex-wrap gap-2 text-xs">
-            <span className="chip bg-white/5 text-ink-200 ring-1 ring-white/10"><Scale className="h-3.5 w-3.5" />Onafhankelijke notaris</span>
-            <span className="chip bg-white/5 text-ink-200 ring-1 ring-white/10"><Lock className="h-3.5 w-3.5" />Versleutelde opslag</span>
-            <span className="chip bg-white/5 text-ink-200 ring-1 ring-white/10"><ShieldCheck className="h-3.5 w-3.5" />AVG-proof</span>
+            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><Scale className="h-3.5 w-3.5" />Onafhankelijke notaris</span>
+            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><Lock className="h-3.5 w-3.5" />Versleutelde opslag</span>
+            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><ShieldCheck className="h-3.5 w-3.5" />AVG-proof</span>
           </div>
         </div>
         {cols.map((c) => (
           <div key={c.title}>
-            <p className="text-sm font-semibold text-white">{c.title}</p>
+            <p className="eyebrow">{c.title}</p>
             <ul className="mt-4 space-y-2.5 text-sm">
-              {c.links.map(([l, h]) => <li key={h}><Link href={h} className="hover:text-white">{l}</Link></li>)}
+              {c.links.map(([l, h]) => <li key={h}><Link href={h} className="hover:text-ink-900">{l}</Link></li>)}
             </ul>
           </div>
         ))}
       </div>
-      <div className="border-t border-white/10">
+      <div className="border-t border-ink-200">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.address} · {BRAND.kvk}</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-ink-200">Privacy</Link>
-            <Link href="/voorwaarden" className="hover:text-ink-200">Voorwaarden</Link>
-            <Link href="/dienstverleningsovereenkomst" className="hover:text-ink-200">Dienstverleningsovereenkomst</Link>
+            <Link href="/privacy" className="hover:text-ink-900">Privacy</Link>
+            <Link href="/voorwaarden" className="hover:text-ink-900">Voorwaarden</Link>
+            <Link href="/dienstverleningsovereenkomst" className="hover:text-ink-900">Dienstverleningsovereenkomst</Link>
           </div>
         </div>
       </div>

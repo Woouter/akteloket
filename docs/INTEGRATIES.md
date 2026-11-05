@@ -57,8 +57,31 @@ Publiek, gratis en zonder sleutel. De browser roept `api.pdok.nl/bzk/locatieserv
 
 ## E-mail
 
-`src/lib/integrations/email.ts`: elk bericht gaat via de tabel `emails`. Met `SMTP_URL` wordt via nodemailer verzonden (bijvoorbeeld een EU-SMTP-provider). In de demo worden berichten niet verzonden en zijn ze te zien in `/demo/mailbox`.
+`src/lib/integrations/email.ts`: elk bericht gaat via de tabel `emails` (outbox, auditbaar). Verzending:
+
+- **Resend** (`RESEND_API_KEY`): `POST https://api.resend.com/emails` met `MAIL_FROM` en `MAIL_REPLY_TO`. Het setup-script voegt het domein toe in de EU-regio (`eu-west-1`) en geeft de app een sleutel die alleen voor dat domein mag verzenden.
+- **SMTP** (`SMTP_URL`): via nodemailer, bijvoorbeeld een EU-SMTP-provider.
+- **Demo** of geen provider: niets wordt verzonden. De berichten zijn te zien in `/demo/mailbox` (status "gesimuleerd").
+
+Mislukte verzending krijgt de status "mislukt", met de foutmelding erbij in `/beheer`.
+
+## Opslag: upload-inbox (Supabase Storage)
+
+`src/lib/integrations/inbox.ts`, `src/app/api/upload/sign/route.ts`, `src/lib/client/upload.ts`.
+
+Vercel accepteert maximaal ~4,5 MB per request. Daarom:
+
+1. Bestanden tot 4 MB gaan als gewone multipart-upload naar de app.
+2. Grotere bestanden (tot 25 MB): de browser vraagt `/api/upload/sign` om een eenmalige upload-URL voor de privé-bucket `inbox`. Dat mag alleen met een sessie of een lopende aanvraag. De browser uploadt daar rechtstreeks heen en stuurt daarna alleen het pad naar de app.
+3. De server haalt het bestand op met de service-sleutel, verwerkt het (scanner), versleutelt het in de database en verwijdert het uit de inbox.
+4. De dagelijkse cron verwijdert achtergebleven bestanden die ouder zijn dan een dag.
+
+Zonder `SUPABASE_URL` en `SUPABASE_SERVICE_ROLE_KEY` (lokaal, Docker) gaat alles direct naar de app.
+
+## Database (Supabase)
+
+De app verbindt via de Supavisor-pooler (`…pooler.supabase.com:6543`, transactiemodus, IPv4) met een pool van maximaal 3 verbindingen per serverless-instance. TLS is altijd aan. Met `DATABASE_CA_CERT` (de CA uit Supabase → Database → SSL) wordt het certificaat ook volledig geverifieerd. De Data API (PostgREST) van Supabase wordt niet gebruikt. Migratie `0001_afscherming` zet RLS aan en trekt de rechten van `anon` en `authenticated` in.
 
 ## Cron
 
-`GET /api/cron` met header `Authorization: Bearer $CRON_SECRET`. Aanbevolen: elk uur. Het endpoint verzorgt de datumcheck (14 dagen vooraf), herinneringen, signalen aan de notaris en het opruimen van verlaten aanvragen.
+`GET /api/cron` met header `Authorization: Bearer $CRON_SECRET`. Vercel Cron roept het dagelijks aan (`vercel.json`) en stuurt de header automatisch mee. Op Vercel Pro of eigen hosting: elk uur. Het endpoint verzorgt de datumcheck (14 dagen vooraf), herinneringen, signalen aan de notaris, het opruimen van verlaten aanvragen en het opruimen van de upload-inbox.

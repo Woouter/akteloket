@@ -26,7 +26,7 @@ export default async function Page() {
     <>
       <PageTitle title={`${hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond"}, ${user.name.split(" ")[0]}`} sub={`${dateNl(new Date(), { weekday: true })} · ${open.length} lopende dossiers`} />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {tiles.map((t) => <Card key={t.label} className="flex items-center gap-4 p-5"><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${t.tone}`}><t.icon className="h-5 w-5" /></span><span><span className="block text-2xl font-extrabold text-ink-900 tabular">{t.value}</span><span className="block text-sm text-ink-500">{t.label}</span></span></Card>)}
+        {tiles.map((t) => <Card key={t.label} className="flex items-center gap-4 p-5"><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${t.tone}`}><t.icon className="h-5 w-5" /></span><span><span className="block font-serif text-3xl font-semibold text-ink-900 tabular">{t.value}</span><span className="block text-sm text-ink-500">{t.label}</span></span></Card>)}
       </div>
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.4fr_1fr]">
         <Card className="p-0" data-tour="n-actions">

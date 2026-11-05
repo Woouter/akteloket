@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import { Loader2, Paperclip, Upload } from "lucide-react";
 import { cn } from "@/lib/util/format";
+import { appendFile } from "@/lib/client/upload";
 
 /** Compacte uploadknop die direct na kiezen uploadt (naar /api/portaal/[id]/upload). */
 export function UploadButton({ dossierId, kind, extra = {}, back, label = "Upload document", className, variant = "secondary" }: { dossierId: string; kind: string; extra?: Record<string, string>; back?: string; label?: string; className?: string; variant?: "secondary" | "primary" | "dark" }) {
@@ -12,7 +13,7 @@ export function UploadButton({ dossierId, kind, extra = {}, back, label = "Uploa
     setBusy(true);
     setErr(null);
     const fd = new FormData();
-    fd.append("file", f);
+    try { await appendFile(fd, f); } catch (e) { setErr((e as Error).message); setBusy(false); return; }
     fd.append("kind", kind);
     for (const [k, v] of Object.entries(extra)) fd.append(k, v);
     const r = await fetch(`/api/portaal/${dossierId}/upload`, { method: "POST", body: fd, headers: { accept: "application/json" } });

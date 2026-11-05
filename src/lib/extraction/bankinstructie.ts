@@ -71,7 +71,7 @@ async function ai(buf: Buffer): Promise<BankExtraction> {
   const { betaZodOutputFormat } = await import("@anthropic-ai/sdk/helpers/beta/zod");
   const client = new Anthropic();
   const res = await client.beta.messages.parse({
-    model: process.env.ANTHROPIC_MODEL ?? "claude-opus-5-5",
+    model: process.env.ANTHROPIC_MODEL || "claude-opus-5-5",
     max_tokens: 16000,
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",

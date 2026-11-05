@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <>
       <section className="container-page max-w-3xl py-16 lg:py-20">
-        <p className="text-sm font-semibold text-brand-600">Over ons</p>
+        <p className="eyebrow">Over ons</p>
         <h1 className="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Notarieel werk verdient een moderne ervaring</h1>
         <div className="prose-site mt-8">
           <p>Een huis kopen is spannend genoeg. Toch voelt het notariële deel voor veel mensen als een zwarte doos: formulieren, kopieën mailen, afspraken op kantoor en weinig zicht op waar je dossier staat. Dat kan beter.</p>

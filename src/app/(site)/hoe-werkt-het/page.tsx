@@ -43,7 +43,7 @@ export default function Page() {
     <>
       <section className="border-b border-ink-100">
         <div className="container-page py-16 lg:py-20">
-          <p className="text-sm font-semibold text-brand-600">Hoe werkt het</p>
+          <p className="eyebrow">Hoe werkt het</p>
           <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Drie rollen, één dossier. Zo regelen we je overdracht online.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600">Er lopen twee klantreizen naast elkaar: een uitgebreide voor de koper en een eenvoudige voor de verkoper. Wij automatiseren en bereiden voor. De notaris controleert, beslist en passeert.</p>
           <div className="mt-10 grid gap-4 md:grid-cols-4">

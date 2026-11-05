@@ -35,16 +35,15 @@ export function Landing(p: LandingProps) {
       <JsonLd data={{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: BRAND.url }, { "@type": "ListItem", position: 2, name: s.name, item: `${BRAND.url}${p.path}` }] }} />
       <FaqJsonLd items={faq} />
 
-      <section className="relative overflow-hidden border-b border-ink-100">
-        <div className="pointer-events-none absolute inset-0 bg-grid mask-fade-b" />
+      <section className="relative overflow-hidden border-b border-ink-200 bg-white">
         <div className="container-page relative grid gap-12 py-16 lg:grid-cols-[1.25fr_0.75fr] lg:py-20" data-tour="landing-hero">
           <div>
             <nav className="text-sm text-ink-500" aria-label="Kruimelpad"><Link href="/" className="hover:text-ink-900">Home</Link> <span className="mx-1.5">/</span> <span className="text-ink-700">{s.name}</span></nav>
-            <p className="mt-6 text-sm font-semibold text-brand-600">{p.eyebrow}</p>
-            <h1 className="mt-2 text-4xl font-extrabold leading-[1.08] tracking-tight text-ink-900 sm:text-[3.4rem]">{p.h1}</h1>
+            <p className="eyebrow mt-6">{p.eyebrow}</p>
+            <h1 className="mt-3 text-4xl text-ink-900 sm:text-[3.3rem]">{p.h1}</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600">{p.intro}</p>
             <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
-              {p.heroPoints.map((h) => <li key={h} className="flex gap-2.5 text-ink-800"><Check className="mt-0.5 h-5 w-5 shrink-0 text-ok-600" />{h}</li>)}
+              {p.heroPoints.map((h) => <li key={h} className="flex gap-2.5 text-ink-800"><Check className="mt-0.5 h-5 w-5 shrink-0 text-brass-500" />{h}</li>)}
             </ul>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={href} className="btn btn-primary btn-lg">{p.ctaLabel ?? "Start je aanvraag"} <ArrowRight className="h-4 w-4" /></Link>
@@ -54,11 +53,11 @@ export function Landing(p: LandingProps) {
           </div>
           <aside className="self-start">
             <div className="card p-7 shadow-lift">
-              <p className="text-sm font-semibold text-brand-600">{s.short}</p>
-              <p className="mt-1 flex items-baseline gap-2"><span className="text-5xl font-extrabold tracking-tight text-ink-900 tabular">€ {s.price}</span><span className="text-ink-500">all-in</span></p>
+              <p className="eyebrow">{s.short}</p>
+              <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-5xl font-semibold text-ink-900 tabular">€ {s.price}</span><span className="text-ink-500">all-in</span></p>
               <p className="text-sm text-ink-500">Inclusief btw{p.service !== "koopovereenkomst" ? " en kadasterinschrijving" : ""}</p>
               <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
-                {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-ok-600" />{i}</li>)}
+                {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" />{i}</li>)}
               </ul>
               <Link href={href} className="btn btn-dark mt-7 w-full">{p.ctaLabel ?? "Start je aanvraag"} <ArrowRight className="h-4 w-4" /></Link>
               <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-ink-500"><Clock className="h-3.5 w-3.5" />Klaar in ongeveer 2 minuten</p>
@@ -71,7 +70,7 @@ export function Landing(p: LandingProps) {
         <div className="space-y-12">
           {p.explainer.map((e) => (
             <div key={e.title}>
-              <h2 className="text-2xl font-bold text-ink-900 sm:text-3xl">{e.title}</h2>
+              <h2 className="text-2xl text-ink-900 sm:text-[2rem]">{e.title}</h2>
               <div className="prose-site mt-4">{e.body}</div>
             </div>
           ))}
@@ -94,7 +93,7 @@ export function Landing(p: LandingProps) {
           <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {p.steps.map((st, i) => (
               <li key={st.title} className="rounded-2xl border border-ink-100 bg-paper p-6">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white">{i + 1}</span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-brass-400 font-serif text-lg font-semibold text-brass-600">{i + 1}</span>
                 <p className="mt-4 font-bold text-ink-900">{st.title}</p>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{st.text}</p>
               </li>

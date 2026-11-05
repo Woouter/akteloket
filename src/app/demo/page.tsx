@@ -20,13 +20,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
   return (
     <div className="container-page py-12">
       {sp.reset && <Notice tone="ok" className="mb-6">De demo is teruggezet naar de beginsituatie.</Notice>}
-      <section className="relative overflow-hidden rounded-[2rem] bg-ink-900 px-6 py-12 text-white sm:px-12">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-brand-500/30 blur-3xl" />
-        <p className="flex items-center gap-2 text-sm font-semibold text-notaris-100"><FlaskConical className="h-4 w-4" />Demo-omgeving · demo.akte-loket.nl</p>
+      <section className="relative overflow-hidden rounded-xl bg-ink-900 px-6 py-12 text-white sm:px-12">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brass-400/70 to-transparent" />
+        <p className="eyebrow flex items-center gap-2 !text-brass-300"><FlaskConical className="h-3.5 w-3.5" />Demo-omgeving · demo.akte-loket.nl</p>
         <h1 className="mt-3 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Welkom{NOTARY_OFFICE.notaryShort ? `, ${NOTARY_OFFICE.notaryShort}` : ""}. Zo werkt Akteloket van A tot Z.</h1>
         <p className="mt-5 max-w-2xl text-lg text-ink-300">Dit is de volledige werkende omgeving — website, klantportaal, verkopersportaal, uw notariswerkplek en ons platformbeheer — gevuld met één fictief voorbeelddossier. Start een tour, of klik zelf rond in elke rol.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href="/demo/start/notaris" prefetch={false} className="btn btn-primary btn-lg"><PlayCircle className="h-5 w-5" />Start de tour voor de notaris</Link>
+          <Link href="/demo/start/notaris" prefetch={false} className="btn btn-brass btn-lg"><PlayCircle className="h-5 w-5" />Start de tour voor de notaris</Link>
           <Link href="/demo/uitleg" className="btn btn-lg bg-white/10 text-white hover:bg-white/15"><BookOpen className="h-5 w-5" />Hoe alles werkt</Link>
         </div>
       </section>

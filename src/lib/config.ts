@@ -9,7 +9,7 @@
 export const BRAND = {
   name: "Akteloket",
   domain: "akte-loket.nl",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://akte-loket.nl",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://akte-loket.nl",
   demoUrl: "https://demo.akte-loket.nl",
   tagline: "Je notaris voor je woning, volledig online geregeld.",
   email: "hallo@akte-loket.nl",
@@ -21,11 +21,11 @@ export const BRAND = {
 
 /** De aangesloten (pilot)notaris. In productie via env/settings te overschrijven. */
 export const NOTARY_OFFICE = {
-  officeName: process.env.NOTARY_OFFICE_NAME ?? "Notariskantoor Van Dam",
-  notaryName: process.env.NOTARY_NAME ?? "mr. L.M. (Lotte) van Dam",
-  notaryShort: process.env.NOTARY_SHORT ?? "mr. L.M. van Dam",
-  city: process.env.NOTARY_CITY ?? "Amersfoort",
-  address: process.env.NOTARY_ADDRESS ?? "Stationsplein 8, 3818 LE Amersfoort",
+  officeName: process.env.NOTARY_OFFICE_NAME || "Notariskantoor Van Dam",
+  notaryName: process.env.NOTARY_NAME || "mr. L.M. (Lotte) van Dam",
+  notaryShort: process.env.NOTARY_SHORT || "mr. L.M. van Dam",
+  city: process.env.NOTARY_CITY || "Amersfoort",
+  address: process.env.NOTARY_ADDRESS || "Stationsplein 8, 3818 LE Amersfoort",
   /** Medewerkers die als gevolmachtigde de akten ondertekenen. */
   proxyHolders: ["iedere medewerker van het kantoor van de notaris"],
   kwaliteitsrekening: "NL00 DEMO 0000 0000 00 (kwaliteitsrekening notaris)",

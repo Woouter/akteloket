@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Bot, Cpu, Database, FileText, Fingerprint, Globe, KeyRound, Landmark, Lock, Mail, Map, PenLine, Scale, ShieldCheck, Store, User, Workflow } from "lucide-react";
+import { ArrowRight, Bot, Cpu, Database, FileText, Fingerprint, Globe, KeyRound, Landmark, Lock, Mail, Map, PenLine, Scale, ServerCog, ShieldCheck, Store, User, Workflow } from "lucide-react";
 import { Card } from "@/components/ui";
 
 export const metadata: Metadata = { title: "Hoe alles werkt", robots: { index: false } };
@@ -28,13 +28,14 @@ const integrations = [
   { icon: Bot, t: "Claude (AI-extractie)", d: "Leest de koopovereenkomst en bankinstructie als PDF (ook scans en foto's) met gestructureerde uitvoer. Zonder sleutel valt het systeem terug op de regelgebaseerde scanner.", s: "Optioneel (ANTHROPIC_API_KEY)" },
   { icon: Fingerprint, t: "Identificatie", d: "iDIN (via een iDIN-acquirer) of een NFC-ID-app. In de demo gesimuleerd. Er worden geen kopieën van ID-bewijzen opgeslagen zonder vastgesteld beveiligd proces.", s: "Demo: gesimuleerd" },
   { icon: PenLine, t: "Ondertekening", d: "DVO: digitaal akkoord met versie, tijdstip, IP en hash. Volmacht: tijdens een video- of kantoorafspraak (formaliteiten door de notaris). Koppeling met een e-signing-provider is voorbereid.", s: "Demo: gesimuleerd" },
-  { icon: Mail, t: "E-mail", d: "Alles via een gelogde outbox. Met SMTP_URL echte verzending (bijv. Postmark/Mailgun EU); in de demo zichtbaar in de demo-mailbox.", s: "Demo: mailbox" },
+  { icon: Mail, t: "E-mail", d: "Alles via een gelogde outbox. In productie verzonden via Resend (EU-regio) vanaf het eigen domein, met een sleutel die alleen mag verzenden. In de demo zichtbaar in de demo-mailbox.", s: "Demo: mailbox" },
+  { icon: ServerCog, t: "Hosting en opslag", d: "De app draait op Vercel, de PostgreSQL-database en de tijdelijke upload-inbox op Supabase, beide in Frankfurt. Productie en demo zijn volledig gescheiden, met elk een eigen database en eigen sleutels. Documenten worden versleuteld opgeslagen (AES-256-GCM).", s: "EU (Frankfurt)" },
 ];
 
 export default function Page() {
   return (
     <div className="container-page max-w-6xl py-12">
-      <p className="text-sm font-semibold text-brand-600">Hoe alles werkt</p>
+      <p className="eyebrow">Hoe alles werkt</p>
       <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Eén dossier, drie klantreizen, één controlerende notaris</h1>
       <p className="mt-5 max-w-3xl text-lg text-ink-600">Het platform verzamelt, structureert en signaleert. De notaris identificeert, beoordeelt, controleert, stelt akten vast en passeert. Deze pagina beschrijft hoe dat technisch en procesmatig in elkaar zit.</p>
 

@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <section className="container-page grid gap-12 py-16 lg:grid-cols-2 lg:py-20">
       <div>
-        <p className="text-sm font-semibold text-brand-600">Contact</p>
+        <p className="eyebrow">Contact</p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">We helpen je graag</h1>
         <p className="mt-5 text-lg text-ink-600">Heb je al een dossier? Stel je vraag dan het liefst via je <Link href="/inloggen" className="text-brand-700 underline underline-offset-4">portaal</Link>, dan zien we direct waar het over gaat.</p>
         <ul className="mt-8 space-y-4 text-ink-800">

@@ -15,7 +15,7 @@ export default function Page() {
       path="/akte-van-levering"
       service="levering"
       eyebrow="Akte van levering · transportakte"
-      h1={<>Akte van levering, <span className="text-brand-600">zonder gedoe</span> online geregeld</>}
+      h1={<>Akte van levering, <span className="italic text-brass-600">zonder gedoe</span> online geregeld</>}
       intro="Koop je een woning? Dan wordt de eigendom pas van jou als de notaris de akte van levering heeft gepasseerd en ingeschreven in het Kadaster. Wij regelen het volledig online: jij uploadt je koopovereenkomst, wij zetten alles klaar, de notaris controleert en passeert."
       heroPoints={["Vaste prijs, inclusief kadasterinschrijving", "Koopovereenkomst wordt automatisch uitgelezen", "Eén volmacht via video — niet langskomen", "Live status in je eigen portaal"]}
       explainer={[

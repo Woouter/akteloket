@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite", "pg", "nodemailer", "unpdf"],
+  // Migraties en kennisbank worden op runtime gelezen (ook op Vercel).
+  outputFileTracingIncludes: { "/**": ["./drizzle/**/*", "./content/**/*"] },
   experimental: {
     serverActions: { bodySizeLimit: "25mb" },
   },

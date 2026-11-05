@@ -15,7 +15,7 @@ export default function Page() {
       path="/hypotheekakte"
       service="hypotheek"
       eyebrow="Hypotheekakte"
-      h1={<>Je hypotheekakte <span className="text-brand-600">snel en online</span> geregeld</>}
+      h1={<>Je hypotheekakte <span className="italic text-brass-600">snel en online</span> geregeld</>}
       intro="Met de hypotheekakte krijgt je geldverstrekker zekerheid op je woning. Je bank stuurt de hypotheekinstructie rechtstreeks naar de notaris; wij bewaken dat die op tijd binnen is en zetten direct de concept-akte klaar. Jij tekent één volmacht en hoeft niet langs."
       heroPoints={["Vaste prijs, inclusief kadasterinschrijving", "Wij bewaken de bankinstructie", "Concept-akte direct na ontvangst instructie", "Ook voor oversluiten of verhogen"]}
       explainer={[

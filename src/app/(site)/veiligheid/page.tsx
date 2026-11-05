@@ -15,7 +15,7 @@ const items = [
 export default function Page() {
   return (
     <section className="container-page py-16 lg:py-20">
-      <p className="text-sm font-semibold text-brand-600">Veiligheid en privacy</p>
+      <p className="eyebrow">Veiligheid en privacy</p>
       <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Jouw gegevens, zo zorgvuldig als een notaris dat hoort te doen</h1>
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((i) => <div key={i.t} className="card p-6"><i.icon className="h-6 w-6 text-brand-600" /><p className="mt-4 font-bold text-ink-900">{i.t}</p><p className="mt-1.5 text-sm leading-relaxed text-ink-600">{i.d}</p></div>)}

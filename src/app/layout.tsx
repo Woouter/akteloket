@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import "@fontsource-variable/plus-jakarta-sans";
-import "@fontsource-variable/source-serif-4";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/source-serif-4/opsz.css";
 import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import { BRAND, isDemo } from "@/lib/config";

@@ -15,7 +15,7 @@ export default function Page() {
       path="/levering-en-hypotheekakte"
       service="beide"
       eyebrow="Notaris voor je nieuwe huis · levering + hypotheek"
-      h1={<>Huis gekocht? Wij regelen <span className="text-brand-600">beide akten</span> in één keer</>}
+      h1={<>Huis gekocht? Wij regelen <span className="italic text-brass-600">beide akten</span> in één keer</>}
       intro="Koop je een woning met een hypotheek, dan heb je twee akten nodig: de akte van levering en de hypotheekakte. Bij Akteloket regel je ze samen, volledig online, met één volmacht voor beide akten en één vaste prijs."
       heroPoints={[`€ ${SERVICES.beide.price} all-in voor beide akten`, "Eén volmacht voor levering én hypotheek", "Automatische toets startersvrijstelling", "Verkoper krijgt een eigen portaal"]}
       explainer={[

@@ -53,8 +53,8 @@ export function Card({ children, className, ...rest }: { children: ReactNode; cl
 export function SectionTitle({ eyebrow, title, intro, center, className }: { eyebrow?: string; title: ReactNode; intro?: ReactNode; center?: boolean; className?: string }) {
   return (
     <div className={cn("max-w-2xl", center && "mx-auto text-center", className)}>
-      {eyebrow && <p className="mb-3 text-sm font-semibold tracking-wide text-brand-600">{eyebrow}</p>}
-      <h2 className="text-3xl font-bold leading-tight text-ink-900 sm:text-[2.35rem]">{title}</h2>
+      {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
+      <h2 className="text-3xl leading-tight text-ink-900 sm:text-[2.5rem]">{title}</h2>
       {intro && <p className="mt-4 text-lg leading-relaxed text-ink-600">{intro}</p>}
     </div>
   );

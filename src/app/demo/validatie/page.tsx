@@ -33,8 +33,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
   const tone = { akkoord: "ok", aanpassen: "warn", schrappen: "bad", toevoegen: "brand" } as const;
   return (
     <div className="container-page max-w-5xl py-12">
-      <p className="text-sm font-semibold text-notaris-600">Beoordelingskader pilot</p>
-      <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-ink-900">Per onderdeel: akkoord, aanpassen, schrappen of toevoegen</h1>
+      <p className="eyebrow">Beoordelingskader pilot</p>
+      <h1 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">Per onderdeel: akkoord, aanpassen, schrappen of toevoegen</h1>
       <p className="mt-4 text-lg text-ink-600">Dit is geen open vragenlijst: alles is al uitgewerkt en werkt in deze demo. Geef per onderdeel uw oordeel; wij verwerken het in de definitieve inrichting.</p>
       {sp.opgeslagen && <Notice tone="ok" className="mt-6" icon={<CheckCircle2 className="h-4 w-4 text-ok-600" />}>Uw beoordeling van “{sp.opgeslagen}” is opgeslagen.</Notice>}
       <div className="mt-10 space-y-5">
@@ -42,14 +42,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
           const mine = fb.filter((f) => f.component === it.key);
           return (
             <Card key={it.key} id={it.key} className="scroll-mt-24 p-6">
-              <div className="flex flex-wrap items-start justify-between gap-3"><h2 className="text-lg font-bold text-ink-900">{it.title}</h2>{mine[0] && <Badge tone={tone[mine[0].verdict]}>{mine[0].verdict}</Badge>}</div>
+              <div className="flex flex-wrap items-start justify-between gap-3"><h2 className="font-serif text-lg font-semibold text-ink-900">{it.title}</h2>{mine[0] && <Badge tone={tone[mine[0].verdict]}>{mine[0].verdict}</Badge>}</div>
               <p className="mt-2 text-sm leading-relaxed text-ink-600"><strong className="text-ink-800">Zoals gebouwd:</strong> {it.now}</p>
               <form action={saveFeedback} className="mt-4 grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-start">
                 <input type="hidden" name="component" value={it.key} />
-                <div className="flex flex-wrap gap-1.5">
-                  {(["akkoord", "aanpassen", "schrappen", "toevoegen"] as const).map((v) => <label key={v} className="cursor-pointer"><input type="radio" name="verdict" value={v} required defaultChecked={mine[0]?.verdict === v} className="peer sr-only" /><span className="btn btn-secondary btn-sm capitalize peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white">{v}</span></label>)}
-                </div>
-                <textarea name="comment" rows={1} className="textarea" placeholder="Toelichting (optioneel)" />
+                <fieldset className="flex flex-wrap gap-1.5"><legend className="sr-only">Uw oordeel over {it.title}</legend>
+                  {(["akkoord", "aanpassen", "schrappen", "toevoegen"] as const).map((v) => <label key={v} className="cursor-pointer"><input type="radio" name="verdict" value={v} required defaultChecked={mine[0]?.verdict === v} className="peer sr-only" /><span className="btn btn-secondary btn-sm capitalize peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white peer-focus-visible:shadow-[var(--shadow-focus)] peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500">{v}</span></label>)}
+                </fieldset>
+                <textarea name="comment" rows={1} className="textarea" placeholder="Toelichting (optioneel)" aria-label={`Toelichting bij ${it.title}`} />
                 <button className="btn btn-dark btn-sm">Opslaan</button>
               </form>
               {mine.length > 0 && <ul className="mt-4 space-y-2 border-t border-ink-100 pt-3">{mine.map((f) => <li key={f.id} className="flex gap-2 text-xs text-ink-600"><MessageSquareText className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span><strong>{f.author}</strong> · {f.verdict} · {dateTimeNl(f.createdAt)}{f.comment ? ` — ${f.comment}` : ""}</span></li>)}</ul>}

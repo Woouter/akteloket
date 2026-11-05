@@ -7,6 +7,7 @@ import { decideCheck, regenerate } from "@/app/notaris/actions";
 import type { DocIR } from "@/lib/docgen/ir";
 import { Badge, Card } from "@/components/ui";
 import { dateTimeNl } from "@/lib/util/format";
+import { CardTitle } from "@/components/staff/card-title";
 
 export default async function Page({ params }: { params: Promise<{ id: string; kind: string }> }) {
   const { id, kind } = await params;
@@ -26,8 +27,8 @@ export default async function Page({ params }: { params: Promise<{ id: string; k
     <>
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Link href={`/notaris/dossiers/${id}${checkKey ? `#${checkKey}` : ""}`} className="btn btn-ghost btn-sm -ml-2"><ArrowLeft className="h-4 w-4" />Controlepaneel</Link>
-          <h1 className="mt-1 text-xl font-extrabold text-ink-900">{ir.title} {akte && <Badge className="ml-2">versie {akte.version}</Badge>}</h1>
+          <Link href={`/notaris/dossiers/${id}${checkKey ? `#${checkKey}` : ""}`} className="btn btn-ghost btn-sm -ml-2"><ArrowLeft className="h-4 w-4" />Terug naar het dossier</Link>
+          <h1 className="mt-1 font-serif text-xl font-semibold text-ink-900">{ir.title} {akte && <Badge className="ml-2">versie {akte.version}</Badge>}</h1>
           <p className="text-sm text-ink-500">{view.dossier.reference} · gegenereerd {dateTimeNl(doc.createdAt)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -37,17 +38,18 @@ export default async function Page({ params }: { params: Promise<{ id: string; k
           {check?.status === "akkoord" && <Badge tone="ok">Akkoord door {check.decidedBy}</Badge>}
         </div>
       </div>
-      <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
-        <div data-tour="akte-doc" className="min-w-0 rounded-2xl bg-ink-100/60 p-3 sm:p-6"><DocView ir={ir} /></div>
-        <aside className="space-y-5 xl:sticky xl:top-6 xl:self-start" data-tour="akte-controlepunten">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div data-tour="akte-doc" className="min-w-0 rounded-lg bg-ink-100/60 p-2 sm:p-6"><DocView ir={ir} /></div>
+        <aside className="min-w-0 space-y-5 xl:sticky xl:top-6 xl:self-start" data-tour="akte-controlepunten">
           <Card className="p-5">
-            <p className="flex items-center gap-2 font-semibold text-ink-900"><Flag className="h-4 w-4 text-warn-600" />Controlepunten ({ir.controlepunten.length})</p>
-            <ol className="mt-3 max-h-[50vh] space-y-2 overflow-auto text-sm">
+            <CardTitle icon={<Flag className="h-4 w-4 shrink-0 text-warn-600" />}>Controlepunten ({ir.controlepunten.length})</CardTitle>
+            {ir.controlepunten.length === 0 && <p className="mt-2 text-sm text-ink-500">Geen controlepunten: alle gegevens in dit document komen uit een bron (zie hieronder).</p>}
+            <ol className="mt-3 max-h-[50vh] space-y-2 overflow-auto text-sm empty:hidden">
               {ir.controlepunten.map((c, i) => <li key={i} className={`rounded-lg p-2.5 ${c.startsWith("Ontbrekend") ? "bg-bad-50 text-bad-700" : "bg-warn-50 text-ink-800"}`}><span className="mr-1 font-mono text-xs text-ink-400">{i + 1}.</span>{c}</li>)}
             </ol>
           </Card>
           <Card className="p-5">
-            <p className="flex items-center gap-2 font-semibold text-ink-900"><Link2 className="h-4 w-4 text-ok-600" />Bronnen ({ir.bronnen.length})</p>
+            <CardTitle icon={<Link2 className="h-4 w-4 shrink-0 text-ok-600" />}>Bronnen ({ir.bronnen.length})</CardTitle>
             <ul className="mt-3 max-h-[40vh] space-y-2 overflow-auto text-xs">
               {ir.bronnen.map((b) => <li key={b.label}><span className="font-semibold text-ink-800">{b.label}</span><span className="block text-ink-500">{b.bron}</span></li>)}
             </ul>

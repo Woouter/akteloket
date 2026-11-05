@@ -155,7 +155,7 @@ export async function saveMatrix(fd: FormData) {
   await setSetting("wwft_matrix", next, user.name);
   await logEvent({ actorType: "notaris", actor: user, type: "instellingen.matrix", message: "Wwft-documentmatrix bijgewerkt." });
   revalidatePath("/notaris/instellingen");
-  redirect("/notaris/instellingen?opgeslagen=1");
+  redirect("/notaris/instellingen?opgeslagen=matrix#matrix");
 }
 
 export async function saveOffice(fd: FormData) {
@@ -168,7 +168,7 @@ export async function saveOffice(fd: FormData) {
   };
   await setSetting("office", next, user.name);
   revalidatePath("/notaris/instellingen");
-  redirect("/notaris/instellingen?opgeslagen=1");
+  redirect("/notaris/instellingen?opgeslagen=kantoor#kantoor");
 }
 
 export async function acknowledgeHandover(dossierId: string, handoverId: string) {

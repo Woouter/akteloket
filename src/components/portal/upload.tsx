@@ -5,7 +5,7 @@ import { cn } from "@/lib/util/format";
 import { appendFile } from "@/lib/client/upload";
 
 /** Compacte uploadknop die direct na kiezen uploadt (naar /api/portaal/[id]/upload). */
-export function UploadButton({ dossierId, kind, extra = {}, back, label = "Upload document", className, variant = "secondary" }: { dossierId: string; kind: string; extra?: Record<string, string>; back?: string; label?: string; className?: string; variant?: "secondary" | "primary" | "dark" }) {
+export function UploadButton({ dossierId, kind, extra = {}, back, label = "Upload document", className, variant = "secondary" }: { dossierId: string; kind: string; extra?: Record<string, string>; back?: string; label?: string; className?: string; variant?: "secondary" | "primary" | "dark" | "brass" }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);

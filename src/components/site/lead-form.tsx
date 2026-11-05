@@ -18,7 +18,7 @@ export function LeadForm({ kind, fields = ["name", "email", "phone", "message"],
       {fields.includes("company") && <label className="block"><span className="label">Kantoor / bedrijf</span><input name="company" className="input" autoComplete="organization" /></label>}
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.includes("email") && <label className="block"><span className="label">E-mailadres</span><input name="email" type="email" required className="input" autoComplete="email" /></label>}
-        {fields.includes("phone") && <label className="block"><span className="label">Telefoon</span><input name="phone" className="input" autoComplete="tel" /></label>}
+        {fields.includes("phone") && <label className="block"><span className="label">Telefoon</span><input name="phone" type="tel" inputMode="tel" className="input" autoComplete="tel" /></label>}
       </div>
       {extra}
       {fields.includes("message") && <label className="block"><span className="label">Bericht</span><textarea name="message" rows={4} className="textarea" /></label>}

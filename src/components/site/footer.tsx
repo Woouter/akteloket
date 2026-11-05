@@ -25,19 +25,19 @@ export function SiteFooter() {
         {cols.map((c) => (
           <div key={c.title}>
             <p className="eyebrow">{c.title}</p>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              {c.links.map(([l, h]) => <li key={h}><Link href={h} className="hover:text-ink-900">{l}</Link></li>)}
+            <ul className="mt-4 space-y-1 text-sm">
+              {c.links.map(([l, h]) => <li key={h}><Link href={h} className="inline-block py-1 hover:text-ink-900">{l}</Link></li>)}
             </ul>
           </div>
         ))}
       </div>
       <div className="border-t border-ink-200">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.address} · {BRAND.kvk}</p>
+          <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.address}{BRAND.kvk ? ` · ${BRAND.kvk}` : ""}</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-ink-900">Privacy</Link>
-            <Link href="/voorwaarden" className="hover:text-ink-900">Voorwaarden</Link>
-            <Link href="/dienstverleningsovereenkomst" className="hover:text-ink-900">Dienstverleningsovereenkomst</Link>
+            <Link href="/privacy" className="inline-block py-1.5 hover:text-ink-900">Privacy</Link>
+            <Link href="/voorwaarden" className="inline-block py-1.5 hover:text-ink-900">Voorwaarden</Link>
+            <Link href="/dienstverleningsovereenkomst" className="inline-block py-1.5 hover:text-ink-900">Dienstverleningsovereenkomst</Link>
           </div>
         </div>
       </div>

@@ -94,21 +94,24 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
     setStep("afronden");
   }
 
-  const steps: [Step[], string][] = [[["dienst"], "Dienst"], [["upload", "scan", "handmatig"], service === "hypotheek" ? "Woning" : "Koopovereenkomst"], [["controle"], "Controleren"], [["afronden"], "Afronden"]];
+  const manual = service === "hypotheek" || hasKo === "nee";
+  const steps: [Step[], string][] = [[["dienst"], "Dienst"], [["upload", "scan", "handmatig"], service === "hypotheek" ? "Woning" : manual || step === "handmatig" ? "Gegevens" : "Koopovereenkomst"], [["controle"], "Controleren"], [["afronden"], "Afronden"]];
   const activeIdx = steps.findIndex(([s]) => s.includes(step));
+  const visible = steps.filter(([, l]) => !(l === "Controleren" && (manual || step === "handmatig")));
 
   return (
     <div ref={top} className="scroll-mt-24">
       <ol className="mb-8 flex items-center gap-2 text-sm" aria-label="Voortgang">
-        {steps.filter(([, l]) => !(l === "Controleren" && (service === "hypotheek" || hasKo === "nee"))).map(([s, l], i) => {
+        {visible.map(([s, l], i) => {
           const idx = steps.findIndex(([x]) => x === s);
           const done = idx < activeIdx;
           const act = idx === activeIdx;
+          const last = i === visible.length - 1;
           return (
-            <li key={l} className="flex flex-1 items-center gap-2">
+            <li key={l} className={cn("flex items-center gap-2", !last && "flex-1")} aria-current={act ? "step" : undefined}>
               <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold", done ? "bg-ok-600 text-white" : act ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-500")}>{done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}</span>
-              <span className={cn("hidden font-medium sm:inline", act ? "text-ink-900" : "text-ink-500")}>{l}</span>
-              {i < 3 && <span className="h-px flex-1 bg-ink-200" />}
+              <span className={cn("font-medium", act ? "text-ink-900" : "hidden text-ink-500 sm:inline")}>{l}</span>
+              {!last && <span className="h-px flex-1 bg-ink-200" />}
             </li>
           );
         })}
@@ -118,7 +121,7 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
 
       {step === "dienst" && (
         <section data-tour="aanvraag-dienst">
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">Welke notariële dienstverlening wil je regelen?</h1>
+          <h1 className="text-3xl font-semibold text-ink-900 sm:text-4xl">Welke notariële dienstverlening wil je regelen?</h1>
           <p className="mt-3 text-lg text-ink-600">Het formulier past zich aan op je keuze. Je kunt dit later nog wijzigen.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {SERVICE_CARDS.map((c) => (
@@ -152,7 +155,7 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
             {Array.from({ length: 14 }).map((_, i) => <div key={i} className="mt-1.5 h-[4px] rounded bg-ink-100" style={{ width: `${55 + ((i * 41) % 45)}%` }} />)}
             <div className="absolute inset-x-0 top-0 h-1/3 animate-scan bg-gradient-to-b from-transparent via-brand-400/25 to-brand-500/50" />
           </div>
-          <h2 className="mt-8 text-2xl font-bold text-ink-900">We lezen je koopovereenkomst…</h2>
+          <h2 className="mt-8 text-2xl font-semibold text-ink-900">We lezen je koopovereenkomst…</h2>
           <ul className="mx-auto mt-6 max-w-sm space-y-2.5 text-left text-sm">
             {SCAN_STAGES.map((s, i) => (
               <li key={s} className={cn("flex items-center gap-3 transition", i <= stage ? "text-ink-800" : "text-ink-300")}>
@@ -179,7 +182,7 @@ function UploadStep({ demo, onFile, onBack, onNoKo }: { demo: boolean; onFile: (
   const input = useRef<HTMLInputElement>(null);
   return (
     <section>
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">Upload je getekende koopovereenkomst</h1>
+      <h1 className="text-3xl font-semibold text-ink-900 sm:text-4xl">Upload je getekende koopovereenkomst</h1>
       <p className="mt-3 text-lg text-ink-600">Upload de volledige overeenkomst, inclusief alle bijlagen en eventuele aanvullingen. Wij halen de gegevens er automatisch uit.</p>
       <div data-tour="aanvraag-upload" onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
         className={cn("mt-8 flex flex-col items-center rounded-3xl border-2 border-dashed px-6 py-14 text-center transition", drag ? "border-brand-500 bg-brand-50" : "border-ink-200 bg-white")}>
@@ -224,7 +227,7 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
     <section>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">Controleer wat we hebben gevonden</h1>
+          <h1 className="text-3xl font-semibold text-ink-900 sm:text-4xl">Controleer wat we hebben gevonden</h1>
           <p className="mt-3 text-lg text-ink-600">Pas aan wat niet klopt en vul aan wat ontbreekt. Het originele document blijft altijd leidend.</p>
         </div>
         <button type="button" className="btn btn-secondary shrink-0" onClick={() => setShowDoc((s) => !s)}><Eye className="h-4 w-4" />{showDoc ? "Verberg origineel" : "Bekijk origineel"}</button>
@@ -233,14 +236,14 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
         <span className="chip bg-ok-100 text-ok-700"><CheckCircle2 className="h-3.5 w-3.5" />{counts.extracted ?? 0} gegevens uitgelezen</span>
         {(counts.uncertain ?? 0) > 0 && <span className="chip bg-warn-100 text-warn-700"><AlertTriangle className="h-3.5 w-3.5" />{counts.uncertain} te controleren</span>}
         {(counts.missing ?? 0) > 0 && <span className="chip bg-bad-100 text-bad-700">{counts.missing} aan te vullen</span>}
-        {scan && <span className="chip bg-ink-100 text-ink-600"><ScanLine className="h-3.5 w-3.5" />{scan.pages} pagina's · {scan.method === "ai" ? "AI-herkenning" : "regelgebaseerde herkenning"}</span>}
+        {scan && <span className="chip bg-ink-100 text-ink-600"><ScanLine className="h-3.5 w-3.5" />{scan.pages} pagina's gelezen</span>}
       </div>
       {scan?.warnings?.map((w) => <p key={w} className="mt-3 flex items-start gap-2 rounded-xl bg-warn-50 p-3 text-sm text-warn-700"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />{w}</p>)}
 
       <div className={cn("mt-8 grid gap-8", showDoc && "lg:grid-cols-[1.1fr_0.9fr]")}>
         <div className="space-y-6">
           <div className="card p-6">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-ink-900"><FileText className="h-5 w-5 text-brand-600" />De woning</h2>
+            <h2 className="flex items-center gap-2 text-lg text-ink-900"><FileText className="h-5 w-5 text-brand-600" />De woning</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-6">
               <RField className="sm:col-span-4" label="Straat" value={model.property.straat} onChange={(v) => setP("straat", v)} s={m["property.straat"]} />
               <RField className="sm:col-span-2" label="Huisnummer" value={model.property.huisnummer} onChange={(v) => setP("huisnummer", v)} s={m["property.huisnummer"]} />
@@ -254,7 +257,7 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
           </div>
 
           <div className="card p-6">
-            <h2 className="text-lg font-bold text-ink-900">De koop</h2>
+            <h2 className="text-lg text-ink-900">De koop</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <RField label="Koopprijs (€)" inputMode="numeric" value={fmtNum(model.transaction.koopprijs)} onChange={(v) => setT("koopprijs", num(v))} s={m["transaction.koopprijs"]} />
               <RField label="Roerende zaken (€)" inputMode="numeric" value={fmtNum(model.transaction.roerendeZaken)} onChange={(v) => setT("roerendeZaken", num(v))} s={m["transaction.roerendeZaken"]} />
@@ -265,7 +268,7 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
             {(payload.voorbehouden.length > 0 || payload.bijzondereBepalingen.length > 0 || payload.notaris) && (
               <div className="mt-6 space-y-3 rounded-xl bg-ink-50 p-4 text-sm">
                 {payload.notaris && <p><span className="text-ink-500">Notaris in koopovereenkomst:</span> <strong className="text-ink-900">{payload.notaris}</strong></p>}
-                {payload.voorbehouden.length > 0 && <div><p className="text-ink-500">Ontbindende voorwaarden — wij bewaken deze termijnen</p><ul className="mt-1 space-y-1">{payload.voorbehouden.map((v) => <li key={v.omschrijving} className="flex justify-between gap-4 font-medium text-ink-800"><span>{v.omschrijving}</span><span className="tabular text-ink-600">{v.datum ? new Date(v.datum + "T12:00").toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" }) : "—"}</span></li>)}</ul></div>}
+                {payload.voorbehouden.length > 0 && <div><p className="text-ink-500">Ontbindende voorwaarden — wij bewaken deze termijnen</p><ul className="mt-1 space-y-1">{payload.voorbehouden.map((v) => <li key={v.omschrijving} className="flex justify-between gap-4 font-medium text-ink-800"><span>{v.omschrijving}</span><span className="shrink-0 text-right tabular text-ink-600">{v.datum ? new Date(v.datum + "T12:00").toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" }) : "—"}{v.datum && v.datum < new Date().toISOString().slice(0, 10) && <span className="block text-xs font-normal text-warn-700">termijn verstreken</span>}</span></li>)}</ul></div>}
                 {payload.bijzondereBepalingen.length > 0 && <div><p className="text-ink-500">Bijzondere bepalingen — de notaris beoordeelt deze</p><ul className="mt-1 flex flex-wrap gap-1.5">{payload.bijzondereBepalingen.map((b) => <li key={b.titel} className="chip bg-white text-ink-700 ring-1 ring-ink-200">{b.titel}</li>)}</ul></div>}
               </div>
             )}
@@ -274,7 +277,7 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
           {(["koper", "verkoper"] as const).map((side) => (
             <div key={side} className="card p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-ink-900">{side === "koper" ? "Koper(s)" : "Verkoper(s)"}</h2>
+                <h2 className="text-lg text-ink-900">{side === "koper" ? "Koper(s)" : "Verkoper(s)"}</h2>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={() => addParty(side)}><Plus className="h-4 w-4" />{side === "koper" ? "Koper" : "Verkoper"} toevoegen</button>
               </div>
               <p className="mt-1 text-sm text-ink-500">{side === "koper" ? "Bij meerdere kopers krijgt ieder een eigen profiel voor de persoonlijke stappen." : "De verkoper(s) krijgen een eigen uitnodiging. Ze zien jouw gegevens niet."}</p>
@@ -335,15 +338,15 @@ function ManualStep({ service, onBack, onDone, setError }: { service: Service; o
   }
   return (
     <section>
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">{service === "hypotheek" ? "Om welke woning gaat het?" : "Een paar gegevens om te beginnen"}</h1>
+      <h1 className="text-3xl font-semibold text-ink-900 sm:text-4xl">{service === "hypotheek" ? "Om welke woning gaat het?" : "Een paar gegevens om te beginnen"}</h1>
       <p className="mt-3 text-lg text-ink-600">{service === "hypotheek" ? "We zoeken de kadastrale gegevens automatisch op." : "Zodra je de getekende koopovereenkomst uploadt, vullen we de rest automatisch aan. Je dossier krijgt de status ‘Wachten op getekende koopovereenkomst’."}</p>
       <div className="card mt-8 space-y-5 p-6">
         <div><span className="label">Adres van de woning</span><AddressSearch onPick={(a) => setF((x) => ({ ...x, straat: a.straat, huisnummer: a.huisnummer, toevoeging: a.toevoeging ?? "", postcode: a.postcode, plaats: a.plaats, perceel: a.perceel ?? "" }))} /></div>
         <div className="grid gap-4 sm:grid-cols-6">
-          <label className="sm:col-span-3"><span className="label">Straat</span><input className="input" value={f.straat ?? ""} onChange={(e) => set("straat", e.target.value)} /></label>
+          <label className="sm:col-span-3"><span className="label">Straat<span className="text-bad-600"> *</span></span><input className="input" value={f.straat ?? ""} onChange={(e) => set("straat", e.target.value)} /></label>
           <label className="sm:col-span-1"><span className="label">Nr.</span><input className="input" value={f.huisnummer ?? ""} onChange={(e) => set("huisnummer", e.target.value)} /></label>
           <label className="sm:col-span-2"><span className="label">Toevoeging</span><input className="input" value={f.toevoeging ?? ""} onChange={(e) => set("toevoeging", e.target.value)} /></label>
-          <label className="sm:col-span-2"><span className="label">Postcode</span><input className="input" value={f.postcode ?? ""} onChange={(e) => set("postcode", e.target.value)} /></label>
+          <label className="sm:col-span-2"><span className="label">Postcode<span className="text-bad-600"> *</span></span><input className="input" value={f.postcode ?? ""} onChange={(e) => set("postcode", e.target.value)} /></label>
           <label className="sm:col-span-4"><span className="label">Plaats</span><input className="input" value={f.plaats ?? ""} onChange={(e) => set("plaats", e.target.value)} /></label>
         </div>
         {f.perceel && <p className="flex items-center gap-2 text-sm text-ok-700"><CheckCircle2 className="h-4 w-4" />Kadastraal perceel gevonden: <strong>{f.perceel}</strong></p>}
@@ -358,19 +361,46 @@ function ManualStep({ service, onBack, onDone, setError }: { service: Service; o
       </div>
       <div className="mt-8 flex justify-between gap-3">
         <button className="btn btn-ghost" onClick={onBack}><ArrowLeft className="h-4 w-4" />Terug</button>
-        <button className="btn btn-primary btn-lg" onClick={submit} disabled={busy || !f.straat || !f.postcode}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}Verder <ArrowRight className="h-4 w-4" /></button>
+        <div className="flex flex-col items-end gap-2">
+          <button className="btn btn-primary btn-lg" onClick={submit} disabled={busy || !f.straat || !f.postcode}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}Verder <ArrowRight className="h-4 w-4" /></button>
+          {(!f.straat || !f.postcode) && <p className="text-xs text-ink-500">Vul minimaal straat en postcode in.</p>}
+        </div>
       </div>
     </section>
   );
 }
+
+/** Zet verwijzingen naar voorwaarden, privacyverklaring en DVO in een vinklabel om in links. */
+function linkify(label: string, onDvo: () => void) {
+  const parts = label.split(/(algemene voorwaarden|privacyverklaring|dienstverleningsovereenkomst)/i);
+  return parts.map((part, i) => {
+    const l = part.toLowerCase();
+    if (l === "algemene voorwaarden") return <a key={i} href="/voorwaarden" target="_blank" rel="noopener" className="font-medium text-ink-900 underline underline-offset-2">{part}</a>;
+    if (l === "privacyverklaring") return <a key={i} href="/privacy" target="_blank" rel="noopener" className="font-medium text-ink-900 underline underline-offset-2">{part}</a>;
+    if (l === "dienstverleningsovereenkomst") return <button key={i} type="button" onClick={(e) => { e.preventDefault(); onDvo(); }} className="font-medium text-ink-900 underline underline-offset-2">{part}</button>;
+    return part;
+  });
+}
+
+const REQ = <span className="text-bad-600"> *</span>;
 
 function FinishStep({ payload, service, dvo, checks, onBack, onDone, setError }: { payload: ReviewPayload; service: Service; dvo: DvoSection[]; checks: readonly { key: string; label: string }[]; onBack: () => void; onDone: (url: string) => void; setError: (e: string | null) => void }) {
   const first = payload.model.parties.find((p) => p.side === "koper");
   const [f, setF] = useState({ name: [first?.person.voornamen, first?.person.achternaam].filter(Boolean).join(" "), email: first?.email ?? "", phone: "", adres: [first?.person.adres, first?.person.postcode, first?.person.woonplaats].filter(Boolean).join(", "), rol: "koper" as "koper" | "mede_koper" | "vertegenwoordiger", signatureName: "" });
   const [checked, setChecked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [tried, setTried] = useState(false);
   const price = SERVICE_CARDS.find((c) => c.key === service)!;
+  const missing = [
+    !f.name.trim() && "je volledige naam",
+    !f.email.trim() && "je e-mailadres",
+    !f.phone.trim() && "je telefoonnummer",
+    checks.some((c) => !checked.includes(c.key)) && `${checks.filter((c) => !checked.includes(c.key)).length === 1 ? "één bevestiging" : "de bevestigingen"} hierboven`,
+    f.signatureName.trim().length <= 3 && "je digitale handtekening (typ je volledige naam)",
+  ].filter(Boolean) as string[];
+  const ready = missing.length === 0;
   async function submit() {
+    if (!ready) { setTried(true); return; }
     setBusy(true);
     setError(null);
     const r = await fetch("/api/aanvraag/afronden", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...f, checks: checked }) });
@@ -378,62 +408,74 @@ function FinishStep({ payload, service, dvo, checks, onBack, onDone, setError }:
     if (!r.ok) { setBusy(false); setError(j.error); return; }
     onDone(j.redirect);
   }
-  const ready = checks.every((c) => checked.includes(c.key)) && f.signatureName.trim().length > 3 && f.email && f.phone && f.name;
+  function openDvo() {
+    const el = Array.from(document.querySelectorAll<HTMLDetailsElement>("details[data-dvo]")).find((d) => d.offsetParent !== null);
+    if (!el) return;
+    el.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  const dvoCard = (className?: string) => (
+    <details data-dvo className={cn("card group scroll-mt-24 p-5", className)}>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold text-ink-900">Dienstverleningsovereenkomst lezen <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" /></summary>
+      <div className="mt-4 max-h-80 space-y-4 overflow-auto pr-2 text-sm text-ink-700">
+        {dvo.map((s) => <div key={s.title}><p className="font-semibold text-ink-900">{s.title}</p><ul className="mt-1 list-disc space-y-1 pl-4">{s.items.map((i) => <li key={i}>{i}</li>)}</ul></div>)}
+      </div>
+    </details>
+  );
   return (
     <section>
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink-900 sm:text-4xl">Bijna klaar: je gegevens en akkoord</h1>
+      <h1 className="text-3xl font-semibold text-ink-900 sm:text-4xl">Bijna klaar: je gegevens en akkoord</h1>
       <p className="mt-3 text-lg text-ink-600">Hierna open je direct je persoonlijke portaal. We sturen je ook een e-mail met een inloglink.</p>
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <div className="card p-6">
-            <h2 className="text-lg font-bold text-ink-900">Contactgegevens</h2>
+            <h2 className="text-lg text-ink-900">Contactgegevens</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <label className="sm:col-span-2"><span className="label">Volledige naam zoals op je identiteitsbewijs</span><input className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} autoComplete="name" /></label>
-              <label><span className="label">E-mailadres</span><input className="input" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} autoComplete="email" /></label>
-              <label><span className="label">Telefoonnummer</span><input className="input" type="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} autoComplete="tel" /></label>
+              <label className="sm:col-span-2"><span className="label">Volledige naam zoals op je identiteitsbewijs{REQ}</span><input className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} autoComplete="name" aria-invalid={tried && !f.name.trim()} /></label>
+              <label className="sm:col-span-2"><span className="label">E-mailadres{REQ}</span><input className="input" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} autoComplete="email" aria-invalid={tried && !f.email.trim()} /></label>
+              <label><span className="label">Telefoonnummer{REQ}</span><input className="input" type="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} autoComplete="tel" aria-invalid={tried && !f.phone.trim()} /></label>
               <label className="sm:col-span-2"><span className="label">Huidig woonadres</span><input className="input" value={f.adres} onChange={(e) => setF({ ...f, adres: e.target.value })} autoComplete="street-address" /></label>
               <div className="sm:col-span-2"><span className="label">Wat is je rol bij deze aanvraag?</span>
-                <div className="flex flex-wrap gap-2">{([["koper", "Koper"], ["mede_koper", "Mede-koper"], ["vertegenwoordiger", "Vertegenwoordiger"]] as const).map(([v, l]) => <button key={v} type="button" onClick={() => setF({ ...f, rol: v })} className={cn("btn btn-sm", f.rol === v ? "btn-dark" : "btn-secondary")}>{l}</button>)}</div>
+                <div className="flex flex-wrap gap-2">{([["koper", "Koper"], ["mede_koper", "Medekoper"], ["vertegenwoordiger", "Vertegenwoordiger"]] as const).map(([v, l]) => <button key={v} type="button" onClick={() => setF({ ...f, rol: v })} className={cn("btn btn-sm", f.rol === v ? "btn-dark" : "btn-secondary")} aria-pressed={f.rol === v}>{l}</button>)}</div>
               </div>
             </div>
           </div>
+          {dvoCard("lg:hidden")}
           <div className="card p-6">
-            <h2 className="text-lg font-bold text-ink-900">Bevestigen</h2>
+            <h2 className="text-lg text-ink-900">Bevestigen</h2>
             <div className="mt-4 space-y-3">
               {checks.map((c) => (
                 <label key={c.key} className="flex cursor-pointer gap-3 rounded-xl p-2 hover:bg-ink-50">
                   <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-brand-600)]" checked={checked.includes(c.key)} onChange={(e) => setChecked((x) => (e.target.checked ? [...x, c.key] : x.filter((y) => y !== c.key)))} />
-                  <span className="text-sm text-ink-700">{c.label}</span>
+                  <span className="text-sm text-ink-700">{linkify(c.label, openDvo)}</span>
                 </label>
               ))}
             </div>
-            <label className="mt-5 block"><span className="label flex items-center gap-1.5"><PenLine className="h-4 w-4" />Onderteken digitaal: typ je volledige naam</span><input className="input font-serif text-lg italic" value={f.signatureName} onChange={(e) => setF({ ...f, signatureName: e.target.value })} placeholder={f.name || "Voornamen Achternaam"} /></label>
+            <label className="mt-5 block"><span className="label flex items-center gap-1.5"><PenLine className="h-4 w-4" />Onderteken digitaal: typ je volledige naam{REQ}</span><input className="input font-serif text-lg italic" value={f.signatureName} onChange={(e) => setF({ ...f, signatureName: e.target.value })} placeholder={f.name || "Voornamen Achternaam"} /></label>
             <p className="hint">We leggen de versie van de overeenkomst, datum, tijdstip en je bevestiging vast als bewijs van je akkoord.</p>
           </div>
         </div>
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl bg-ink-900 p-6 text-white">
             <p className="text-sm text-ink-300">Je dienst</p>
-            <p className="mt-1 text-lg font-bold">{price.title}</p>
-            <p className="mt-3 text-3xl font-extrabold">€ {price.price}<span className="ml-1 text-sm font-normal text-ink-300">all-in</span></p>
+            <p className="mt-1 text-lg font-semibold">{price.title}</p>
+            <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <ul className="mt-4 space-y-2 text-sm text-ink-200">
-              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-300" />Geen betaling vooraf — via de nota van afrekening</li>
-              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-300" />Kosteloos annuleren tot de concept-akte er is</li>
-              <li className="flex gap-2"><Info className="mt-0.5 h-4 w-4 text-brand-300" />Excl. overdrachtsbelasting</li>
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Geen betaling vooraf — via de nota van afrekening</li>
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Kosteloos annuleren tot de concept-akte er is</li>
+              {service !== "hypotheek" && <li className="flex gap-2"><Info className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Excl. overdrachtsbelasting</li>}
             </ul>
             {payload.model.property.straat && <p className="mt-4 border-t border-white/10 pt-4 text-sm text-ink-300">{payload.model.property.straat} {payload.model.property.huisnummer}, {payload.model.property.plaats}</p>}
           </div>
-          <details className="card group p-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-ink-900">Dienstverleningsovereenkomst lezen <ChevronDown className="h-4 w-4 transition group-open:rotate-180" /></summary>
-            <div className="mt-4 max-h-80 space-y-4 overflow-auto pr-2 text-sm text-ink-700">
-              {dvo.map((s) => <div key={s.title}><p className="font-semibold text-ink-900">{s.title}</p><ul className="mt-1 list-disc space-y-1 pl-4">{s.items.map((i) => <li key={i}>{i}</li>)}</ul></div>)}
-            </div>
-          </details>
+          {dvoCard("hidden lg:block")}
         </aside>
       </div>
-      <div className="mt-8 flex flex-col-reverse justify-between gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col-reverse justify-between gap-3 sm:flex-row sm:items-start">
         <button className="btn btn-ghost" onClick={onBack}><ArrowLeft className="h-4 w-4" />Terug</button>
-        <button className="btn btn-primary btn-lg" onClick={submit} disabled={!ready || busy}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}Aanvraag bevestigen en naar mijn portaal <ArrowRight className="h-4 w-4" /></button>
+        <div className="flex flex-col gap-2 sm:items-end">
+          <button className={cn("btn btn-primary btn-lg whitespace-normal text-center", !ready && "opacity-60")} onClick={submit} disabled={busy}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}<span>Bevestigen en naar mijn portaal</span> <ArrowRight className="h-4 w-4 shrink-0" /></button>
+          {!ready && <p className={cn("text-sm sm:text-right", tried ? "text-bad-700" : "text-ink-500")}>Nog nodig: {missing.join(", ")}.</p>}
+        </div>
       </div>
     </section>
   );

@@ -126,7 +126,6 @@
   :focus-visible {
     outline: none;
     box-shadow: var(--shadow-focus);
-    border-radius: 0.5rem;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
@@ -228,9 +227,10 @@
     border-color: var(--color-brand-500);
     box-shadow: var(--shadow-focus);
   }
-  .input[data-state="extracted"] { background: var(--color-ok-50); border-color: #a7f3d0; }
-  .input[data-state="uncertain"] { background: var(--color-warn-50); border-color: #fcd34d; }
-  .input[data-state="missing"] { background: white; border-color: #fca5a5; border-style: dashed; }
+  .input[data-state="extracted"], .select[data-state="extracted"], .textarea[data-state="extracted"] { background: var(--color-ok-50); border-color: color-mix(in srgb, var(--color-ok-600) 35%, white); }
+  .input[data-state="uncertain"], .select[data-state="uncertain"], .textarea[data-state="uncertain"] { background: var(--color-warn-50); border-color: color-mix(in srgb, var(--color-warn-600) 45%, white); }
+  .input[data-state="missing"], .select[data-state="missing"], .textarea[data-state="missing"] { background: white; border-color: color-mix(in srgb, var(--color-bad-600) 45%, white); border-style: dashed; }
+  .input[data-state="manual"], .select[data-state="manual"], .textarea[data-state="manual"] { background: white; }
   .label { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink-700); margin-bottom: 0.375rem; }
   .hint { font-size: 0.8125rem; color: var(--color-ink-500); margin-top: 0.375rem; }
 
@@ -256,8 +256,8 @@
   .prose-akte p { margin: 0.5rem 0; }
 
   .prose-site { color: var(--color-ink-700); font-size: 1.0625rem; line-height: 1.75; }
-  .prose-site h2 { color: var(--color-ink-900); font-size: 1.75rem; margin: 2.5rem 0 0.875rem; line-height: 1.25; }
-  .prose-site h3 { color: var(--color-ink-900); font-size: 1.25rem; margin: 2rem 0 0.5rem; }
+  .prose-site h2 { color: var(--color-ink-900); font-size: 1.75rem; margin: 2.5rem 0 0.875rem; line-height: 1.25; scroll-margin-top: 6rem; }
+  .prose-site h3 { color: var(--color-ink-900); font-size: 1.25rem; margin: 2rem 0 0.5rem; scroll-margin-top: 6rem; }
   .prose-site p { margin: 0.875rem 0; }
   .prose-site ul { list-style: disc; padding-left: 1.25rem; margin: 0.875rem 0; }
   .prose-site ol { list-style: decimal; padding-left: 1.25rem; margin: 0.875rem 0; }
@@ -266,19 +266,21 @@
   .prose-site a { color: var(--color-ink-900); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .prose-site strong { color: var(--color-ink-900); font-weight: 650; }
   .prose-site blockquote { border-left: 3px solid var(--color-brass-500); background: var(--color-brass-50); padding: 0.875rem 1.125rem; border-radius: 0 0.75rem 0.75rem 0; margin: 1.25rem 0; color: var(--color-ink-800); }
-  .prose-site table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; margin: 1.25rem 0; }
+  /* Op smalle schermen scrollt een brede tabel binnen zichzelf; de pagina blijft schermbreed. */
+  .prose-site table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.9375rem; margin: 1.25rem 0; }
+  @media (min-width: 768px) { .prose-site table { display: table; width: 100%; } }
   .prose-site th { text-align: left; font-weight: 650; color: var(--color-ink-900); border-bottom: 2px solid var(--color-ink-200); padding: 0.5rem 0.75rem 0.5rem 0; }
   .prose-site td { border-bottom: 1px solid var(--color-ink-100); padding: 0.5rem 0.75rem 0.5rem 0; vertical-align: top; }
 
   .bg-grid {
-    background-image: linear-gradient(to right, rgb(13 20 56 / 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(13 20 56 / 0.045) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(11 31 58 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(11 31 58 / 0.045) 1px, transparent 1px);
     background-size: 32px 32px;
   }
   .mask-fade-b { mask-image: linear-gradient(to bottom, black 55%, transparent); }
 
-  .field-mark { background: #fff4c2; border-bottom: 1.5px solid #e9b308; padding: 0 0.15em; border-radius: 0.2em; }
-  .field-filled { background: #e6f6ee; border-bottom: 1.5px solid #34b27b; padding: 0 0.15em; border-radius: 0.2em; }
+  .field-mark { background: var(--color-warn-50); border-bottom: 1.5px solid var(--color-warn-600); padding: 0 0.15em; border-radius: 0.2em; }
+  .field-filled { background: var(--color-ok-50); border-bottom: 1.5px solid var(--color-ok-600); padding: 0 0.15em; border-radius: 0.2em; }
   .field-source { font-family: var(--font-sans); font-size: 0.65em; vertical-align: super; color: var(--color-brand-700); font-weight: 700; }
 }
 
@@ -309,3 +311,5 @@ h1, h2, h3 {
   letter-spacing: -0.012em;
 }
 h1 { line-height: 1.12; }
+/* Uitzondering: kopjes in akten blijven klein, sans en gespatieerd. */
+.prose-akte h2 { font-weight: 700; letter-spacing: 0.08em; }

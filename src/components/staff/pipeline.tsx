@@ -6,6 +6,8 @@ import { SERVICES } from "@/lib/config";
 import { cn, dateNl, propertyLine } from "@/lib/util/format";
 
 export function CheckDots({ s }: { s: Summary }) {
+  // Het losse product "koopovereenkomst opstellen" kent geen notariële controles N1–N7.
+  if (s.view.data.service === "koopovereenkomst") return <span className="text-xs text-ink-400" title="Koopovereenkomst opstellen: geen akte, controles N1–N7 n.v.t.">n.v.t. (koopovereenkomst)</span>;
   return (
     <span className="inline-flex gap-1">
       {s.checks.map((c) => (
@@ -20,6 +22,8 @@ export function CheckDots({ s }: { s: Summary }) {
 
 export function PipelineTable({ rows, base }: { rows: Summary[]; base: "notaris" | "beheer" }) {
   return (
+    <>
+    <p className="mb-2 text-xs text-ink-500 lg:hidden">Schuif de tabel opzij voor passeerdatum, klanten, controles en signalen.</p>
     <div className="card overflow-x-auto p-0">
       <table className="w-full min-w-[56rem] text-sm">
         <thead className="border-b border-ink-100 bg-ink-50/60 text-left text-xs font-semibold uppercase tracking-wider text-ink-500">
@@ -30,9 +34,9 @@ export function PipelineTable({ rows, base }: { rows: Summary[]; base: "notaris"
             const d = s.view.data;
             return (
               <tr key={s.view.dossier.id} className="hover:bg-ink-50/50">
-                <td className="p-4"><Link href={`/${base}/dossiers/${s.view.dossier.id}`} className="block"><span className="font-semibold text-ink-900 hover:text-brand-700">{propertyLine(d.property) || "(adres volgt)"}</span><span className="block text-xs text-ink-500">{s.view.dossier.reference} · {SERVICES[d.service].short} · {s.view.kopers.map((k) => k.displayName).join(", ") || "—"}</span></Link></td>
+                <td className="min-w-[15rem] p-4"><Link href={`/${base}/dossiers/${s.view.dossier.id}`} className="block"><span className="font-semibold text-ink-900 hover:text-brand-700">{propertyLine(d.property) || "(adres volgt)"}</span><span className="block text-xs text-ink-500">{s.view.dossier.reference} · {SERVICES[d.service].short} · {s.view.kopers.map((k) => k.displayName).join(", ") || "—"}</span></Link></td>
                 <td className="p-4"><Badge tone={s.view.dossier.status === "afgewikkeld" ? "ok" : s.view.dossier.status === "gereed_voor_passeren" ? "brand" : s.view.dossier.status === "wacht_op_ko" ? "warn" : "neutral"}>{STATUS_LABEL[s.view.dossier.status]}</Badge></td>
-                <td className="p-4 whitespace-nowrap"><span className="font-medium text-ink-900">{dateNl(d.transaction.leveringsdatum, { short: true })}</span>{s.daysToPassing !== undefined && s.daysToPassing >= 0 && <span className={cn("block text-xs", s.daysToPassing <= 7 ? "font-semibold text-warn-700" : "text-ink-500")}>over {s.daysToPassing} dagen</span>}</td>
+                <td className="p-4 whitespace-nowrap">{d.service === "koopovereenkomst" ? <span className="text-xs text-ink-400">geen passering</span> : <><span className="font-medium text-ink-900">{dateNl(d.transaction.leveringsdatum, { short: true })}</span>{s.daysToPassing !== undefined && s.daysToPassing >= 0 && <span className={cn("block text-xs", s.daysToPassing <= 7 ? "font-semibold text-warn-700" : "text-ink-500")}>over {s.daysToPassing} dagen</span>}</>}</td>
                 <td className="p-4"><div className="w-32 space-y-1.5"><div className="flex items-center gap-2 text-xs text-ink-500"><span className="w-12">Koper</span><ProgressBar pct={s.koperPct} tone="koper" className="h-1.5" /></div>{s.view.verkopers.length > 0 && <div className="flex items-center gap-2 text-xs text-ink-500"><span className="w-12">Verk.</span><ProgressBar pct={s.verkoperPct} tone="verkoper" className="h-1.5" /></div>}</div></td>
                 <td className="p-4"><CheckDots s={s} /></td>
                 <td className="p-4">{s.signals.length ? <Badge tone={s.signals.some((x) => x.ernst === "kritiek") ? "bad" : "warn"}>{s.signals.length} open</Badge> : <span className="text-xs text-ink-400">—</span>}</td>
@@ -42,5 +46,6 @@ export function PipelineTable({ rows, base }: { rows: Summary[]; base: "notaris"
         </tbody>
       </table>
     </div>
+    </>
   );
 }

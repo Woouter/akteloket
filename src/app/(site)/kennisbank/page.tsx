@@ -16,7 +16,7 @@ export default function Page() {
       <section className="border-b border-ink-100">
         <div className="container-page py-16 lg:py-20">
           <p className="eyebrow">Kennisbank</p>
-          <h1 className="mt-2 max-w-3xl text-4xl font-extrabold tracking-tight text-ink-900 sm:text-5xl">Snap precies wat er gebeurt als je een huis koopt</h1>
+          <h1 className="mt-3 max-w-3xl text-4xl text-ink-900 sm:text-5xl">Snap precies wat er gebeurt als je een huis koopt</h1>
           <p className="mt-5 max-w-2xl text-lg text-ink-600">{arts.length} artikelen in gewone taal, geschreven voor kopers en verkopers. Bijgewerkt voor 2026.</p>
         </div>
       </section>
@@ -30,9 +30,9 @@ export default function Page() {
               <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((a) => (
                   <Link key={a.slug} href={`/kennisbank/${a.slug}`} className="card group flex flex-col p-6 transition hover:-translate-y-0.5 hover:shadow-lift">
-                    <p className="text-lg font-bold leading-snug text-ink-900 group-hover:text-brand-700">{a.title}</p>
-                    <p className="mt-2 line-clamp-3 flex-1 text-sm text-ink-600">{a.description}</p>
-                    <p className="mt-4 text-xs text-ink-400">{a.readingTime} min lezen</p>
+                    <p className="font-serif text-xl font-semibold leading-snug text-ink-900 group-hover:text-brand-700">{a.title}</p>
+                    <p className="mt-2 line-clamp-3 text-sm text-ink-600">{a.description}</p>
+                    <p className="mt-auto pt-4 text-xs text-ink-400">{a.readingTime} min lezen</p>
                   </Link>
                 ))}
               </div>

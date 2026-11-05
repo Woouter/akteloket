@@ -26,7 +26,7 @@ export interface LandingProps {
 
 export function Landing(p: LandingProps) {
   const s = SERVICES[p.service];
-  const faq = [...(p.extraFaq ?? []), ...FAQ.filter((f) => f.tags.some((t) => p.faqTags.includes(t)))].slice(0, 8);
+  const faq = [...(p.extraFaq ?? []), ...FAQ.filter((f) => f.tags.some((t) => p.faqTags.includes(t)) && !(p.service === "koopovereenkomst" && f.q.startsWith("Kunnen jullie ook de koopovereenkomst")))].slice(0, 8);
   const arts = p.articles.map((slug) => allArticles().find((a) => a.slug === slug)).filter(Boolean);
   const href = p.service === "koopovereenkomst" ? "/aanvraag/koopovereenkomst" : `/aanvraag?dienst=${p.service}`;
   return (
@@ -60,7 +60,7 @@ export function Landing(p: LandingProps) {
                 {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" />{i}</li>)}
               </ul>
               <Link href={href} className="btn btn-dark mt-7 w-full">{p.ctaLabel ?? "Start je aanvraag"} <ArrowRight className="h-4 w-4" /></Link>
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-ink-500"><Clock className="h-3.5 w-3.5" />Klaar in ongeveer 2 minuten</p>
+              <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-ink-500"><Clock className="h-3.5 w-3.5" />{p.service === "koopovereenkomst" ? "Vragenlijst in ongeveer een kwartier" : "Aanvraag in ongeveer 2 minuten"}</p>
             </div>
           </aside>
         </div>
@@ -80,7 +80,7 @@ export function Landing(p: LandingProps) {
             <p className="text-sm font-semibold text-ink-900">Lees ook</p>
             <ul className="mt-4 space-y-3">
               {arts.map((a) => a && (
-                <li key={a.slug}><Link href={`/kennisbank/${a.slug}`} className="group flex gap-3 text-sm"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" /><span className="font-medium text-ink-700 group-hover:text-brand-700">{a.title}</span></Link></li>
+                <li key={a.slug}><Link href={`/kennisbank/${a.slug}`} className="group flex gap-3 text-sm"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" /><span className="font-medium text-ink-700 group-hover:text-brand-700">{a.title}</span></Link></li>
               ))}
             </ul>
           </div>
@@ -94,7 +94,7 @@ export function Landing(p: LandingProps) {
             {p.steps.map((st, i) => (
               <li key={st.title} className="rounded-2xl border border-ink-100 bg-paper p-6">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-brass-400 font-serif text-lg font-semibold text-brass-600">{i + 1}</span>
-                <p className="mt-4 font-bold text-ink-900">{st.title}</p>
+                <p className="mt-4 font-serif text-lg font-semibold text-ink-900">{st.title}</p>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{st.text}</p>
               </li>
             ))}
@@ -114,7 +114,11 @@ export function Landing(p: LandingProps) {
         <FaqList items={faq} />
       </section>
 
-      <CtaBand service={p.service === "koopovereenkomst" ? undefined : p.service} />
+      {p.service === "koopovereenkomst" ? (
+        <CtaBand title="Je koopovereenkomst laten opstellen?" text="Beantwoord de vragen online. Wij stellen een sluitende koopovereenkomst op die koper en verkoper digitaal ondertekenen." href={href} note="Vaste prijs · Daarna met één klik door naar je akte van levering" />
+      ) : (
+        <CtaBand service={p.service} />
+      )}
     </>
   );
 }

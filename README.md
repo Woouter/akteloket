@@ -11,7 +11,7 @@ Eén codebase bevat:
 | Klantportaal: 12 stappen koper, A–G verkoper | `/portaal/[id]` | Koper, mede-koper, verkoper |
 | Notariswerkplek: werkvoorraad, controlepaneel N1–N7, akten, overdracht, agenda, instellingen | `/notaris` | Notaris |
 | Platformbeheer: automatisering, termijnen, e-mail, leads, pilotfeedback | `/beheer` | Akteloket-team |
-| Demo-omgeving: tours, rollenwisselaar, simulaties, mailbox, uitleg, beoordelingskader | `/demo` | De pilotnotaris (op `demo.akte-loket.nl`) |
+| Demo-omgeving: alleen via tours, met simulaties, mailbox, uitleg en beoordelingskader | `/demo` | De pilotnotaris (op `demo.akte-loket.nl`) |
 
 ## Snel starten
 
@@ -22,7 +22,7 @@ npm run dev
 
 Open http://localhost:3000. Zonder configuratie draait alles in **demo-modus** met een ingebedde database (PGlite in `.data/`). Bij de eerste start wordt het voorbeelddossier *Bloesemlaan 14, Amersfoort* opgebouwd via dezelfde pijplijn die een echte klant doorloopt (scan, Kadaster, akten, overdracht).
 
-- **Demo-hub:** http://localhost:3000/demo. Start hier een tour of log in als koper, verkoper, notaris of platformbeheer.
+- **Tourkeuze:** http://localhost:3000 opent in demo-modus op `/demo`. Kies een tour; daarna kun je het uitgelegde deel zelf bekijken. Vrij door alles klikken tijdens het ontwikkelen: `DEMO_GATE=uit npm run dev`.
 - **Probeer de scanner:** `/aanvraag` → "Gebruik voorbeeld".
 - **Demo resetten:** knop op `/demo`, of stop de server en verwijder `.data/`.
 

@@ -1,80 +1,107 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BookOpen, ClipboardList, Download, FileText, FlaskConical, Inbox, Landmark, PlayCircle, RotateCcw, ScanLine, Sparkles, Users } from "lucide-react";
-import { TOURS } from "@/lib/demo/tours";
-import { PERSONAS } from "@/lib/demo/personas";
+import { cookies } from "next/headers";
+import { ArrowUpRight, BookOpen, Check, Compass, Download, FileText, Inbox, PlayCircle, RotateCcw, Sparkles } from "lucide-react";
+import { SEEN_COOKIE, TOURS, parseSeen, tourByKey, tourForPath } from "@/lib/demo/tours";
 import { DEMO } from "@/lib/demo/scenario";
 import { mainDemoDossierId } from "@/lib/demo/main";
 import { resetDemoAction } from "./actions";
-import { Card, Notice } from "@/components/ui";
-import { NOTARY_OFFICE } from "@/lib/config";
+import { Notice } from "@/components/ui";
+import { BRAND, NOTARY_OFFICE } from "@/lib/config";
 import { euro } from "@/lib/util/format";
 
-export const metadata: Metadata = { title: "Demo-omgeving", robots: { index: false } };
+export const metadata: Metadata = { title: "Demo — kies een tour", robots: { index: false } };
 
-const tone: Record<string, string> = { website: "bg-brand-50 text-brand-700", koper: "bg-koper-50 text-koper-600", verkoper: "bg-verkoper-50 text-verkoper-700", notaris: "bg-notaris-50 text-notaris-700", platform: "bg-platform-50 text-platform-600" };
+const RECOMMENDED = "notaris";
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ reset?: string }> }) {
+/**
+ * Startpagina van demo.akte-loket.nl (de proxy stuurt "/" hierheen).
+ * De demo is alleen via tours te gebruiken; na een tour kan de bezoeker het
+ * uitgelegde deel zelf bekijken.
+ */
+export default async function Page({ searchParams }: { searchParams: Promise<{ reset?: string; van?: string }> }) {
   const sp = await searchParams;
+  const jar = await cookies();
+  const seen = new Set(parseSeen(jar.get(SEEN_COOKIE)?.value));
   const main = await mainDemoDossierId();
+  const firstPage = (key: string) => tourByKey(key)!.steps[0].path.replace("{main}", main ?? "");
+  const blocked = sp.van && sp.van.startsWith("/") ? sp.van : null;
+  const match = blocked ? tourForPath(blocked) : undefined;
+
   return (
-    <div className="container-page py-12">
-      {sp.reset && <Notice tone="ok" className="mb-6">De demo is teruggezet naar de beginsituatie.</Notice>}
-      <section className="relative overflow-hidden rounded-xl bg-ink-900 px-6 py-12 text-white sm:px-12">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brass-400/70 to-transparent" />
-        <p className="eyebrow flex items-center gap-2 !text-brass-300"><FlaskConical className="h-3.5 w-3.5" />Demo-omgeving · demo.akte-loket.nl</p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Welkom{NOTARY_OFFICE.notaryShort ? `, ${NOTARY_OFFICE.notaryShort}` : ""}. Zo werkt Akteloket van A tot Z.</h1>
-        <p className="mt-5 max-w-2xl text-lg text-ink-300">Dit is de volledige werkende omgeving — website, klantportaal, verkopersportaal, uw notariswerkplek en ons platformbeheer — gevuld met één fictief voorbeelddossier. Start een tour, of klik zelf rond in elke rol.</p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href="/demo/start/notaris" prefetch={false} className="btn btn-brass btn-lg"><PlayCircle className="h-5 w-5" />Start de tour voor de notaris</Link>
-          <Link href="/demo/uitleg" className="btn btn-lg bg-white/10 text-white hover:bg-white/15"><BookOpen className="h-5 w-5" />Hoe alles werkt</Link>
-        </div>
-      </section>
+    <div className="pb-20">
+      <section className="border-b border-ink-200 bg-white">
+        <div className="container-page py-12 sm:py-16">
+          {sp.reset && <Notice tone="ok" className="mb-8">De demo is teruggezet naar de beginsituatie.</Notice>}
+          {blocked && (
+            <Notice tone="info" className="mb-8" title="Kies eerst een tour">
+              <p>De pagina <span className="font-mono text-[0.85em]">{blocked}</span> hoort bij een deel dat u nog niet in een tour heeft gezien. Na de tour kunt u daar zelf verder rondkijken.</p>
+              {match && <a href={`/demo/start/${match.key}`} className="btn btn-dark btn-sm mt-3"><PlayCircle className="h-4 w-4" />Start de tour “{match.title}”</a>}
+            </Notice>
+          )}
+          <p className="eyebrow">Demo-omgeving Akteloket</p>
+          <h1 className="mt-3 max-w-3xl text-4xl text-ink-900 sm:text-5xl">
+            Welkom{NOTARY_OFFICE.notaryShort ? `, ${NOTARY_OFFICE.notaryShort}` : ""}. Welke rondleiding wilt u zien?
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-600">
+            Elke tour logt u automatisch in met de juiste rol en wijst stap voor stap aan hoe het werkt, met één fictief voorbeelddossier. Na afloop kunt u de getoonde pagina’s zelf verder bekijken.
+          </p>
 
-      <section className="mt-12">
-        <h2 className="text-2xl font-bold text-ink-900">Uitlegtours</h2>
-        <p className="mt-1 text-ink-600">Elke tour logt u automatisch in met de juiste rol en wijst stap voor stap aan hoe het werkt.</p>
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
-          {TOURS.map((t) => (
-            <Card key={t.key} className="flex flex-col p-6">
-              <span className={`chip self-start ${tone[t.key]}`}>{t.minutes} min · {t.steps.length} stappen</span>
-              <p className="mt-4 text-lg font-bold text-ink-900">{t.title}</p>
-              <p className="mt-1 flex-1 text-sm text-ink-600">{t.description}</p>
-              <Link href={`/demo/start/${t.key}`} prefetch={false} className="btn btn-dark btn-sm mt-5">Start tour <ArrowRight className="h-4 w-4" /></Link>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card className="p-6">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-ink-900"><FileText className="h-5 w-5 text-brand-600" />Het voorbeelddossier</h2>
-          <p className="mt-1 text-sm text-ink-600">{DEMO.property.straat} {DEMO.property.huisnummer}, {DEMO.property.plaats} — koopprijs {euro(DEMO.koopprijs)}. Kopers Sanne de Vries (29) en Daan Bakker (36), verkopers Henk Jansen en Marijke Visser. Hypotheek bij Noorderlicht Hypotheken; bestaande hypotheek verkopers bij Westbank. Alles fictief.</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <a href="/api/demo/koopovereenkomst" className="flex items-center gap-3 rounded-xl border border-ink-100 p-4 hover:border-ink-200"><Download className="h-5 w-5 text-brand-600" /><span><span className="block font-semibold text-ink-900">Koopovereenkomst (PDF)</span><span className="block text-xs text-ink-500">Download en upload hem zelf in de aanvraag</span></span></a>
-            <Link href={`/demo/als/notaris?next=${encodeURIComponent(`/notaris/dossiers/${main}/akte/levering`)}`} className="flex items-center gap-3 rounded-xl border border-ink-100 p-4 hover:border-ink-200"><FileText className="h-5 w-5 text-brand-600" /><span><span className="block font-semibold text-ink-900">Concept-leveringsakte</span><span className="block text-xs text-ink-500">Met bronnen en controlepunten</span></span></Link>
-            <Link href={`/demo/als/notaris?next=${encodeURIComponent(`/notaris/dossiers/${main}/akte/hypotheek`)}`} className="flex items-center gap-3 rounded-xl border border-ink-100 p-4 hover:border-ink-200"><Landmark className="h-5 w-5 text-brand-600" /><span><span className="block font-semibold text-ink-900">Concept-hypotheekakte</span><span className="block text-xs text-ink-500">Uit de (fictieve) bankinstructie</span></span></Link>
-            <Link href={`/demo/als/notaris?next=${encodeURIComponent(`/notaris/dossiers/${main}/overdracht`)}`} className="flex items-center gap-3 rounded-xl border border-ink-100 p-4 hover:border-ink-200"><ClipboardList className="h-5 w-5 text-brand-600" /><span><span className="block font-semibold text-ink-900">Dossieroverdracht</span><span className="block text-xs text-ink-500">Alle onderdelen + ZIP-download</span></span></Link>
-          </div>
-          <div className="mt-5 rounded-xl bg-ink-50 p-4 text-sm text-ink-700">
-            <p className="flex items-center gap-2 font-semibold text-ink-900"><ScanLine className="h-4 w-4" />Zelf een aanvraag doen?</p>
-            <p className="mt-1">Ga naar <Link href="/demo/als/uit?next=/aanvraag" className="font-semibold text-brand-700 underline">Start je aanvraag</Link> en kies ‘Gebruik voorbeeld’. U doorloopt dan de echte klantflow; daarna kunt u in het portaal met de knop <strong>Demo-acties</strong> (linksonder) gebeurtenissen simuleren, zoals ‘bankinstructie ontvangen’.</p>
-          </div>
-        </Card>
-        <Card className="p-6">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-ink-900"><Users className="h-5 w-5 text-brand-600" />Bekijk als…</h2>
-          <ul className="mt-4 space-y-2">
-            {PERSONAS.map((p) => (
-              <li key={p.key}><Link href={`/demo/als/${p.key}`} className="flex items-start justify-between gap-3 rounded-xl border border-ink-100 p-3 hover:border-ink-200"><span><span className="block font-semibold text-ink-900">{p.name} <span className="font-normal text-ink-500">· {p.label}</span></span><span className="block text-xs text-ink-500">{p.description}</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-ink-300" /></Link></li>
-            ))}
+          <ul className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {TOURS.map((t) => {
+              const done = seen.has(t.key);
+              const rec = t.key === RECOMMENDED;
+              return (
+                <li key={t.key} className={`relative flex flex-col rounded-lg border bg-white p-6 transition hover:shadow-lift ${rec ? "border-brass-400 ring-1 ring-brass-300" : "border-ink-200"}`}>
+                  {rec && <span className="chip absolute -top-3 left-6 bg-brass-500 text-ink-950">Aanbevolen voor de notaris</span>}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="chip bg-ink-50 text-ink-600">{t.minutes} min · {t.steps.length} stappen</span>
+                    {done && <span className="chip bg-ok-50 text-ok-700"><Check className="h-3 w-3" />Bekeken</span>}
+                  </div>
+                  <h2 className="mt-4 text-xl text-ink-900">{t.title}</h2>
+                  <p className="mt-1 text-sm font-medium text-ink-700">{t.audience}</p>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">{t.description}</p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    <a href={`/demo/start/${t.key}`} className={`btn btn-sm ${done ? "btn-secondary" : rec ? "btn-brass" : "btn-primary"}`}>
+                      <PlayCircle className="h-4 w-4" />{done ? "Opnieuw bekijken" : "Start tour"}
+                    </a>
+                    {done && <Link href={firstPage(t.key)} className="btn btn-ghost btn-sm"><Compass className="h-4 w-4" />Zelf rondkijken</Link>}
+                  </div>
+                </li>
+              );
+            })}
+            <li className="flex flex-col justify-between rounded-lg border border-dashed border-ink-300 bg-paper p-6">
+              <div>
+                <h2 className="text-xl text-ink-900">Liever vrij rondkijken?</h2>
+                <p className="mt-2 text-sm leading-relaxed text-ink-600">De demo is bedoeld voor rondleidingen. De website zelf bekijkt u op {BRAND.domain}.</p>
+              </div>
+              <a href={`https://${BRAND.domain}`} className="btn btn-secondary btn-sm mt-6 self-start">Naar {BRAND.domain} <ArrowUpRight className="h-4 w-4" /></a>
+            </li>
           </ul>
-        </Card>
+        </div>
       </section>
 
-      <section className="mt-12 grid gap-5 md:grid-cols-3">
-        <Link href="/demo/validatie" className="card group p-6 hover:shadow-lift"><Sparkles className="h-6 w-6 text-notaris-600" /><p className="mt-4 text-lg font-bold text-ink-900">Beoordelingskader</p><p className="mt-1 text-sm text-ink-600">Geef per onderdeel aan: akkoord, aanpassen, schrappen of toevoegen. Wij verwerken het direct.</p></Link>
-        <Link href="/demo/mailbox" className="card group p-6 hover:shadow-lift"><Inbox className="h-6 w-6 text-brand-600" /><p className="mt-4 text-lg font-bold text-ink-900">Demo-mailbox</p><p className="mt-1 text-sm text-ink-600">Alle e-mails die het systeem verstuurt (uitnodigingen, herinneringen, datumcheck, meldingen aan u).</p></Link>
-        <form action={resetDemoAction} className="card flex flex-col p-6"><RotateCcw className="h-6 w-6 text-ink-500" /><p className="mt-4 text-lg font-bold text-ink-900">Demo terugzetten</p><p className="mt-1 flex-1 text-sm text-ink-600">Zet alle dossiers terug naar de beginsituatie. Uw feedback uit het beoordelingskader blijft bewaard.</p><button className="btn btn-secondary btn-sm mt-4 self-start">Reset demo</button></form>
+      <section className="container-page mt-14 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="card p-6">
+          <h2 className="flex items-center gap-2 text-xl text-ink-900"><FileText className="h-5 w-5 text-brass-600" />Het voorbeelddossier</h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-600">
+            {DEMO.property.straat} {DEMO.property.huisnummer}, {DEMO.property.plaats}, koopprijs {euro(DEMO.koopprijs)}. Kopers Sanne de Vries (29) en Daan Bakker (36), verkopers Henk Jansen en Marijke Visser. Hypotheek bij Noorderlicht Hypotheken; de bestaande hypotheek van de verkopers loopt bij Westbank. Alles is fictief.
+          </p>
+          <a href="/api/demo/koopovereenkomst" className="mt-5 flex items-center gap-3 rounded-lg border border-ink-200 p-4 hover:border-ink-300">
+            <Download className="h-5 w-5 shrink-0 text-brass-600" />
+            <span><span className="block font-semibold text-ink-900">Voorbeeld-koopovereenkomst (PDF)</span><span className="block text-xs text-ink-500">Na de websitetour kunt u hem zelf uploaden in de aanvraag</span></span>
+          </a>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <Link href="/demo/uitleg" className="card flex items-start gap-3 p-5 hover:shadow-lift"><BookOpen className="mt-0.5 h-5 w-5 shrink-0 text-brass-600" /><span><span className="block font-semibold text-ink-900">Hoe alles werkt</span><span className="block text-sm text-ink-600">Processen, automatisering en koppelingen op één pagina.</span></span></Link>
+          <Link href="/demo/validatie" className="card flex items-start gap-3 p-5 hover:shadow-lift"><Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-brass-600" /><span><span className="block font-semibold text-ink-900">Beoordelingskader</span><span className="block text-sm text-ink-600">Geef per onderdeel aan: akkoord, aanpassen, schrappen of toevoegen.</span></span></Link>
+          <Link href="/demo/mailbox" className="card flex items-start gap-3 p-5 hover:shadow-lift"><Inbox className="mt-0.5 h-5 w-5 shrink-0 text-brass-600" /><span><span className="block font-semibold text-ink-900">Demo-mailbox</span><span className="block text-sm text-ink-600">Alle e-mails die het systeem in de demo verstuurt.</span></span></Link>
+          <form action={resetDemoAction} className="card flex items-start gap-3 p-5">
+            <RotateCcw className="mt-0.5 h-5 w-5 shrink-0 text-ink-500" />
+            <span className="flex-1"><span className="block font-semibold text-ink-900">Demo terugzetten</span><span className="block text-sm text-ink-600">Alle dossiers terug naar de beginsituatie. Uw feedback blijft bewaard.</span></span>
+            <button className="btn btn-secondary btn-sm shrink-0">Reset</button>
+          </form>
+        </div>
       </section>
     </div>
   );

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SectionTitle } from "@/components/ui";
 import { CtaBand, FaqList, PriceCards } from "@/components/site/sections";
 import { EXTRAS, TAX_YEARS } from "@/lib/config";
 import { FAQ } from "@/lib/content/faq";
@@ -15,7 +14,11 @@ export default function Page() {
   return (
     <>
       <section className="container-page py-16 lg:py-20">
-        <SectionTitle center eyebrow="Tarieven" title="Vaste prijzen. Vooraf duidelijk." intro="Alle prijzen zijn all-in: inclusief btw en de inschrijving van de akte(n) in het Kadaster. Je betaalt niets vooraf; alles wordt verrekend via de nota van afrekening." />
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="eyebrow mb-3">Tarieven</p>
+          <h1 className="text-4xl leading-tight text-ink-900 sm:text-5xl">Vaste prijzen. Vooraf duidelijk.</h1>
+          <p className="mt-4 text-lg leading-relaxed text-ink-600">Alle prijzen zijn all-in: inclusief btw en de inschrijving van de akte(n) in het Kadaster. Je betaalt niets vooraf; alles wordt verrekend via de nota van afrekening.</p>
+        </div>
         <div className="mt-12"><PriceCards keys={["levering", "beide", "hypotheek", "koopovereenkomst"]} /></div>
       </section>
       <section className="container-page mt-8 grid gap-8 lg:grid-cols-2">

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isDemo } from "@/lib/config";
-import { tourByKey } from "@/lib/demo/tours";
+import { TOUR_COOKIE, tourByKey } from "@/lib/demo/tours";
 import { PERSONAS } from "@/lib/demo/personas";
 import { mainDemoDossierId } from "@/lib/demo/main";
 
@@ -11,7 +11,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ tour: st
   if (!t) return new Response("Onbekende tour", { status: 404 });
   const main = await mainDemoDossierId();
   const first = `${t.steps[0].path.replace("{main}", main ?? "")}?tour=${t.key}&step=0`;
-  if (t.persona === "anoniem") return NextResponse.redirect(new URL(`/demo/als/uit?next=${encodeURIComponent(first)}`, req.url));
-  const persona = PERSONAS.find((p) => p.key === t.persona);
-  return NextResponse.redirect(new URL(`/demo/als/${persona?.key}?next=${encodeURIComponent(first)}`, req.url));
+  const via = t.persona === "anoniem" ? "uit" : PERSONAS.find((p) => p.key === t.persona)?.key;
+  const res = NextResponse.redirect(new URL(`/demo/als/${via}?next=${encodeURIComponent(first)}`, req.url));
+  // De lopende tour geeft toegang tot de pagina's van die tour (zie src/proxy.ts).
+  res.cookies.set(TOUR_COOKIE, t.key, { path: "/", sameSite: "lax", maxAge: 60 * 60 * 24 * 30 });
+  return res;
 }

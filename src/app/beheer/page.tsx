@@ -8,6 +8,8 @@ import { PageTitle } from "@/components/staff/shell";
 import { Card } from "@/components/ui";
 import { addDays, daysBetween, propertyLine, timeAgo, todayIso } from "@/lib/util/format";
 import { TERMS } from "@/lib/config";
+import { CardTitle } from "@/components/staff/card-title";
+import { humanize } from "@/components/staff/labels";
 
 export default async function Page() {
   const db = await getDb();
@@ -42,18 +44,18 @@ export default async function Page() {
         {tiles.map((t) => <Card key={t.label} className="flex items-center gap-4 p-5"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-platform-50 text-platform-600"><t.icon className="h-5 w-5" /></span><span><span className="block font-serif text-3xl font-semibold text-ink-900 tabular">{t.value}</span><span className="block text-sm text-ink-500">{t.label}</span></span></Card>)}
       </div>
       <Card className="mt-4 flex flex-wrap gap-2 p-4 text-sm">{byStatus.map(([k, v]) => <span key={k} className="chip bg-ink-50 text-ink-700 ring-1 ring-ink-100">{STATUS_LABEL[k]}: <strong>{v}</strong></span>)}</Card>
-      <div className="mt-6 grid gap-6 xl:grid-cols-2">
-        <Card className="p-0" data-tour="b-attention">
-          <div className="border-b border-ink-100 p-5"><h2 className="flex items-center gap-2 font-bold text-ink-900"><AlertTriangle className="h-4 w-4 text-warn-600" />Vraagt actie van het platformteam</h2></div>
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <Card className="min-w-0 self-start p-0" data-tour="b-attention">
+          <div className="border-b border-ink-100 p-5"><CardTitle icon={<AlertTriangle className="h-4 w-4 shrink-0 text-warn-600" />}>Vraagt actie van het platformteam</CardTitle></div>
           <ul className="divide-y divide-ink-100">
             {attention.length === 0 && <li className="p-5 text-sm text-ink-500">Alles loopt.</li>}
             {attention.map((a, i) => <li key={i}><Link href={`/beheer/dossiers/${a.s.view.dossier.id}`} className="block p-4 hover:bg-ink-50/60"><p className="text-sm font-semibold text-ink-900">{propertyLine(a.s.view.data.property) || a.s.view.dossier.reference}</p><p className="text-sm text-ink-600">{a.why}</p></Link></li>)}
           </ul>
         </Card>
-        <Card className="p-0" data-tour="b-stream">
-          <div className="border-b border-ink-100 p-5"><h2 className="flex items-center gap-2 font-bold text-ink-900"><Activity className="h-4 w-4 text-platform-600" />Live automatiseringslog</h2></div>
+        <Card className="min-w-0 p-0" data-tour="b-stream">
+          <div className="border-b border-ink-100 p-5"><CardTitle icon={<Activity className="h-4 w-4 shrink-0 text-platform-600" />}>Live automatiseringslog</CardTitle></div>
           <ul className="max-h-[32rem] divide-y divide-ink-100 overflow-auto">
-            {evs.map((e) => <li key={e.id} className="flex gap-3 p-4 text-sm"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><span className="min-w-0"><span className="block text-ink-800">{e.message}</span><span className="block text-xs text-ink-400">{timeAgo(e.createdAt)} · {e.actorName ?? e.actorType} · <span className="font-mono">{e.type}</span></span></span></li>)}
+            {evs.map((e) => <li key={e.id} className="flex gap-3 p-4 text-sm"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><span className="min-w-0"><span className="block text-ink-800">{humanize(e.message)}</span><span className="block text-xs text-ink-500">{timeAgo(e.createdAt)} · {e.actorName ?? e.actorType} · <span className="font-mono">{e.type}</span></span></span></li>)}
           </ul>
         </Card>
       </div>

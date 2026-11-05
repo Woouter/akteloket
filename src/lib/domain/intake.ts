@@ -9,6 +9,7 @@ import { dossierReference, sha256, uid } from "@/lib/util/ids";
 import { saveDocument } from "@/lib/integrations/storage";
 import { scanKoopovereenkomst, type KoExtraction, type ScanResult } from "@/lib/extraction/koopovereenkomst";
 import { dvoPlainText } from "@/lib/docgen/dvo";
+import { dvoPdf } from "./dvo-pdf";
 import { personName } from "@/lib/util/format";
 
 export async function createConceptDossier(service: ServiceKey, draftToken: string, isDemo = false): Promise<string> {
@@ -184,7 +185,9 @@ export async function finalizeAanvraag(dossierId: string, input: {
     if (d.koStatus === "ontvangen") d.koStatus = "verwerkt";
     return { status: input.hasKo && d.koStatus !== "ontbreekt" ? "intake" : "wacht_op_ko", draftToken: null };
   });
-  await saveDocument({ dossierId, kind: "dvo", filename: `dienstverleningsovereenkomst-${DVO_VERSION}.txt`, mime: "text/plain; charset=utf-8", content: Buffer.from(`${dvoText}\n\n---\nDigitaal akkoord door: ${input.signatureName} (${input.email})\nTijdstip: ${new Date().toISOString()}\nIP: ${input.ip ?? "-"}\nAangevinkt: ${input.checks.join(", ")}\nHash DVO-tekst: ${sha256(dvoText)}\n`), source: "gegenereerd", visibility: "koper", createdBy: user.id });
+  const service = (await db.select().from(schema.dossiers).where(eq(schema.dossiers.id, dossierId)))[0].service as ServiceKey;
+  const pdf = await dvoPdf(service, { version: DVO_VERSION, signatureName: input.signatureName, email: input.email, acceptedAt: new Date().toISOString(), ip: input.ip, checks: input.checks, hash: sha256(dvoText) });
+  await saveDocument({ dossierId, kind: "dvo", title: "Dienstverleningsovereenkomst en akkoordbewijs", filename: `dienstverleningsovereenkomst-${DVO_VERSION}.pdf`, mime: "application/pdf", content: pdf, source: "gegenereerd", visibility: "koper", createdBy: user.id });
   await logEvent({ dossierId, actorType: "klant", actor: user, type: "dvo.akkoord", message: `Dienstverleningsovereenkomst ${DVO_VERSION} digitaal geaccepteerd door ${input.signatureName}.`, visibleTo: "koper", data: { checks: input.checks } });
   return { user, partyId: me?.id };
 }

@@ -20,25 +20,27 @@ export function TrustStrip({ className }: { className?: string }) {
 
 export function PriceCards({ highlight = "beide", keys = ["levering", "beide", "hypotheek"] as ServiceKey[], cta = true }: { highlight?: ServiceKey; keys?: ServiceKey[]; cta?: boolean }) {
   return (
-    <div className={cn("grid gap-5", keys.length === 3 ? "md:grid-cols-3" : keys.length === 4 ? "md:grid-cols-2 xl:grid-cols-4" : "md:grid-cols-2")}>
+    // Subgrid: titel, prijs, lijst en knop staan in alle kaarten op dezelfde hoogte.
+    <div className={cn("grid gap-x-5", keys.length === 3 ? "mx-auto max-w-xl lg:max-w-none lg:grid-cols-3" : keys.length === 4 ? "md:grid-cols-2 xl:grid-cols-4" : "md:grid-cols-2")}>
       {keys.map((k) => {
         const s = SERVICES[k];
         const hi = k === highlight;
+        const href = k === "koopovereenkomst" ? "/aanvraag/koopovereenkomst" : `/aanvraag?dienst=${k}`;
         return (
-          <div key={k} className={cn("relative flex flex-col rounded-lg p-7", hi ? "bg-ink-900 text-white shadow-lift ring-1 ring-ink-900" : "card")}>
-            {hi && <span className="absolute -top-3 left-7 chip bg-brass-500 text-ink-950">Meest gekozen</span>}
+          <div key={k} className={cn("relative row-span-7 mb-5 grid grid-rows-subgrid rounded-lg p-6 xl:p-7", hi ? "bg-ink-900 text-white shadow-lift ring-1 ring-ink-900" : "card")}>
+            {k === "beide" && <span className={cn("absolute -top-3 left-6 chip xl:left-7", hi ? "bg-brass-500 text-ink-950" : "bg-ink-900 text-white")}>Meest gekozen</span>}
             <p className={cn("eyebrow", hi && "!text-brass-300")}>{s.short}</p>
             <p className={cn("mt-2 font-serif text-xl font-semibold", hi ? "text-white" : "text-ink-900")}>{s.name}</p>
             <p className={cn("mt-2 text-sm leading-relaxed", hi ? "text-ink-300" : "text-ink-600")}>{s.description}</p>
             <p className="mt-6 flex items-baseline gap-1.5">
-              <span className={cn("font-serif text-[2.6rem] font-semibold tabular", hi ? "text-white" : "text-ink-900")}>€ {s.price}</span>
+              <span className={cn("font-serif text-[2.6rem] font-semibold leading-none tabular", hi ? "text-white" : "text-ink-900")}>€ {s.price}</span>
               <span className={cn("text-sm", hi ? "text-ink-300" : "text-ink-500")}>all-in</span>
             </p>
-            <p className={cn("text-xs", hi ? "text-ink-400" : "text-ink-500")}>incl. btw en kadasterinschrijving</p>
+            <p className={cn("mt-1 text-xs", hi ? "text-ink-400" : "text-ink-500")}>{k === "koopovereenkomst" ? "incl. btw" : "incl. btw en kadasterinschrijving"}</p>
             <ul className="mt-6 space-y-2.5 text-sm">
               {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className={cn("mt-0.5 h-4 w-4 shrink-0", hi ? "text-brass-300" : "text-brass-500")} />{i}</li>)}
             </ul>
-            {cta && <Link href={`/aanvraag?dienst=${k}`} className={cn("btn mt-8", hi ? "btn-brass" : "btn-secondary")}>Kies {s.short.toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>}
+            {cta ? <Link href={href} className={cn("btn mt-8 self-end", hi ? "btn-brass" : "btn-secondary")}>Start aanvraag <ArrowRight className="h-4 w-4" /></Link> : <span />}
           </div>
         );
       })}
@@ -71,7 +73,7 @@ export function JsonLd({ data }: { data: unknown }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }
 
-export function CtaBand({ title = "Klaar om te beginnen?", text = "Upload je koopovereenkomst en zie binnen een minuut welke gegevens we al voor je hebben ingevuld.", service }: { title?: string; text?: string; service?: ServiceKey }) {
+export function CtaBand({ title = "Klaar om te beginnen?", text = "Upload je koopovereenkomst en zie binnen een minuut welke gegevens we al voor je hebben ingevuld.", service, href, note = "Geen betaling vooraf · Nog geen koopovereenkomst? Je kunt toch al starten." }: { title?: string; text?: string; service?: ServiceKey; href?: string; note?: string }) {
   return (
     <section className="container-page mt-24">
       <div className="relative overflow-hidden rounded-xl bg-ink-900 px-6 py-14 text-center sm:px-12">
@@ -81,10 +83,10 @@ export function CtaBand({ title = "Klaar om te beginnen?", text = "Upload je koo
           <h2 className="mt-3 text-3xl text-white sm:text-[2.6rem]">{title}</h2>
           <p className="mt-4 text-lg text-ink-300">{text}</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href={`/aanvraag${service ? `?dienst=${service}` : ""}`} className="btn btn-brass btn-lg">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
+            <Link href={href ?? `/aanvraag${service ? `?dienst=${service}` : ""}`} className="btn btn-brass btn-lg">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
             <Link href="/hoe-werkt-het" className="btn btn-lg border-white/40 text-white hover:bg-white/10">Bekijk hoe het werkt</Link>
           </div>
-          <p className="mt-5 text-sm text-ink-400">Geen betaling vooraf · Nog geen koopovereenkomst? Je kunt toch al starten.</p>
+          <p className="mt-5 text-sm text-ink-400">{note}</p>
         </div>
       </div>
     </section>

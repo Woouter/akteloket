@@ -2,6 +2,10 @@
  * Uitlegtours voor de demo-omgeving. Elke stap verwijst naar een pagina en een
  * element met `data-tour="..."`. `{main}` wordt vervangen door het id van het
  * voorbeelddossier Bloesemlaan 14.
+ *
+ * De demo is alleen via tours te gebruiken: wie binnenkomt kiest eerst een tour
+ * (op /demo). Na een tour mag de bezoeker het uitgelegde deel (`scope`) zelf verder
+ * bekijken. Dit bestand is puur data, zodat proxy, server en browser het delen.
  */
 export interface TourStep {
   path: string;
@@ -17,8 +21,14 @@ export interface Tour {
   persona: "anoniem" | "koper" | "verkoper" | "notaris" | "beheer";
   minutes: number;
   description: string;
+  /** Padvoorvoegsels die na (of tijdens) deze tour vrij te bekijken zijn. */
+  scope: string[];
+  /** Hoe dat deel heet ("… zelf bekijken"). */
+  area: string;
   steps: TourStep[];
 }
+
+const SITE_PAGES = ["/", "/akte-van-levering", "/hypotheekakte", "/levering-en-hypotheekakte", "/koopovereenkomst-opstellen", "/kennisbank", "/hoe-werkt-het", "/tarieven", "/veelgestelde-vragen", "/over-ons", "/veiligheid", "/contact", "/voor-makelaars-en-adviseurs", "/privacy", "/voorwaarden"];
 
 export const TOURS: Tour[] = [
   {
@@ -28,6 +38,8 @@ export const TOURS: Tour[] = [
     persona: "anoniem",
     minutes: 4,
     description: "Homepage, landingspagina's per zoekwoord, kennisbank en de geïsoleerde aanvraagflow met de koopovereenkomst-scanner.",
+    scope: [...SITE_PAGES, "/aanvraag", "/portaal"],
+    area: "de website en de aanvraag",
     steps: [
       { path: "/", target: "home-hero", title: "Eén belofte: snel, online, duidelijk", body: "De homepage richt zich op kopers met een getekende koopovereenkomst. Eén primaire actie: 'Start je aanvraag'. Vaste all-in prijzen staan direct zichtbaar — geen offerte nodig.", placement: "bottom" },
       { path: "/", target: "home-usp", title: "Waarom online?", body: "De klant hoeft bijna nooit langs: één volmacht (video of op kantoor) en wij bereiden alles voor. De notaris houdt de controlerende rol.", placement: "top" },
@@ -47,6 +59,8 @@ export const TOURS: Tour[] = [
     persona: "koper",
     minutes: 6,
     description: "Overzicht, volgende actie, gegevens, startersvrijstelling per koper, Wwft-tool met documentmatrix, volmachtafspraak en de 14-dagen-check.",
+    scope: ["/portaal"],
+    area: "het klantportaal van de koper",
     steps: [
       { path: "/portaal/{main}", target: "portal-header", title: "Het dossier van Sanne en Daan", body: "Bloesemlaan 14, Amersfoort. Bovenaan: adres, leveringsdatum, gekozen dienst en de voortgang. De klant ziet uitsluitend de eigen kant van de transactie.", placement: "bottom" },
       { path: "/portaal/{main}", target: "portal-next", title: "Altijd duidelijk wat de volgende stap is", body: "Het portaal toont alleen relevante acties. Hier: de overdrachtsdatum bevestigen (de 14-dagen-check uit het procesdocument).", placement: "bottom" },
@@ -67,6 +81,8 @@ export const TOURS: Tour[] = [
     persona: "verkoper",
     minutes: 4,
     description: "Uitnodiging, gegevens, ID-check, IBAN, verkoopvolmacht, bestaande hypotheken/aflosnota en nota van afrekening.",
+    scope: ["/portaal"],
+    area: "het verkopersportaal",
     steps: [
       { path: "/portaal/{main}", target: "portal-header", title: "Henk ziet alleen de verkoperskant", body: "Na het DVO-akkoord van de koper én ontvangst van de koopovereenkomst krijgt iedere verkoper automatisch een persoonlijke uitnodiging. Koper en verkoper zien elkaars gegevens niet.", placement: "bottom" },
       { path: "/portaal/{main}", target: "portal-steps", title: "Stappen A–G", body: "Kort en overzichtelijk: gegevens controleren, identificeren, IBAN, volmacht, bestaande hypotheken en de nota van afrekening.", placement: "top" },
@@ -82,6 +98,8 @@ export const TOURS: Tour[] = [
     persona: "notaris",
     minutes: 7,
     description: "Dashboard, controlepaneel N1–N7, concept-akten met bronnen en controlepunten, aflosnota's, nota's, dossieroverdracht en instellingen.",
+    scope: ["/notaris"],
+    area: "de werkomgeving van de notaris",
     steps: [
       { path: "/notaris", target: "n-actions", title: "Uw werkvoorraad", body: "Bovenaan: wat vandaag uw aandacht vraagt. Alleen dossiers waarin iets te beoordelen is — de rest loopt automatisch.", placement: "bottom" },
       { path: "/notaris", target: "n-pipeline", title: "Alle dossiers per fase", body: "Van 'wacht op koopovereenkomst' tot 'afgewikkeld', gesorteerd op passeerdatum, met per dossier de stand van de controles.", placement: "top" },
@@ -101,6 +119,8 @@ export const TOURS: Tour[] = [
     persona: "beheer",
     minutes: 3,
     description: "Live automatiseringslog, termijnbewaking, uitgaande e-mail en dossiers die aandacht nodig hebben.",
+    scope: ["/beheer"],
+    area: "het platformbeheer",
     steps: [
       { path: "/beheer", target: "b-kpis", title: "De pijplijn in cijfers", body: "Dossiers per fase, open acties per partij en wat er deze week passeert.", placement: "bottom" },
       { path: "/beheer", target: "b-attention", title: "Waar moeten wij iets doen?", body: "Dossiers waar een klant vastloopt, een gegeven onzeker is of een termijn dreigt te verlopen. Dit is ons werk — niet dat van de notaris.", placement: "top" },
@@ -110,4 +130,35 @@ export const TOURS: Tour[] = [
   },
 ];
 
-export const tourByKey = (k: string) => TOURS.find((t) => t.key === k);
+export const tourByKey = (k: string | undefined | null) => (k ? TOURS.find((t) => t.key === k) : undefined);
+
+// ---------------------------------------------------------------------------
+// Toegang tot de demo
+// ---------------------------------------------------------------------------
+
+/** Cookie met de tour die nu loopt (gezet door /demo/start/<tour>). */
+export const TOUR_COOKIE = "ak_tour";
+/** Cookie met de tours die al bekeken zijn (komma-gescheiden). */
+export const SEEN_COOKIE = "ak_seen";
+
+/** Altijd bereikbaar: de tourkeuze, uitleg, beoordelingskader, mailbox en inloggen. */
+export const ALWAYS_OPEN = ["/demo", "/inloggen", "/uitloggen", "/uitnodiging"];
+
+const under = (path: string, prefix: string) => (prefix === "/" ? path === "/" : path === prefix || path.startsWith(prefix + "/"));
+
+export function parseSeen(v: string | undefined | null): string[] {
+  return (v ?? "").split(",").filter((k) => TOURS.some((t) => t.key === k));
+}
+
+/** De tour die een pad het meest specifiek uitlegt (voor de melding "kies eerst een tour"). */
+export function tourForPath(path: string): Tour | undefined {
+  const hits = TOURS.flatMap((t) => t.scope.filter((p) => under(path, p)).map((p) => ({ t, len: p.length + (t.key === "website" ? 0 : 0.5) })));
+  return hits.sort((a, b) => b.len - a.len)[0]?.t;
+}
+
+/** Mag dit pad bekeken worden met de lopende tour en de al bekeken tours? */
+export function demoPathAllowed(path: string, active: string | undefined | null, seen: string[]): boolean {
+  if (ALWAYS_OPEN.some((p) => under(path, p))) return true;
+  const keys = new Set([...(active ? [active] : []), ...seen]);
+  return TOURS.some((t) => keys.has(t.key) && t.scope.some((p) => under(path, p)));
+}

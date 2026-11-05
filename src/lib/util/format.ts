@@ -19,23 +19,59 @@ export function parseEuro(input: string | number | undefined | null): number | u
 
 const MONTHS = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"];
 
+/** Alle datums en tijden tonen we in Nederlandse tijd, ongeacht de tijdzone van de server. */
+export const TZ = "Europe/Amsterdam";
+
+/** Datum-only ("2026-11-18") als 12:00 UTC: valt in elke tijdzone op dezelfde kalenderdag. */
+const toDate = (iso: string | Date) => (typeof iso === "string" ? new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso) : iso);
+
 export function dateNl(iso: string | Date | undefined | null, opts: { weekday?: boolean; short?: boolean } = {}): string {
   if (!iso) return "—";
-  const d = typeof iso === "string" ? new Date(iso.length === 10 ? iso + "T12:00:00" : iso) : iso;
+  const d = toDate(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  if (opts.short) return d.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" });
-  return d.toLocaleDateString("nl-NL", { weekday: opts.weekday ? "long" : undefined, day: "numeric", month: "long", year: "numeric" });
+  if (opts.short) return d.toLocaleDateString("nl-NL", { timeZone: TZ, day: "numeric", month: "short", year: "numeric" });
+  return d.toLocaleDateString("nl-NL", { timeZone: TZ, weekday: opts.weekday ? "long" : undefined, day: "numeric", month: "long", year: "numeric" });
 }
 
 export function dateTimeNl(iso: string | Date | undefined | null): string {
   if (!iso) return "—";
-  const d = typeof iso === "string" ? new Date(iso) : iso;
-  return d.toLocaleString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const d = toDate(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("nl-NL", { timeZone: TZ, day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+/** Tijd ("09:30") in Nederlandse tijd. */
+export function timeNl(iso: string | Date): string {
+  return toDate(iso).toLocaleTimeString("nl-NL", { timeZone: TZ, hour: "2-digit", minute: "2-digit" });
+}
+
+/** Kalenderdag (yyyy-mm-dd) in Nederlandse tijd, bijv. om afspraken per dag te groeperen. */
+export function dayKeyNl(iso: string | Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(toDate(iso));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+/** Uur van de dag (0–23) in Nederlandse tijd. */
+export function hourNl(d: Date = new Date()): number {
+  return Number(new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "2-digit", hourCycle: "h23" }).format(d));
+}
+
+/** Getal in Nederlandse notatie (1.234,5). */
+export function numberNl(n: number, maxDecimals = 2): string {
+  return n.toLocaleString("nl-NL", { maximumFractionDigits: maxDecimals });
+}
+
+/** Fractie als percentage in Nederlandse notatie: 0.104 → "10,4%". */
+export function pctNl(fraction: number, maxDecimals = 1): string {
+  return `${numberNl(Math.round(fraction * 100 * 10 ** maxDecimals) / 10 ** maxDecimals, maxDecimals)}%`;
 }
 
 export function timeAgo(iso: string | Date): string {
-  const d = typeof iso === "string" ? new Date(iso) : iso;
+  const d = toDate(iso);
   const s = Math.round((Date.now() - d.getTime()) / 1000);
+  // Tijdstip in de toekomst (bijv. klokverschil of geplande gebeurtenis): toon het tijdstip zelf.
+  if (s < -60) return dateTimeNl(d);
   if (s < 60) return "zojuist";
   if (s < 3600) return `${Math.floor(s / 60)} min geleden`;
   if (s < 86400) return `${Math.floor(s / 3600)} uur geleden`;
@@ -80,7 +116,8 @@ export function ageOn(birthIso: string, onIso: string): number {
   return age;
 }
 
-export const todayIso = () => new Date().toISOString().slice(0, 10);
+/** De kalenderdatum van vandaag in Nederland (JJJJ-MM-DD), ongeacht de tijdzone van de server. */
+export const todayIso = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Amsterdam", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
 export function personName(p: { voornamen?: string; achternaam?: string } | undefined): string {
   if (!p) return "";

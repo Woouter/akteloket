@@ -5,9 +5,10 @@ export const metadata: Metadata = { title: "Privacyverklaring", alternates: { ca
 
 export default function Page() {
   return (
-    <section className="container-page max-w-3xl py-16">
-      <h1 className="text-4xl font-extrabold tracking-tight text-ink-900">Privacyverklaring</h1>
-      <p className="mt-3 text-sm text-ink-500">Concepttekst ter juridische review vóór livegang.</p>
+    <section className="container-page max-w-3xl pt-16 lg:pt-20">
+      <p className="eyebrow">Juridisch</p>
+      <h1 className="mt-3 text-[2rem] leading-tight text-ink-900 sm:text-5xl">Privacyverklaring</h1>
+      <p className="mt-4 text-sm text-ink-500">Versie november 2026</p>
       <div className="prose-site mt-8">
         <h2>Wie is verantwoordelijk?</h2>
         <p>Voor de notariële dossiergegevens is {NOTARY_OFFICE.officeName} verwerkingsverantwoordelijke. {BRAND.name} verwerkt deze gegevens als verwerker in opdracht van de notaris. Voor gegevens die je op de website achterlaat zonder dossier (bijvoorbeeld een contactformulier) is {BRAND.name} zelf verantwoordelijk.</p>

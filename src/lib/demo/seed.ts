@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { DEMO, demoDates } from "./scenario";
 import { aflosnotaPdf, bankafschriftPdf, bankinstructiePdf, genericKoPdf, koopovereenkomstPdf, schenkingPdf } from "./pdfs";
@@ -13,6 +13,7 @@ import { token, uid } from "@/lib/util/ids";
 import { addDays, todayIso } from "@/lib/util/format";
 import type { Role } from "@/lib/domain/types";
 import { PERSONAS } from "./personas";
+import { DVO_VERSION } from "@/lib/config";
 export { PERSONAS };
 
 export async function ensureBaseSettings() {
@@ -93,7 +94,7 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
     d.transaction.waarborgsom = { ...d.transaction.waarborgsom, ontvangen: true };
     d.koStatus = "verwerkt";
     d.financing = { ...d.financing, hypotheek: "ja", geldverstrekker: "Noorderlicht Hypotheken N.V. (fictief)", status: "rond", overbrugging: "nee", meerdereGeldverstrekkers: "nee", eigenMiddelen: "ja", hypotheekbedragIndicatie: DEMO.financieringBedrag, adviseur: DEMO.adviseur, bevestigd: true, bankinstructieStatus: "verwacht" };
-    d.koperIban = { iban: "NL91ABNA0417164300", tenaamstelling: "S.M. de Vries en D.P. Bakker", bevestigd: true, bevestigdOp: new Date().toISOString() };
+    d.koperIban = { iban: "NL91ABNA0417164300", tenaamstelling: "S.M. de Vries en D.P. Bakker", bevestigd: true, bevestigdOp: daysAgo(24, 20) };
     d.wwft = { bronnen: [], status: "aangeleverd" };
     if (d.dvo) d.dvo.acceptedAt = new Date(Date.now() - 33 * 86400_000).toISOString();
   });
@@ -105,8 +106,8 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
       d.person = { ...d.person, nationaliteit: x.nationaliteit, roepnaam: x.roepnaam, beroep: x.beroep, huwelijkseVoorwaarden: "nee", heeftPartner: "nee" };
       d.eigendom = { alleenOfSamen: "een_ander", verhouding: "gelijk", aandeel: "1/2", privéOfOnderneming: "prive", bevestigd: true };
       d.gegevensBevestigd = true;
-      d.gegevensBevestigdOp = new Date().toISOString();
-      d.pep = { antwoord: "nee", beantwoordOp: new Date().toISOString() };
+      d.gegevensBevestigdOp = daysAgo(26, 10 + i);
+      d.pep = { antwoord: "nee", beantwoordOp: daysAgo(16, 9 + i) };
       d.idcheck = { status: "voltooid", methode: "idin", provider: "iDIN (demo)", gestartOp: addDays(todayIso(), -20), voltooidOp: addDays(todayIso(), -20), resultaat: { naam: `${x.voornamen} ${x.achternaam}`, geboortedatum: x.geboortedatum, documentType: "Paspoort", documentNummerMasked: "NX•••••7K", geldigTot: "2031-04-11", bank: i === 0 ? "ING (demo)" : "Rabobank (demo)" }, match: { naam: true, geboortedatum: true } };
     }, );
     if (i === 0) await db.update(schema.parties).set({ phone: x.phone }).where(eq(schema.parties.id, k.id));
@@ -121,22 +122,24 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
   await updateParty(sanne.id, (d) => { d.starters = { ...d.starters, verklaringGetekendOp: addDays(todayIso(), -12) }; });
 
   // Wwft: twee bronnen met bewijsstukken
-  const afschrift = await saveDocument({ dossierId: id, partyId: sanne.id, kind: "wwft_bewijs", title: "Rekeningafschrift spaarrekening", filename: "spaarrekening-afschrift.pdf", mime: "application/pdf", content: await bankafschriftPdf(), source: "upload", visibility: "koper", meta: { bron: "spaargeld" } });
-  const schenking = await saveDocument({ dossierId: id, partyId: sanne.id, kind: "wwft_bewijs", title: "Schenkingsovereenkomst ouders", filename: "schenkingsovereenkomst.pdf", mime: "application/pdf", content: await schenkingPdf(), source: "upload", visibility: "koper", meta: { bron: "schenking" } });
+  // documentType = de stukken uit de documentregels van de notaris, zodat de checklist per bron klopt.
+  const afschrift = await saveDocument({ dossierId: id, partyId: sanne.id, kind: "wwft_bewijs", title: "Rekeningafschrift spaarrekening", filename: "spaarrekening-afschrift.pdf", mime: "application/pdf", content: await bankafschriftPdf(), source: "upload", visibility: "koper", meta: { bron: "spaargeld", documentType: "Rekeningafschrift(en) waarop saldo en rekeninghouder zichtbaar zijn" } });
+  const schenking = await saveDocument({ dossierId: id, partyId: sanne.id, kind: "wwft_bewijs", title: "Schenkingsovereenkomst ouders", filename: "schenkingsovereenkomst.pdf", mime: "application/pdf", content: await schenkingPdf(), source: "upload", visibility: "koper", meta: { bron: "schenking", documentType: "Schenkingsovereenkomst of schriftelijke verklaring" } });
+  const ontvangst = await saveDocument({ dossierId: id, partyId: sanne.id, kind: "wwft_bewijs", title: "Rekeningafschrift ontvangst schenking", filename: "afschrift-ontvangst-schenking.pdf", mime: "application/pdf", content: await bankafschriftPdf(), source: "upload", visibility: "koper", meta: { bron: "schenking", documentType: "Bewijs van ontvangst (rekeningafschrift)" } });
   await updateDossier(id, (d) => {
     d.wwft = {
       status: "aangeleverd",
-      ingediendOp: addDays(todayIso(), -15) + "T10:12:00.000Z",
+      ingediendOp: amsAt(addDays(todayIso(), -15), 10, 12).toISOString(),
       bronnen: [
         { id: uid(), type: "spaargeld", bedrag: 35000, beschikbaar: "helemaal", rekening: "gezamenlijk", eigenaarGeld: "mij_en_partner", overgemaakt: "ja", details: { opbouw: "Loon of regulier inkomen" }, documentIds: [afschrift] },
-        { id: uid(), type: "schenking", bedrag: 25000, beschikbaar: "helemaal", rekening: "eigen", eigenaarGeld: "mij", overgemaakt: "ja", details: { van: "Ouders", relatie: "Ouders van Sanne (A. de Vries en J. de Vries-Mulder)", ontvangen: "ja", voorwaarden: "nee" }, documentIds: [schenking] },
+        { id: uid(), type: "schenking", bedrag: 25000, beschikbaar: "helemaal", rekening: "eigen", eigenaarGeld: "mij", overgemaakt: "ja", details: { van: "Ouders", relatie: "Ouders van Sanne (A. de Vries en J. de Vries-Mulder)", ontvangen: "ja", voorwaarden: "nee" }, documentIds: [schenking, ontvangst] },
       ],
     };
   });
 
   // Volmachtafspraken: Sanne getekend (video), Daan gepland
-  const past = new Date(Date.now() - 4 * 86400_000); past.setHours(10, 30, 0, 0);
-  const future = new Date(Date.now() + 2 * 86400_000); if (future.getDay() === 0) future.setDate(future.getDate() + 1); if (future.getDay() === 6) future.setDate(future.getDate() + 2); future.setHours(16, 0, 0, 0);
+  const past = amsAt(addDays(todayIso(), -4), 10, 30);
+  const future = amsAt(workday(addDays(todayIso(), 2)), 16, 0);
   const a1 = uid(); const a2 = uid();
   await db.insert(schema.appointments).values([
     { id: a1, dossierId: id, partyId: sanne.id, kind: "volmacht", mode: "video", startsAt: past, status: "afgerond", location: "Videogesprek (beveiligde link)" },
@@ -154,16 +157,16 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
       d.person = { ...d.person, nationaliteit: x.nationaliteit, roepnaam: x.roepnaam, huwelijkseVoorwaarden: "nee", heeftPartner: "ja", partnerDatum: x.partnerDatum };
       d.eigendom = { alleenOfSamen: "een_ander", aandeel: "1/2", bevestigd: true };
       d.gegevensBevestigd = true;
-      d.gegevensBevestigdOp = new Date().toISOString();
+      d.gegevensBevestigdOp = daysAgo(28, 19 + i);
       d.idcheck = { status: "voltooid", methode: i === 0 ? "idin" : "nfc_app", provider: i === 0 ? "iDIN (demo)" : "ID-app met NFC-chip (demo)", voltooidOp: addDays(todayIso(), -25), resultaat: { naam: `${x.voornamen} ${x.achternaam}`, geboortedatum: x.geboortedatum, documentType: i === 0 ? "Identiteitskaart" : "Paspoort", documentNummerMasked: i === 0 ? "IR•••••3D" : "NP•••••9Q", geldigTot: "2030-02-01" }, match: { naam: true, geboortedatum: true } };
-      d.iban = { iban: "NL20INGB0001234567", tenaamstelling: "H.J. Jansen en M.E. Visser", bevestigd: true, bevestigdOp: new Date().toISOString(), verdeling: "Gezamenlijke rekening (beide 50%)" };
-      d.meta = { ...(d.meta ?? {}), zekerhedenBevestigd: { source: "klant", confirmedAt: new Date().toISOString() } };
+      d.iban = { iban: "NL20INGB0001234567", tenaamstelling: "H.J. Jansen en M.E. Visser", bevestigd: true, bevestigdOp: daysAgo(27, 20), verdeling: "Gezamenlijke rekening (beide 50%)" };
+      d.meta = { ...(d.meta ?? {}), zekerhedenBevestigd: { source: "klant", confirmedAt: daysAgo(27, 20) } };
     });
   }
   await db.update(schema.users).set({ name: "Marijke Visser" }).where(eq(schema.users.id, marijkeUser.id));
   await runAutomations(id, "seed");
   // Verkoper-volmachten getekend
-  for (const v of [henk, marijke]) await updateParty(v.id, (d) => { d.volmacht = { ...(d.volmacht ?? { status: "te_plannen" }), status: "ondertekend", ondertekendOp: addDays(todayIso(), -9) + "T14:00:00.000Z", ondertekeningMethode: "video", legalisatie: "niet_vereist", ontvangenOp: addDays(todayIso(), -9) + "T14:05:00.000Z" }; });
+  for (const v of [henk, marijke]) await updateParty(v.id, (d) => { d.volmacht = { ...(d.volmacht ?? { status: "te_plannen" }), status: "ondertekend", ondertekendOp: amsAt(addDays(todayIso(), -9), 14, 0).toISOString(), ondertekeningMethode: "video", legalisatie: "niet_vereist", ontvangenOp: amsAt(addDays(todayIso(), -9), 14, 5).toISOString() }; });
 
   // Aflosnota Westbank: toestemming → verzoek → ontvangen
   view = (await loadDossierView(id))!;
@@ -179,7 +182,7 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
   const biPdf = await bankinstructiePdf();
   const biDoc = await saveDocument({ dossierId: id, kind: "bankinstructie", filename: "hypotheekinstructie-noorderlicht.pdf", mime: "application/pdf", content: biPdf, source: "notaris", visibility: "intern", meta: { gedeeldDoor: "notaris" } });
   const bi = await scanBankinstructie(biPdf);
-  await updateDossier(id, (d) => { d.financing.bankinstructie = { ...bi.data, ontvangenOp: new Date().toISOString(), documentId: biDoc }; d.financing.bankinstructieStatus = "ontvangen"; });
+  await updateDossier(id, (d) => { d.financing.bankinstructie = { ...bi.data, ontvangenOp: daysAgo(5, 11), documentId: biDoc }; d.financing.bankinstructieStatus = "ontvangen"; });
   await runAutomations(id, "seed");
 
   // Notaris heeft N1 al akkoord gegeven; de rest staat open voor de demo
@@ -188,22 +191,96 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
   await logEvent({ dossierId: id, actorType: "notaris", actorName: "Lotte van Dam", type: "check.akkoord", message: "N1 Wwft-uitvraag en identificatie: akkoord." });
 
   await spreadTimeline(id, 33);
+  await alignWithTimeline(id);
 }
 
-/** Verdeel de tijdstempels van gebeurtenissen en e-mails realistisch over de afgelopen dagen. */
-async function spreadTimeline(dossierId: string, days: number) {
+/** ISO-tijdstip `days` dagen geleden om `hour` uur (Nederlandse tijd bij benadering). */
+function daysAgo(days: number, hour = 10): string {
+  return amsAt(addDays(todayIso(), -days), hour, (days * 7) % 60).toISOString();
+}
+
+/** Minuten dat Europe/Amsterdam op moment `d` voorloopt op UTC (60 of 120). */
+function amsOffset(d: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Amsterdam", hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(d);
+  const get = (t: string) => Number(parts.find((x) => x.type === t)?.value ?? 0);
+  return Math.round((Date.UTC(get("year"), get("month") - 1, get("day"), get("hour"), get("minute"), get("second")) - d.getTime()) / 60000);
+}
+
+/** Tijdstip "YYYY-MM-DD HH:mm" als Nederlandse kloktijd (Europe/Amsterdam), ongeacht de servertijdzone. */
+function amsAt(dateIso: string, hour: number, minute = 0): Date {
+  const guess = new Date(`${dateIso}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00.000Z`);
+  const first = new Date(guess.getTime() - amsOffset(guess) * 60000);
+  return new Date(guess.getTime() - amsOffset(first) * 60000);
+}
+
+/** Uur van de dag in Nederlandse tijd. */
+const amsHour = (d: Date) => (d.getUTCHours() + Math.round(amsOffset(d) / 60)) % 24;
+
+/** Eerstvolgende werkdag (passeren gebeurt niet in het weekend). */
+function workday(iso: string): string {
+  let d = iso;
+  for (let i = 0; i < 3; i++) { const wd = new Date(d + "T12:00:00Z").getUTCDay(); if (wd !== 0 && wd !== 6) break; d = addDays(d, 1); }
+  return d;
+}
+
+/**
+ * Laat vastgelegde datums (DVO-akkoord, besluit N1, documentdatums) samenvallen met de
+ * bijbehorende gebeurtenis op de tijdlijn, zodat portaal en notarisscherm hetzelfde zeggen.
+ */
+async function alignWithTimeline(dossierId: string) {
   const db = await getDb();
   const evs = await db.select().from(schema.events).where(eq(schema.events.dossierId, dossierId)).orderBy(asc(schema.events.createdAt));
-  const start = Date.now() - days * 86400_000;
+  const at = (type: string, last = false) => { const list = evs.filter((e) => e.type === type); return (last ? list[list.length - 1] : list[0])?.createdAt; };
+  const dvo = at("dvo.akkoord");
+  if (dvo) await updateDossier(dossierId, (d) => { if (d.dvo) d.dvo.acceptedAt = dvo.toISOString(); });
+  const n1 = at("check.akkoord", true);
+  if (n1) await db.update(schema.checks).set({ decidedAt: n1 }).where(and(eq(schema.checks.dossierId, dossierId), eq(schema.checks.key, "wwft_id"), eq(schema.checks.status, "akkoord")));
+  const kindToEvent: Record<string, string> = {
+    koopovereenkomst: "ko.uitgelezen", dvo: "dvo.akkoord", kadaster_eigendom: "kadaster.opgehaald", kadaster_kaart: "kadaster.opgehaald", kadaster_akte: "kadaster.opgehaald",
+    volmacht_koper: "volmacht.koper", volmacht_verkoper: "volmacht.verkoper", verklaring_starters: "starters.verklaring", concept_leveringsakte: "akte.levering",
+    concept_hypotheekakte: "akte.hypotheek", bankinstructie: "akte.hypotheek", aflosnota_verzoek: "aflosnota.voorbereid", wwft_bewijs: "wwft.ingediend",
+  };
+  const docs = await db.select().from(schema.documents).where(eq(schema.documents.dossierId, dossierId));
+  for (const doc of docs) {
+    const t = kindToEvent[doc.kind] && at(kindToEvent[doc.kind], doc.kind.startsWith("concept_"));
+    if (t) await db.update(schema.documents).set({ createdAt: new Date(t.getTime() - (doc.kind === "wwft_bewijs" || doc.kind === "bankinstructie" ? 3600_000 : 0)) }).where(eq(schema.documents.id, doc.id));
+  }
+  const parties = await db.select().from(schema.parties).where(eq(schema.parties.dossierId, dossierId));
+  for (const e of evs.filter((x) => x.type === "verkoper.uitgenodigd")) {
+    const p = parties.find((x) => x.side === "verkoper" && e.message.includes(x.displayName));
+    if (!p) continue;
+    const activated = new Date(Math.min(e.createdAt.getTime() + 20 * 3600_000, Date.now() - 3600_000));
+    await db.update(schema.parties).set({ invitedAt: e.createdAt, ...(p.activatedAt ? { activatedAt: activated } : {}) }).where(eq(schema.parties.id, p.id));
+  }
+  const po = await db.select().from(schema.payoffs).where(eq(schema.payoffs.dossierId, dossierId));
+  for (const p of po) if (p.documentId && p.receivedAt) await db.update(schema.documents).set({ createdAt: p.receivedAt }).where(eq(schema.documents.id, p.documentId));
+}
+
+/**
+ * Verdeel de tijdstempels van gebeurtenissen realistisch over een periode die eindigt op
+ * `end` (standaard nu). E-mails krijgen het tijdstip van de gebeurtenis waarbij ze zijn
+ * verstuurd, zodat tijdlijn en e-maillog niet uiteenlopen. Niets komt in de toekomst.
+ */
+async function spreadTimeline(dossierId: string, days: number, end = Date.now()) {
+  const db = await getDb();
+  const evs = await db.select().from(schema.events).where(eq(schema.events.dossierId, dossierId)).orderBy(asc(schema.events.createdAt));
+  const mails = await db.select().from(schema.emails).where(eq(schema.emails.dossierId, dossierId)).orderBy(asc(schema.emails.createdAt));
+  const start = end - days * 86400_000;
   const span = days * 86400_000 - 3600_000;
+  const latest = Math.min(end, Date.now()) - 3600_000;
+  const placed: { orig: number; at: Date }[] = [];
   for (const [i, e] of evs.entries()) {
     const at = new Date(start + (span * i) / Math.max(1, evs.length - 1));
-    if (at.getHours() < 8) at.setHours(8 + (i % 9));
+    const h = amsHour(at);
+    if (h < 8 || h > 20) at.setTime(amsAt(new Date(at.getTime() + amsOffset(at) * 60000).toISOString().slice(0, 10), 8 + (i % 9), at.getUTCMinutes()).getTime());
+    if (at.getTime() > latest) at.setTime(latest - (evs.length - i) * 60_000);
+    placed.push({ orig: e.createdAt.getTime(), at });
     await db.update(schema.events).set({ createdAt: at }).where(eq(schema.events.id, e.id));
   }
-  const mails = await db.select().from(schema.emails).where(eq(schema.emails.dossierId, dossierId)).orderBy(asc(schema.emails.createdAt));
-  for (const [i, m] of mails.entries()) {
-    const at = new Date(start + (span * (i + 1)) / (mails.length + 1));
+  for (const m of mails) {
+    // Gebeurtenis die het dichtst bij het oorspronkelijke verzendmoment lag.
+    const near = placed.reduce<{ orig: number; at: Date } | undefined>((best, p) => (!best || Math.abs(p.orig - m.createdAt.getTime()) < Math.abs(best.orig - m.createdAt.getTime()) ? p : best), undefined);
+    const at = near ? new Date(near.at.getTime() + 60_000) : new Date(start);
     await db.update(schema.emails).set({ createdAt: at, sentAt: at }).where(eq(schema.emails.id, m.id));
   }
   await db.update(schema.dossiers).set({ createdAt: new Date(start) }).where(eq(schema.dossiers.id, dossierId));
@@ -219,11 +296,17 @@ async function seedPipeline() {
   ];
   for (const e of extra) {
     const id = await createConceptDossier(e.service, token(), true);
-    const lev = addDays(todayIso(), e.levering);
+    const lev = workday(addDays(todayIso(), e.levering));
+    const passed = e.stage === "gepasseerd";
+    const levTs = (h: number, plusDays = 0) => amsAt(addDays(lev, plusDays), h);
+    const spanDays = Math.max(8, 45 - Math.max(0, e.levering));
+    const timelineEnd = passed ? levTs(8, -1).getTime() : Date.now();
+    const timelineStart = timelineEnd - spanDays * 86400_000;
     await updateDossier(id, (d) => {
       d.property = { straat: e.adres, huisnummer: e.nr, postcode: e.postcode, plaats: e.plaats, soort: "woning" };
-      d.transaction = { koopprijs: e.prijs || undefined, leveringsdatum: lev, leveringsdatumOrigineel: lev, leveringsdatumStatus: "voorlopig", datumOndertekening: addDays(todayIso(), e.levering - 45) };
-      d.dvo = { version: "DVO-2026.11-v1", acceptedAt: new Date(Date.now() - 20 * 86400_000).toISOString(), acceptedBy: "demo", signatureName: `${e.koper[0]} ${e.koper[1]}`, checks: ["dvo", "voorwaarden", "volmacht", "juist"] };
+      d.transaction = { koopprijs: e.prijs || undefined, leveringsdatum: lev, leveringsdatumOrigineel: lev, leveringsdatumStatus: passed ? "bevestigd" : "voorlopig", datumOndertekening: addDays(todayIso(), e.levering - 45) };
+      if (passed) d.datumCheck = { gevraagdOp: levTs(9, -14).toISOString(), antwoord: "ja", beantwoordOp: levTs(20, -13).toISOString() };
+      d.dvo = { version: DVO_VERSION, acceptedAt: new Date(timelineStart + 86400_000).toISOString(), acceptedBy: "demo", signatureName: `${e.koper[0]} ${e.koper[1]}`, checks: ["dvo", "voorwaarden", "volmacht", "juist"] };
       d.koStatus = e.stage === "wacht" || e.service === "hypotheek" ? "ontbreekt" : "verwerkt";
       d.financing = { ...d.financing, hypotheek: e.service === "levering" ? "nee" : "ja", status: "offerte_geaccepteerd", eigenMiddelen: "ja", bevestigd: e.stage !== "wacht", geldverstrekker: e.service === "levering" ? undefined : "Demo Hypotheekbank N.V. (fictief)", hypotheekbedragIndicatie: e.prijs ? Math.round(e.prijs * 0.85) : 300000 };
     });
@@ -233,7 +316,7 @@ async function seedPipeline() {
       kp.gegevensBevestigd = true;
       kp.pep = { antwoord: "nee" };
       kp.idcheck = { status: "voltooid", methode: "idin", resultaat: { naam: `${e.koper[0]} ${e.koper[1]}`, geboortedatum: e.koper[2], documentType: "Paspoort" }, match: { naam: true, geboortedatum: true } };
-      kp.volmacht = { status: "ondertekend", ondertekendOp: new Date().toISOString() };
+      kp.volmacht = { status: "ondertekend", ondertekendOp: (passed ? levTs(11, -10) : new Date(Date.now() - 3 * 86400_000)).toISOString(), ondertekeningMethode: "video" };
     }
     if (e.stage === "intake") { kp.idcheck = { status: "in_behandeling" }; }
     await db.insert(schema.parties).values({ id: uid(), dossierId: id, side: "koper", isPrimary: true, email: `${e.koper[0].toLowerCase()}@example.com`, displayName: `${e.koper[0]} ${e.koper[1]}`, data: kp, activatedAt: new Date() });
@@ -246,14 +329,33 @@ async function seedPipeline() {
       await saveDocument({ dossierId: id, kind: "koopovereenkomst", filename: `koopovereenkomst-${e.adres.toLowerCase().replace(/\s/g, "-")}.pdf`, mime: "application/pdf", content: await genericKoPdf({ adres: `${e.adres} ${e.nr}`, postcode: e.postcode, plaats: e.plaats, koopprijs: e.prijs, koper: `${e.koper[0]} ${e.koper[1]}`, verkoper: `${e.verkoper[0]} ${e.verkoper[1]}`, levering: lev }), source: "upload", visibility: "partijen" });
     }
     if (e.service === "hypotheek") await updateDossier(id, (d) => { d.wwft = { bronnen: [], status: "niet_van_toepassing" }; d.financing.eigenMiddelen = "nee"; d.koperIban = { iban: "NL44RABO0123456780", tenaamstelling: "K. Hoekstra", bevestigd: true }; d.financing.bankinstructie = { geldverstrekker: "Demo Hypotheekbank N.V. (fictief)", kenmerk: "DHB-2026-5512", hypotheekbedrag: 315000, inschrijvingsbedrag: 393750, leningdelen: [{ soort: "Annuïteitenlening", bedrag: 315000 }], rang: "Eerste in rang", algemeneVoorwaarden: "Algemene Voorwaarden Demo Hypotheekbank 2026 (fictief)", bijzondereVoorwaarden: [], controlepunten: [] }; d.financing.bankinstructieStatus = "ontvangen"; });
-    if (advanced) await updateDossier(id, (d) => { d.wwft = { ...d.wwft, ingediendOp: new Date().toISOString(), status: d.wwft.status ?? "aangeleverd" }; d.koperIban = { iban: "NL44RABO0123456780", tenaamstelling: `${e.koper[0][0]}. ${e.koper[1]}`, bevestigd: true }; });
+    if (advanced) await updateDossier(id, (d) => { d.wwft = { ...d.wwft, ingediendOp: (passed ? levTs(14, -20) : new Date(Date.now() - 6 * 86400_000)).toISOString(), status: d.wwft.status ?? "aangeleverd" }; d.koperIban = { iban: "NL44RABO0123456780", tenaamstelling: `${e.koper[0][0]}. ${e.koper[1]}`, bevestigd: true }; });
     await db.update(schema.dossiers).set({ status: e.stage === "wacht" ? "wacht_op_ko" : e.stage === "gepasseerd" ? "bij_notaris" : "intake", draftToken: null }).where(eq(schema.dossiers.id, id));
     await runAutomations(id, "seed");
-    if (e.stage === "gepasseerd") {
-      await db.update(schema.checks).set({ status: "akkoord", decidedBy: "Lotte van Dam", decidedAt: new Date(Date.now() - 7 * 86400_000) }).where(eq(schema.checks.dossierId, id));
-      await updateDossier(id, (d) => { d.gepasseerdOp = addDays(todayIso(), e.levering) + "T09:30:00.000Z"; d.ingeschrevenOp = addDays(todayIso(), e.levering) + "T11:02:00.000Z"; d.afgewikkeldOp = addDays(todayIso(), e.levering + 1) + "T10:00:00.000Z"; if (d.notaKoper) d.notaKoper.status = "definitief"; if (d.akteLevering) d.akteLevering.status = "definitief"; if (d.notaVerkoper) { d.notaVerkoper.status = "definitief"; d.notaVerkoper.uitbetaaldOp = d.afgewikkeldOp; } d.datumCheck = { gevraagdOp: new Date().toISOString(), antwoord: "ja", beantwoordOp: new Date().toISOString() }; return { status: "afgewikkeld" }; });
+    if (passed) {
+      // Afgewikkeld dossier: eerst alles compleet maken (aflosnota ontvangen en gecontroleerd,
+      // nota's herberekend), pas daarna passeren, inschrijven en afwikkelen.
+      for (const po of await db.select().from(schema.payoffs).where(eq(schema.payoffs.dossierId, id))) {
+        await db.update(schema.payoffs).set({ status: "gecontroleerd", toestemmingVerkoper: true, loanNumbers: "4400 7788 12", amount: Math.round(e.prijs * 0.42) * 100, validUntil: lev, requestedAt: levTs(10, -16), receivedAt: levTs(15, -9) }).where(eq(schema.payoffs.id, po.id));
+      }
+      await runAutomations(id, "seed");
+      await db.update(schema.checks).set({ status: "akkoord", decidedBy: "Lotte van Dam", decidedAt: levTs(16, -3) }).where(eq(schema.checks.dossierId, id));
+      await updateDossier(id, (d) => {
+        d.gepasseerdOp = levTs(10).toISOString(); d.ingeschrevenOp = levTs(12).toISOString(); d.afgewikkeldOp = levTs(11, 1).toISOString();
+        if (d.notaKoper) d.notaKoper.status = "definitief";
+        if (d.akteLevering) d.akteLevering.status = "definitief";
+        if (d.notaVerkoper) { d.notaVerkoper.status = "definitief"; d.notaVerkoper.uitbetaaldOp = d.afgewikkeldOp; }
+        return { status: "afgewikkeld" };
+      });
     }
     if (e.stage === "bij_notaris") await runAutomations(id, "seed");
-    await spreadTimeline(id, Math.max(8, 45 - Math.max(0, e.levering)));
+    await spreadTimeline(id, spanDays, timelineEnd);
+    if (passed) {
+      for (const [type, message, at] of [["akte.gepasseerd", "Akte van levering gepasseerd bij de notaris.", levTs(10)], ["kadaster.ingeschreven", "Akte ingeschreven in het Kadaster.", levTs(12)], ["dossier.afgewikkeld", "Dossier financieel afgewikkeld: verkoopopbrengst uitbetaald.", levTs(11, 1)]] as const) {
+        await logEvent({ dossierId: id, actorType: type === "akte.gepasseerd" ? "notaris" : "systeem", actorName: type === "akte.gepasseerd" ? "Lotte van Dam" : undefined, type, message, visibleTo: "partijen" });
+        const [ev] = await db.select().from(schema.events).where(and(eq(schema.events.dossierId, id), eq(schema.events.type, type)));
+        if (ev) await db.update(schema.events).set({ createdAt: at }).where(eq(schema.events.id, ev.id));
+      }
+    }
   }
 }

@@ -9,7 +9,7 @@
 import type { DossierView } from "@/lib/domain/dossier";
 import type { Party } from "@/lib/db/schema";
 import { TERMS } from "@/lib/config";
-import { addDays, daysBetween, todayIso } from "@/lib/util/format";
+import { addDays, dateNl, daysBetween, todayIso } from "@/lib/util/format";
 
 export type StepState = "done" | "todo" | "in_progress" | "waiting" | "attention" | "locked" | "na";
 export type StepOwner = "klant" | "platform" | "notaris";
@@ -73,6 +73,24 @@ function agg(states: StepState[]): StepState {
   return "todo";
 }
 
+/**
+ * Eén samenvattend statuslabel voor een stap met meerdere personen. Zelfde label voor
+ * iedereen → dat label; iedereen klaar met verschillende labels → "Afgerond"; anders
+ * "x van y gereed". De labels per persoon staan in de stappenlijst zelf.
+ */
+export function summaryLabel(pp: { state: StepState; label: string }[]): string {
+  if (!pp.length) return "—";
+  const labels = [...new Set(pp.map((p) => p.label))];
+  if (labels.length === 1) return labels[0];
+  const rel = pp.filter((p) => p.state !== "na");
+  const done = rel.filter((p) => p.state === "done").length;
+  if (done === rel.length) return "Afgerond";
+  return `${done} van ${rel.length} gereed`;
+}
+
+const FIN_STATUS: Record<string, string> = { aanvraag_loopt: "Aanvraag loopt", offerte_ontvangen: "Offerte ontvangen", offerte_geaccepteerd: "Offerte geaccepteerd", rond: "Financiering rond", weet_niet: "Status onbekend" };
+const NOTA_STATUS: Record<string, string> = { in_voorbereiding: "concept klaar", beschikbaar: "gedeeld met partijen", definitief: "definitief" };
+
 function openRequestFor(view: DossierView, checkKey: string, side: "koper" | "verkoper") {
   return view.requests.some((r) => r.side === side && r.checkKey === checkKey && r.status === "open");
 }
@@ -124,7 +142,7 @@ export function koperSteps(view: DossierView): Step[] {
     key: "woning", nr: "4", title: "Woning & financiering",
     description: "Woninggegevens bevestigen en je financiering aangeven (geldverstrekker, status, eigen geld).",
     state: wState,
-    label: locked ? "Na upload koopovereenkomst" : !fin.bevestigd ? "Nog in te vullen" : fin.hypotheek === "nee" ? "Zonder hypotheek" : fin.status === "rond" ? "Financiering rond" : "Aanvraag loopt",
+    label: locked ? "Na upload koopovereenkomst" : !fin.bevestigd ? "Nog in te vullen" : fin.hypotheek === "nee" ? "Zonder hypotheek" : FIN_STATUS[fin.status ?? ""] ?? "Aanvraag loopt",
     owner: "klant", platform: "Woning- en hypotheekgegevens registreren en koppelen aan het dossier.", actionable: !locked && !fin.bevestigd,
   });
 
@@ -146,7 +164,7 @@ export function koperSteps(view: DossierView): Step[] {
   steps.push({
     key: "starters", nr: "5", title: "Startersvrijstelling (OB)",
     description: "Automatische toets per koper (leeftijd, woningwaarde, eerder gebruik) en zo nodig de verklaring tekenen.",
-    state: sState, label: !lev ? "Niet van toepassing" : locked ? "Na upload koopovereenkomst" : starters.map((s) => s.label).join(" · "),
+    state: sState, label: !lev ? "Niet van toepassing" : locked ? "Na upload koopovereenkomst" : summaryLabel(starters),
     owner: "klant", platform: "Automatische toets startersvrijstelling en benodigde verklaring genereren.", perPerson: starters,
     actionable: !locked && lev && sState !== "done",
   });
@@ -185,7 +203,7 @@ export function koperSteps(view: DossierView): Step[] {
   steps.push({
     key: "identificatie", nr: "8", title: "Identificeren (ID-check)",
     description: "Digitale identificatie via de door de notaris gekozen procedure.",
-    state: idState, label: locked ? "Na upload koopovereenkomst" : ids.map((i) => i.label).join(" · "), owner: "klant",
+    state: idState, label: locked ? "Na upload koopovereenkomst" : summaryLabel(ids), owner: "klant",
     platform: "ID-check verwerken en vastleggen.", perPerson: ids, actionable: !locked && idState !== "done",
   });
 
@@ -199,7 +217,7 @@ export function koperSteps(view: DossierView): Step[] {
   steps.push({
     key: "volmacht", nr: "9", title: hyp && lev ? "Volmacht (levering en hypotheek)" : "Volmacht",
     description: "Eén digitale volmacht voor de notariële levering en de hypotheekakte, getekend tijdens één korte afspraak.",
-    state: vState, label: locked ? "Na upload koopovereenkomst" : vms.map((v) => v.label).join(" · "), owner: "klant",
+    state: vState, label: locked ? "Na upload koopovereenkomst" : summaryLabel(vms), owner: "klant",
     platform: "Volmachtdocumenten klaarzetten, ondertekening registreren en opslaan in dossier.", perPerson: vms, actionable: !locked && vState !== "done",
   });
 
@@ -210,7 +228,8 @@ export function koperSteps(view: DossierView): Step[] {
   if (locked) { dState = "locked"; dLabel = "Na upload koopovereenkomst"; }
   else if (kad === "nader_onderzoek") { dState = "attention"; dLabel = "Kadaster: nader onderzoek"; }
   else if (!lev && kad === "opgehaald") { dState = "done"; dLabel = "Kadastrale stukken opgehaald"; }
-  else if (akte && akte.status !== "in_voorbereiding") { dState = "done"; dLabel = akte.status === "goedgekeurd" ? "Concept-leveringsakte goedgekeurd" : akte.status === "ter_controle_notaris" ? "Concept-leveringsakte ter controle notaris" : "Concept-leveringsakte gegenereerd"; }
+  else if (akte && akte.status === "gegenereerd" && !view.kopers.every((p) => personDataComplete(p) && p.data.gegevensBevestigd)) { dState = "in_progress"; dLabel = "Eerste concept klaar — wacht op je gegevens"; }
+  else if (akte && akte.status !== "in_voorbereiding") { dState = "done"; dLabel = akte.status === "goedgekeurd" ? "Concept-leveringsakte goedgekeurd" : akte.status === "definitief" ? "Leveringsakte definitief" : akte.status === "ter_controle_notaris" ? "Concept-leveringsakte bij de notaris" : "Concept-leveringsakte gegenereerd"; }
   else if (kad === "opgehaald") { dState = "in_progress"; dLabel = "Concept-leveringsakte in voorbereiding"; }
   steps.push({
     key: "dossier", nr: "10", title: "Dossiervoorbereiding",
@@ -238,7 +257,7 @@ export function koperSteps(view: DossierView): Step[] {
   const opens = lever ? addDays(lever, -TERMS.datumCheckDagenVooraf) : undefined;
   const isOpen = !!opens && daysBetween(todayIso(), opens) <= 0;
   let lState: StepState = "locked";
-  let lLabel = lever ? `Vanaf ${opens}` : "Leveringsdatum nog te bepalen";
+  let lLabel = lever && opens ? `Vanaf ${dateNl(opens, { short: true })}` : "Leveringsdatum nog te bepalen";
   if (d.datumCheck.antwoord === "ja" || d.datumCheck.antwoord === "nee_nieuwe_datum") { lState = "done"; lLabel = d.datumCheck.antwoord === "ja" ? "Overdrachtsdatum bevestigd" : "Overdrachtsdatum gewijzigd"; }
   else if (d.datumCheck.antwoord === "onbekend") { lState = "attention"; lLabel = "Nieuwe datum nog niet bekend"; }
   else if (isOpen || d.datumCheck.gevraagdOp) { lState = "todo"; lLabel = "Bevestig je overdrachtsdatum"; }
@@ -265,7 +284,7 @@ export function verkoperSteps(view: DossierView): Step[] {
   steps.push({
     key: "uitnodiging", nr: "A", title: "Uitnodiging portaal",
     description: "Na akkoord DVO van de koper en ontvangst van de koopovereenkomst ontvangt iedere verkoper een uitnodiging voor het eigen portaal.",
-    state: agg(inv.map((i) => i.state)), label: inv.map((i) => i.label).join(" · ") || "—", owner: "platform",
+    state: agg(inv.map((i) => i.state)), label: summaryLabel(inv), owner: "platform",
     platform: "Uitnodiging versturen, account aanmaken en verkopersdossier inrichten.", perPerson: inv, actionable: false,
   });
 
@@ -287,7 +306,7 @@ export function verkoperSteps(view: DossierView): Step[] {
   steps.push({
     key: "identificatie", nr: "C", title: "Identificeren (ID-check)",
     description: "Digitale identificatie via de door de notaris voorgeschreven procedure.",
-    state: agg(ids.map((i) => i.state)), label: ids.map((i) => i.label).join(" · "), owner: "klant",
+    state: agg(ids.map((i) => i.state)), label: summaryLabel(ids), owner: "klant",
     platform: "ID-check verwerken en vastleggen.", perPerson: ids, actionable: true,
   });
 
@@ -313,7 +332,7 @@ export function verkoperSteps(view: DossierView): Step[] {
   steps.push({
     key: "volmacht", nr: "E", title: "Eenvoudige verkoopvolmacht",
     description: "De notaris stelt een eenvoudige volmacht op voor de levering. Je ondertekent deze (en laat zo nodig je handtekening legaliseren).",
-    state: agg(vms.map((v) => v.state)), label: vms.map((v) => v.label).join(" · "), owner: "klant",
+    state: agg(vms.map((v) => v.state)), label: summaryLabel(vms), owner: "klant",
     platform: "Volmacht klaarzetten, ondertekening registreren en opslaan in dossier.", perPerson: vms, actionable: true,
   });
 
@@ -326,7 +345,8 @@ export function verkoperSteps(view: DossierView): Step[] {
   else if (confirmed) {
     zState = "in_progress";
     const lab = { op_te_vragen: "op te vragen", aangevraagd: "aangevraagd", ontvangen: "ontvangen", gecontroleerd: "gecontroleerd" };
-    zLabel = pos.map((p) => `Aflosnota ${p.lender}: ${lab[p.status]}`).join(" · ");
+    const ontvangen = pos.filter((p) => p.status === "ontvangen" || p.status === "gecontroleerd").length;
+    zLabel = pos.length === 1 ? `Aflosnota ${lab[pos[0].status]}${pos[0].status === "ontvangen" ? " — notaris controleert" : ""}` : `${ontvangen} van ${pos.length} aflosnota's ontvangen`;
   }
   steps.push({
     key: "zekerheden", nr: "F", title: "Bestaande zekerheden en aflosnota's",
@@ -446,7 +466,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "nota", nr: "N6", title: "Nota's van afrekening",
     description: "Stelt de nota('s) van afrekening op voor koper en verkoper (automatisch voorbereid).",
     applicable: true, ready: !!d.notaKoper && (!lev || !!d.notaVerkoper),
-    readyLabel: d.notaKoper ? `Koper: ${d.notaKoper.status}${lev ? ` · Verkoper: ${d.notaVerkoper?.status ?? "—"}` : ""}` : "In voorbereiding",
+    readyLabel: d.notaKoper ? `Koper: ${NOTA_STATUS[d.notaKoper.status] ?? d.notaKoper.status}${lev ? ` · Verkoper: ${d.notaVerkoper ? NOTA_STATUS[d.notaVerkoper.status] ?? d.notaVerkoper.status : "nog in voorbereiding"}` : ""}` : "Nog in voorbereiding",
     status: st("nota"), flags: [],
   });
 
@@ -464,10 +484,15 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
   return res;
 }
 
-export function progress(steps: Step[]): { done: number; total: number; pct: number } {
-  const rel = steps.filter((s) => s.state !== "na");
-  const done = rel.filter((s) => s.state === "done").length;
+export function progress(steps: Step[], partyId?: string): { done: number; total: number; pct: number } {
+  const rel = steps.map((s) => stateFor(s, partyId)).filter((st) => st !== "na");
+  const done = rel.filter((st) => st === "done").length;
   return { done, total: rel.length, pct: rel.length ? Math.round((done / rel.length) * 100) : 0 };
+}
+
+/** Status van een stap voor één persoon (persoonlijke stappen), anders de stapstatus. */
+export function stateFor(s: Step, partyId?: string): StepState {
+  return (partyId && s.perPerson?.find((p) => p.partyId === partyId)?.state) || s.state;
 }
 
 export function stateTone(s: StepState): { bg: string; text: string; dot: string; label: string } {
@@ -491,16 +516,16 @@ export function koopovereenkomstSteps(view: DossierView): Step[] {
   const order = ["concept", "ter_controle", "verzonden", "getekend", "bedenktijd", "definitief"] as const;
   const at = order.indexOf(ko.status);
   const signed = view.parties.filter((p) => p.data.meta?.koGetekend).length;
-  const mk = (key: string, nr: string, title: string, description: string, from: number, label: [string, string], owner: StepOwner, platform: string): Step => {
+  const mk = (key: string, nr: string, title: string, description: string, from: number, label: [string, string, string], owner: StepOwner, platform: string): Step => {
     const state: StepState = at > from ? "done" : at === from ? (owner === "klant" ? "todo" : "in_progress") : "locked";
-    return { key, nr, title, description, state, label: state === "done" ? label[1] : label[0], owner, platform, actionable: state === "todo" };
+    return { key, nr, title, description, state, label: state === "done" ? label[1] : state === "locked" ? label[2] : label[0], owner, platform, actionable: state === "todo" };
   };
   return [
     { key: "vragenlijst", nr: "1", title: "Vragenlijst", description: "Woning, partijen, prijs, leveringsdatum, waarborgsom en ontbindende voorwaarden.", state: "done", label: "Ingevuld", owner: "klant", platform: "Gegevens structureren en kadastrale aanduiding opzoeken.", actionable: false },
-    mk("concept", "2", "Concept-koopovereenkomst", "Wij stellen de overeenkomst op volgens een vaste structuur.", 0, ["In voorbereiding", "Opgesteld"], "platform", "Concept genereren uit de vragenlijst."),
-    mk("controle", "3", "Juridische controle", "Een jurist controleert het concept en de bijzondere afspraken.", 1, ["Ter controle", "Gecontroleerd"], "platform", "Juridische controle en eventuele vragen aan partijen."),
-    { ...mk("ondertekenen", "4", "Ondertekenen", "Koper en verkoper ondertekenen digitaal.", 2, [`${signed}/${view.parties.length} getekend`, "Door alle partijen getekend"], "klant", "Digitale ondertekening registreren en exemplaren uitreiken."), actionable: at === 2 },
-    mk("bedenktijd", "5", "Bedenktijd koper", "De koper heeft drie dagen bedenktijd na terhandstelling.", 3, [view.data.transaction.bedenktijdEinde ? `Loopt tot ${view.data.transaction.bedenktijdEinde}` : "Loopt", "Verstreken"], "platform", "Bedenktijd en termijnen (waarborgsom, voorbehouden) bewaken."),
+    mk("concept", "2", "Concept-koopovereenkomst", "Wij stellen de overeenkomst op volgens een vaste structuur.", 0, ["In voorbereiding", "Opgesteld", "Na de vragenlijst"], "platform", "Concept genereren uit de vragenlijst."),
+    mk("controle", "3", "Juridische controle", "Een jurist controleert het concept en de bijzondere afspraken.", 1, ["Ter controle", "Gecontroleerd", "Na het concept"], "platform", "Juridische controle en eventuele vragen aan partijen."),
+    { ...mk("ondertekenen", "4", "Ondertekenen", "Koper en verkoper ondertekenen digitaal.", 2, [`${signed} van ${view.parties.length} getekend`, "Door alle partijen getekend", "Na juridische controle"], "klant", "Digitale ondertekening registreren en exemplaren uitreiken."), actionable: at === 2 },
+    mk("bedenktijd", "5", "Bedenktijd koper", "De koper heeft drie dagen bedenktijd na terhandstelling.", 3, [view.data.transaction.bedenktijdEinde ? `Loopt tot en met ${dateNl(view.data.transaction.bedenktijdEinde, { short: true })}` : "Loopt", "Verstreken", "Na ondertekening"], "platform", "Bedenktijd en termijnen (waarborgsom, voorbehouden) bewaken."),
     { key: "akte", nr: "6", title: "Door naar de akte van levering", description: "Start met één klik de notariële afhandeling; alle gegevens staan al klaar.", state: at >= 3 ? "todo" : "locked", label: at >= 3 ? "Beschikbaar" : "Na ondertekening", owner: "klant", platform: "Dossier omzetten naar levering (+ hypotheek) zonder dubbele uitvraag.", actionable: at >= 3 },
   ];
 }

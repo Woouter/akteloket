@@ -5,6 +5,13 @@
  */
 import { addDays, todayIso } from "@/lib/util/format";
 
+/** Eerstvolgende werkdag: er wordt niet gepasseerd in het weekend. */
+function werkdag(iso: string): string {
+  let d = iso;
+  for (let i = 0; i < 3; i++) { const wd = new Date(d + "T12:00:00Z").getUTCDay(); if (wd !== 0 && wd !== 6) break; d = addDays(d, 1); }
+  return d;
+}
+
 export function demoDates(base = todayIso()) {
   return {
     ondertekening: addDays(base, -34),
@@ -13,7 +20,7 @@ export function demoDates(base = todayIso()) {
     keuring: addDays(base, -20),
     waarborgsomUiterlijk: addDays(base, -6),
     financiering: addDays(base, -2),
-    levering: addDays(base, 13),
+    levering: werkdag(addDays(base, 13)),
     vorigeLevering: "2011-06-30",
     vorigeHypotheek: "2011-06-30",
   };

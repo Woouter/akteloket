@@ -34,17 +34,17 @@ export function DossierHeader({ view, side, pct }: { view: DossierView; side: Si
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone={side === "koper" ? "koper" : "verkoper"}>{side === "koper" ? "Koper" : "Verkoper"}</Badge>
-              <Badge>{SERVICES[d.service].name}</Badge>
+              <Badge>{side === "verkoper" && d.service !== "koopovereenkomst" ? "Leveringsakte (verkoop)" : SERVICES[d.service].name}</Badge>
               <span className="font-mono text-xs text-ink-400">{view.dossier.reference}</span>
             </div>
-            <h1 className="mt-3 flex items-start gap-2 text-2xl font-extrabold tracking-tight text-ink-900 sm:items-center sm:text-3xl"><Home className="mt-1 h-6 w-6 shrink-0 text-ink-300 sm:mt-0" />{propertyLine(d.property) || "Je nieuwe woning"}</h1>
+            <h1 className="mt-3 flex items-start gap-2 font-serif text-2xl font-semibold text-ink-900 sm:items-center sm:text-3xl"><Home className="mt-1 h-6 w-6 shrink-0 text-ink-300 sm:mt-0" />{propertyLine(d.property) || (side === "koper" ? "Je nieuwe woning" : "Je woning")}</h1>
             <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink-600">
-              {lev && <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-ink-400" />Overdracht {dateNl(lev, { weekday: true })}{days !== undefined && days >= 0 && <strong className="text-ink-900">· nog {days} dagen</strong>}</span>}
-              {d.property.kadastraal?.perceel && <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-ink-400" />{d.property.kadastraal.gemeente} {d.property.kadastraal.sectie} {d.property.kadastraal.perceel}</span>}
+              {lev && <span className="flex items-start gap-1.5"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" /><span>Overdracht {dateNl(lev, { weekday: true })}{days !== undefined && days > 0 && !d.gepasseerdOp && <> · <strong className="whitespace-nowrap text-ink-900">nog {days} {days === 1 ? "dag" : "dagen"}</strong></>}{days === 0 && <> · <strong className="text-ink-900">vandaag</strong></>}</span></span>}
+              {d.property.kadastraal?.perceel && d.property.kadastraal.gemeente && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 shrink-0 text-ink-400" />{d.property.kadastraal.gemeente} {d.property.kadastraal.sectie} {d.property.kadastraal.perceel}</span>}
             </p>
           </div>
           <div className="w-full shrink-0 lg:w-72">
-            <div className="flex justify-between text-sm"><span className="font-medium text-ink-700">Jouw voortgang</span><span className="font-bold text-ink-900">{pct}%</span></div>
+            <div className="flex justify-between text-sm"><span className="font-medium text-ink-700">Jouw voortgang</span><span className="font-semibold text-ink-900 tabular">{pct}%</span></div>
             <ProgressBar className="mt-2" pct={pct} tone={side === "koper" ? "koper" : "verkoper"} />
           </div>
         </div>

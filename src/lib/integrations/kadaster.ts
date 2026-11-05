@@ -22,6 +22,8 @@ export interface KadasterQuery {
   /** Namen van verkopers uit de KO — alleen gebruikt door de mock om plausibele data te maken. */
   hintVerkopers?: { naam: string; geboortedatum?: string }[];
   hintKoopprijs?: number;
+  /** Woonplaats — alleen gebruikt door de mock als (fictieve) kadastrale gemeente. */
+  hintPlaats?: string;
 }
 
 export interface KadasterDoc { kind: "kadaster_eigendom" | "kadaster_kaart" | "kadaster_akte" | "kadaster_hypotheken"; filename: string; mime: string; content: Buffer; kenmerk: string }
@@ -76,7 +78,7 @@ class MockKadaster implements KadasterProvider {
     }
     // Generiek: maak plausibele, duidelijk fictieve gegevens op basis van de hints.
     const kenmerk = `DEMO-KAD-${new Date().getFullYear()}-${shortId().toUpperCase()}`;
-    const aanduiding: KadastraleAanduiding = q.aanduiding?.perceel ? q.aanduiding : { gemeente: "Onbekend (demo)", sectie: "A", perceel: String(1000 + Math.floor(Math.random() * 8000)), grootte: "2 are en 10 centiare", grootteM2: 210 };
+    const aanduiding: KadastraleAanduiding = q.aanduiding?.perceel ? q.aanduiding : { gemeente: q.hintPlaats || "Demogemeente", sectie: "A", perceel: String(1000 + Math.floor(Math.random() * 8000)), grootte: "2 are en 10 centiare", grootteM2: 210 };
     const rechthebbenden = (q.hintVerkopers?.length ? q.hintVerkopers : [{ naam: "Onbekende eigenaar (demo)" }]).map((v) => ({ naam: v.naam, recht: "Eigendom (recht van)", aandeel: q.hintVerkopers && q.hintVerkopers.length > 1 ? `1/${q.hintVerkopers.length}` : "1/1", geboortedatum: v.geboortedatum }));
     const bedrag = Math.round(((q.hintKoopprijs ?? 400000) * 0.7) / 1000) * 1000;
     const deel = String(70000 + Math.floor(Math.random() * 9000));

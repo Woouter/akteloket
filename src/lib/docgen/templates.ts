@@ -236,6 +236,24 @@ export function buildHypotheekakte(view: DossierView): DocIR {
 // Volmachten
 // ---------------------------------------------------------------------------
 
+const isSigned = (p: Party) => ["ondertekend", "verwerkt"].includes(p.data.volmacht?.status ?? "");
+
+/** Ondertekenregel: getekend met datum en wijze, of een lege regel om te tekenen. */
+function sigLine(p: Party): string {
+  const v = p.data.volmacht;
+  if (isSigned(p) && v) return `Digitaal ondertekend door ${personName(p.data.person)}${v.ondertekendOp ? ` op ${dateNl(v.ondertekendOp)}` : ""}${v.ondertekeningMethode === "video" ? " (videoafspraak, na identificatie)" : v.ondertekeningMethode === "kantoor" ? " (op kantoor, na identificatie)" : ""}.`;
+  return `Ondertekend door ${personName(p.data.person)}: ____________________   datum: __________`;
+}
+
+/** Statusregel boven de volmacht; zolang niet iedereen heeft getekend blijft het een concept. */
+function signStatus(parties: Party[]): { allSigned: boolean; note?: string } {
+  const signed = parties.filter(isSigned);
+  if (!signed.length) return { allSigned: false };
+  const open = parties.filter((p) => !isSigned(p));
+  if (!open.length) return { allSigned: true, note: `Ondertekend door ${signed.map((p) => personName(p.data.person)).join(" en ")} — ter beoordeling bij de notaris.` };
+  return { allSigned: false, note: `Ondertekend door ${signed.map((p) => personName(p.data.person)).join(" en ")}; ${open.map((p) => personName(p.data.person)).join(" en ")} ${open.length > 1 ? "tekenen" : "tekent"} nog.` };
+}
+
 export function buildVolmachtKoper(view: DossierView): DocIR {
   const b = new IRBuilder();
   const d = view.data;
@@ -243,9 +261,11 @@ export function buildVolmachtKoper(view: DossierView): DocIR {
   const hyp = needsHypotheek(view);
   b.title("VOLMACHT");
   b.subtitle(`${lev && hyp ? "Levering en hypotheekverlening" : lev ? "Levering" : "Hypotheekverlening"} · ${propertyLine(d.property)}`);
+  const status = signStatus(view.kopers);
+  if (status.note) b.note(status.note);
   b.p("De ondergetekenden:");
   view.kopers.forEach((p, i) => b.li("", ...comparitiePersoon(b, p, i + 1)));
-  b.p(`hierna te noemen: "volmachtgever",`);
+  b.p(`hierna${view.kopers.length > 1 ? " samen" : ""} te noemen: “volmachtgever”,`);
   b.p(`verklaren bij deze volmacht te verlenen aan ${NOTARY_OFFICE.proxyHolders[0]} (${NOTARY_OFFICE.officeName}, ${NOTARY_OFFICE.city}), ieder afzonderlijk, om namens volmachtgever:`);
   let n = 1;
   if (lev) {
@@ -257,9 +277,9 @@ export function buildVolmachtKoper(view: DossierView): DocIR {
   }
   b.li(`${n++}.`, "kwijting te geven en te ontvangen, de nota van afrekening goed te keuren, woonplaats te kiezen en verder al datgene te doen wat de gevolmachtigde ter uitvoering van deze volmacht nodig of nuttig acht.");
   b.p("De gevolmachtigde is bevoegd deze volmacht ook te gebruiken als tegenpartij van volmachtgever of als gevolmachtigde van een of meer andere partijen (onder meer de verkoper en de geldverstrekker). Deze volmacht is onherroepelijk voor zover dit voor de uitvoering nodig is en eindigt niet door de dood van volmachtgever. Op deze volmacht is Nederlands recht van toepassing.");
-  b.sig(view.kopers.map((p) => `Ondertekend door ${personName(p.data.person)} ____________________   datum: ${p.data.volmacht?.ondertekendOp ? dateNl(p.data.volmacht.ondertekendOp) : "__________"}`));
+  b.sig(view.kopers.map(sigLine));
   b.note("Ondertekening vindt plaats tijdens een volmachtafspraak (video of op kantoor) na identificatie, volgens de door de notaris vastgestelde formaliteiten.");
-  return b.build("Volmacht koper", view.dossier.reference);
+  return b.build("Volmacht koper", view.dossier.reference, !status.allSigned);
 }
 
 export function buildVolmachtVerkoper(view: DossierView): DocIR {
@@ -267,17 +287,19 @@ export function buildVolmachtVerkoper(view: DossierView): DocIR {
   const d = view.data;
   b.title("VERKOOPVOLMACHT");
   b.subtitle(propertyLine(d.property));
+  const status = signStatus(view.verkopers);
+  if (status.note) b.note(status.note);
   b.p("De ondergetekenden:");
   view.verkopers.forEach((p, i) => b.li("", ...comparitiePersoon(b, p, i + 1)));
-  b.p(`hierna te noemen: "volmachtgever",`);
+  b.p(`hierna${view.verkopers.length > 1 ? " samen" : ""} te noemen: “volmachtgever”,`);
   b.p(`verklaren bij deze volmacht te verlenen aan ${NOTARY_OFFICE.proxyHolders[0]} (${NOTARY_OFFICE.officeName}, ${NOTARY_OFFICE.city}), ieder afzonderlijk, om namens volmachtgever:`);
   b.li("1.", "aan ", b.f(view.kopers.map((k) => personName(k.data.person)).join(" en ") || undefined, "Koper(s)", BRON.ko), " te leveren: ", ...objectRuns(b, view), ", voor een koopprijs van ", b.f(d.transaction.koopprijs ? euro(d.transaction.koopprijs) : undefined, "Koopprijs", BRON.ko), ", ter uitvoering van de koopovereenkomst d.d. ", b.f(d.transaction.datumOndertekening ? dateNl(d.transaction.datumOndertekening) : undefined, "Datum koopovereenkomst", BRON.ko), ", en daartoe de akte van levering te tekenen;");
   b.li("2.", "de koopprijs in ontvangst te nemen en daarvoor kwijting te verlenen, de notaris op te dragen bestaande hypothecaire schulden uit de opbrengst af te lossen en medewerking te verlenen aan doorhaling van de inschrijvingen;");
   b.li("3.", "de nota van afrekening goed te keuren, woonplaats te kiezen en verder al datgene te doen wat de gevolmachtigde ter uitvoering van deze volmacht nodig of nuttig acht.");
   b.p("De gevolmachtigde is bevoegd deze volmacht ook te gebruiken als tegenpartij van volmachtgever. Deze volmacht eindigt niet door de dood van volmachtgever. Op deze volmacht is Nederlands recht van toepassing.");
-  b.sig(view.verkopers.map((p) => `Ondertekend door ${personName(p.data.person)} ____________________   datum: __________`));
+  b.sig(view.verkopers.map(sigLine));
   b.note("Indien de notaris dat vereist: handtekening laten legaliseren (bij een notaris of de gemeente) en de gelegaliseerde volmacht uploaden en origineel opsturen.");
-  return b.build("Verkoopvolmacht", view.dossier.reference);
+  return b.build("Verkoopvolmacht", view.dossier.reference, !status.allSigned);
 }
 
 export function buildStartersVerklaring(view: DossierView, p: Party): DocIR {
@@ -354,6 +376,7 @@ export function buildKoopovereenkomst(view: DossierView): DocIR {
   const persoon = (p: Party, i: number): Run[] => [`${i + 1}. `, b.f(personName(p.data.person), `Naam ${p.side} ${i + 1}`, bron), p.data.person.geboortedatum ? `, geboren op ${dateNl(p.data.person.geboortedatum)}` : "", p.data.person.geboorteplaats ? ` te ${p.data.person.geboorteplaats}` : "", p.data.person.adres ? `, wonende te ${[p.data.person.postcode, p.data.person.woonplaats].filter(Boolean).join(" ")}, ${p.data.person.adres}` : "", ";"];
   b.title("KOOPOVEREENKOMST WOONHUIS");
   b.subtitle(`${propertyLine(d.property)} · concept ${view.dossier.reference}`);
+  b.note("Concept — wordt juridisch gecontroleerd voordat koper en verkoper digitaal tekenen.");
   b.p("DE ONDERGETEKENDEN:");
   view.verkopers.forEach((p, i) => b.li("", ...persoon(p, i)));
   b.p(`hierna${view.verkopers.length > 1 ? " samen" : ""} te noemen: "verkoper",`);
@@ -391,5 +414,5 @@ export function buildKoopovereenkomst(view: DossierView): DocIR {
   b.h("Ondertekening");
   b.sig([...view.verkopers.map((p) => `Verkoper: ${personName(p.data.person)} ____________________`), ...view.kopers.map((p) => `Koper: ${personName(p.data.person)} ____________________`)]);
   b.check("Juridische controle concept vóór verzending ter ondertekening");
-  return b.build("Concept-koopovereenkomst", view.dossier.reference);
+  return b.build("Concept-koopovereenkomst", view.dossier.reference, false);
 }

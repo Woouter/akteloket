@@ -3,6 +3,12 @@ import type { ReactNode } from "react";
 import { ArrowLeft, Cpu, Info } from "lucide-react";
 import { StateChip, StateIcon } from "@/components/ui";
 import type { Step } from "@/lib/workflow/steps";
+import type { PartyAccess } from "@/lib/auth/guards";
+
+/** Personen aan deze kant, met de ingelogde persoon eerst. */
+export function meFirst(a: PartyAccess) {
+  return [...a.mine].sort((x, y) => Number(y.id === a.me.id) - Number(x.id === a.me.id));
+}
 
 export function StepFrame({ step, base, children, aside }: { step: Step; base: string; children: ReactNode; aside?: ReactNode }) {
   return (
@@ -13,7 +19,7 @@ export function StepFrame({ step, base, children, aside }: { step: Step; base: s
           <StateIcon state={step.state} size="lg" />
           <div className="min-w-0">
             <p className="font-mono text-xs font-semibold text-ink-400">Stap {step.nr}</p>
-            <h2 className="text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">{step.title}</h2>
+            <h2 className="text-2xl font-semibold text-ink-900 sm:text-3xl">{step.title}</h2>
             <p className="mt-1.5 text-ink-600">{step.description}</p>
             <div className="mt-3"><StateChip state={step.state} label={step.label} /></div>
           </div>
@@ -22,7 +28,7 @@ export function StepFrame({ step, base, children, aside }: { step: Step; base: s
       </div>
       <aside className="min-w-0 space-y-4">
         <div className="rounded-2xl border border-platform-100 bg-platform-50/60 p-5 text-sm">
-          <p className="flex items-center gap-2 font-semibold text-ink-900"><Cpu className="h-4 w-4 text-platform-600" />Wat wij doen</p>
+          <h3 className="flex items-center gap-2 font-sans text-sm font-semibold text-ink-900"><Cpu className="h-4 w-4 text-platform-600" />Wat wij doen</h3>
           <p className="mt-2 text-ink-700">{step.platform}</p>
         </div>
         {aside}
@@ -46,7 +52,7 @@ export function Radio({ name, options, value, required }: { name: string; option
       {options.map(([v, l]) => (
         <label key={v} className="cursor-pointer">
           <input type="radio" name={name} value={v} defaultChecked={value === v} required={required} className="peer sr-only" />
-          <span className="btn btn-secondary btn-sm peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white peer-focus-visible:shadow-[var(--shadow-focus)]">{l}</span>
+          <span className="btn btn-secondary btn-sm peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white peer-focus-visible:shadow-[var(--shadow-focus)] whitespace-normal">{l}</span>
         </label>
       ))}
     </div>

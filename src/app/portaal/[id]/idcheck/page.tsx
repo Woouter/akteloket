@@ -1,9 +1,13 @@
-import { notFound } from "next/navigation";
-import { Fingerprint, Landmark, ShieldCheck, Smartphone } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArrowLeft, Fingerprint, Landmark, ShieldCheck, Smartphone } from "lucide-react";
 import { requireParty } from "@/lib/auth/guards";
 import { completeIdCheck } from "@/app/portaal/actions";
 import { isDemo } from "@/lib/config";
 import { Notice } from "@/components/ui";
+
+export const metadata: Metadata = { title: "Identificeren", robots: { index: false } };
 
 /**
  * Identificatie. In productie wordt hier doorverwezen naar de door de notaris gekozen
@@ -13,12 +17,14 @@ import { Notice } from "@/components/ui";
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ party?: string; m?: string }> }) {
   const { id } = await params;
   const sp = await searchParams;
-  const a = await requireParty(id);
+  const a = await requireParty(id, `/portaal/${id}/stap/identificatie`);
   const p = a.mine.find((x) => x.id === sp.party);
-  if (!p) notFound();
+  // Zonder (geldige) persoon: terug naar de stap, waar je de methode kiest.
+  if (!p || p.data.idcheck?.status === "voltooid") redirect(`/portaal/${id}/stap/identificatie`);
   const m = sp.m === "nfc_app" ? "nfc_app" : "idin";
   return (
     <div className="mx-auto max-w-lg">
+      <Link href={`/portaal/${id}/stap/identificatie`} className="btn btn-ghost btn-sm -ml-2 mb-3"><ArrowLeft className="h-4 w-4" />Terug naar identificeren</Link>
       <div className="card overflow-hidden p-0">
         <div className="flex items-center gap-3 bg-ink-900 px-6 py-4 text-white">{m === "idin" ? <Landmark className="h-5 w-5" /> : <Smartphone className="h-5 w-5" />}<span className="font-semibold">{m === "idin" ? "Identificeren met iDIN" : "Identificeren met je identiteitsbewijs"}</span></div>
         <div className="space-y-5 p-6">

@@ -11,8 +11,8 @@ export function UitnodigingStep({ a }: { a: PartyAccess }) {
     <Card className="divide-y divide-ink-100 p-0">
       {a.mine.map((p) => (
         <div key={p.id} className="flex items-center justify-between gap-4 p-5">
-          <span className="flex items-center gap-3"><StateIcon state={p.activatedAt ? "done" : "todo"} size="sm" /><span><span className="block font-semibold text-ink-900">{p.displayName}</span><span className="block text-xs text-ink-500"><Mail className="mr-1 inline h-3 w-3" />{p.email ?? "e-mailadres onbekend"}</span></span></span>
-          <span className="text-sm text-ink-600">{p.activatedAt ? `Geactiveerd ${dateNl(p.activatedAt, { short: true })}` : p.invitedAt ? `Uitgenodigd ${dateNl(p.invitedAt, { short: true })}` : "Nog niet uitgenodigd"}</span>
+          <span className="flex min-w-0 items-center gap-3"><StateIcon state={p.activatedAt ? "done" : "todo"} size="sm" /><span className="min-w-0"><span className="block font-semibold text-ink-900">{p.displayName}</span><span className="block text-xs text-ink-500"><Mail className="mr-1 inline h-3 w-3" />{p.email ?? "e-mailadres onbekend"}</span></span></span>
+          <span className="shrink-0 text-right text-sm text-ink-600">{p.activatedAt ? `Geactiveerd ${dateNl(p.activatedAt, { short: true })}` : p.invitedAt ? `Uitgenodigd ${dateNl(p.invitedAt, { short: true })}` : "Nog niet uitgenodigd"}</span>
         </div>
       ))}
     </Card>
@@ -27,11 +27,11 @@ export function ZekerhedenStep({ a }: { a: PartyAccess }) {
     <div className="space-y-5" data-tour="zekerheden">
       <form action={saveZekerheden.bind(null, a.view.dossier.id)} className="space-y-5">
         <Card className="p-6">
-          <h3 className="flex items-center gap-2 font-bold text-ink-900"><Landmark className="h-5 w-5 text-brand-600" />Bestaande hypotheken op de woning</h3>
+          <h3 className="flex items-center gap-2 text-lg text-ink-900"><Landmark className="h-5 w-5 text-brand-600" />Bestaande hypotheken op de woning</h3>
           {pos.length ? <p className="mt-1 text-sm text-ink-600">Uit de kadastrale registratie blijkt de volgende inschrijving. Vul je leningnummer(s) aan, dan kan de notaris de aflosnota direct opvragen.</p> : <p className="mt-1 text-sm text-ink-600">In de kadastrale registratie hebben we geen hypotheekinschrijving gevonden.</p>}
           <div className="mt-5 space-y-3">
             {pos.map((p) => (
-              <div key={p.id} className="rounded-2xl border border-ink-100 p-4">
+              <div key={p.id} className="rounded-xl border border-ink-100 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2"><p className="font-semibold text-ink-900">{p.lender}</p><span className={`chip ${p.status === "gecontroleerd" || p.status === "ontvangen" ? "bg-ok-100 text-ok-700" : "bg-ink-100 text-ink-600"}`}>Aflosnota: {label[p.status]}</span></div>
                 <p className="text-xs text-ink-500">{p.inschrijving} · bron: {p.source === "kadaster" ? "kadastrale registratie" : "opgave verkoper"}</p>
                 <label className="mt-3 block max-w-sm"><span className="label">Leningnummer(s)</span><input className="input" name={`lening_${p.id}`} defaultValue={p.loanNumbers ?? ""} placeholder="Staat op je jaaroverzicht" /></label>
@@ -40,7 +40,8 @@ export function ZekerhedenStep({ a }: { a: PartyAccess }) {
             ))}
           </div>
           <div className="mt-5 grid gap-4 border-t border-ink-100 pt-5 sm:grid-cols-2">
-            <label className="block"><span className="label">Andere geldverstrekker of lening met zekerheid op de woning?</span><input className="input" name="extraLender" placeholder="Naam geldverstrekker (optioneel)" /></label>
+            <p className="text-sm text-ink-600 sm:col-span-2">Rust er nog een andere lening met zekerheid op de woning? Vul die hier aan (optioneel).</p>
+            <label className="block"><span className="label">Andere geldverstrekker</span><input className="input" name="extraLender" placeholder="Naam geldverstrekker" /></label>
             <label className="block"><span className="label">Leningnummer</span><input className="input" name="extraLening" /></label>
             {!pos.length && <label className="sm:col-span-2 flex items-center gap-3 text-sm"><input type="checkbox" name="geen" className="h-5 w-5 accent-[var(--color-brand-600)]" />Er rust geen hypotheek of andere lening op de woning</label>}
           </div>
@@ -61,7 +62,7 @@ export function NotaVerkoperStep({ a }: { a: PartyAccess }) {
   return (
     <div className="space-y-5" data-tour="nota">
       <Card className="p-6">
-        <p className="flex items-center gap-2 font-bold text-ink-900"><Banknote className="h-5 w-5 text-verkoper-600" />Nota van afrekening verkoper</p>
+        <h3 className="flex items-center gap-2 text-lg text-ink-900"><Banknote className="h-5 w-5 text-verkoper-600" />Nota van afrekening verkoper</h3>
         {nota && nota.status !== "in_voorbereiding" ? (
           <>
             <NotaTable nota={nota} side="verkoper" />
@@ -76,7 +77,7 @@ export function NotaVerkoperStep({ a }: { a: PartyAccess }) {
           </>
         )}
       </Card>
-      <KV className="card p-5" rows={[["Status nota", nota?.status === "definitief" ? "Definitief" : nota?.status === "beschikbaar" ? "Beschikbaar" : "In voorbereiding"], ["Uitbetalings-IBAN", formatIban(ib?.iban) || "Nog niet opgegeven"], ["Aflosnota's", a.view.payoffs.map((p) => `${p.lender}: ${p.status}`).join(", ") || "Geen"]]} />
+      <KV className="card p-5" rows={[["Status nota", nota?.status === "definitief" ? "Definitief" : nota?.status === "beschikbaar" ? "Beschikbaar" : "In voorbereiding"], ["Uitbetalings-IBAN", formatIban(ib?.iban) || "Nog niet opgegeven"], ["Aflosnota's", a.view.payoffs.map((p) => `${p.lender}: ${{ op_te_vragen: "op te vragen", aangevraagd: "aangevraagd", ontvangen: "ontvangen", gecontroleerd: "gecontroleerd" }[p.status]}`).join(", ") || "Geen"]]} />
       <p className="flex items-center gap-2 text-xs text-ink-500"><ShieldCheck className="h-4 w-4" />De koper ziet jouw nota en rekeninggegevens niet.</p>
     </div>
   );

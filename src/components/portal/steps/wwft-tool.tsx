@@ -28,15 +28,21 @@ const GENERAL: { key: keyof WwftBron; label: string; options: [string, string][]
 
 const eur = (n?: number) => (n == null ? "—" : `€ ${n.toLocaleString("nl-NL")}`);
 
-export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { dossierId: string; bronnen: WwftBron[]; matrix: WwftRule[]; docs: { id: string; title: string; meta: Record<string, unknown> }[]; indicatie: number }) {
+export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { dossierId: string; bronnen: WwftBron[]; matrix: WwftRule[]; docs: { id: string; title: string; meta: Record<string, unknown> }[]; indicatie: number | null }) {
   const [edit, setEdit] = useState<string | "nieuw" | null>(bronnen.length ? null : "nieuw");
   const total = bronnen.reduce((s, b) => s + (b.bedrag ?? 0), 0);
   return (
     <div className="space-y-4" data-tour="wwft-bronnen">
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-100"><p className="text-xs text-ink-500">Opgegeven eigen middelen</p><p className="mt-1 text-xl font-extrabold text-ink-900 tabular">{eur(total)}</p></div>
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-100"><p className="text-xs text-ink-500">Indicatie benodigd eigen geld</p><p className="mt-1 text-xl font-extrabold text-ink-900 tabular">{eur(Math.round(indicatie))}</p></div>
-        <div className={cn("rounded-2xl p-4 ring-1", total >= indicatie ? "bg-ok-50 ring-ok-600/15" : "bg-warn-50 ring-warn-600/20")}><p className="text-xs text-ink-500">Verschil</p><p className={cn("mt-1 text-xl font-extrabold tabular", total >= indicatie ? "text-ok-700" : "text-warn-700")}>{total >= indicatie ? "Gedekt" : eur(Math.round(indicatie - total))}</p></div>
+        <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100"><p className="text-xs text-ink-500">Opgegeven eigen middelen</p><p className="mt-1 font-serif text-xl font-semibold text-ink-900 tabular">{eur(total)}</p></div>
+        {indicatie == null ? (
+          <div className="rounded-xl bg-ink-50 p-4 ring-1 ring-ink-100 sm:col-span-2"><p className="text-xs text-ink-500">Indicatie benodigd eigen geld</p><p className="mt-1 text-sm text-ink-700">Vul eerst stap 4 <a href="woning" className="font-medium text-ink-900 underline underline-offset-2">Woning &amp; financiering</a> in; dan rekenen we uit hoeveel eigen geld je ongeveer nodig hebt.</p></div>
+        ) : (
+          <>
+            <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100"><p className="text-xs text-ink-500">Indicatie benodigd eigen geld</p><p className="mt-1 font-serif text-xl font-semibold text-ink-900 tabular">{eur(Math.round(indicatie))}</p></div>
+            <div className={cn("rounded-xl p-4 ring-1", total >= indicatie ? "bg-ok-50 ring-ok-600/15" : "bg-warn-50 ring-warn-600/20")}><p className="text-xs text-ink-500">Verschil</p><p className={cn("mt-1 font-serif text-xl font-semibold tabular", total >= indicatie ? "text-ok-700" : "text-warn-700")}>{total >= indicatie ? "Gedekt" : eur(Math.round(indicatie - total))}</p></div>
+          </>
+        )}
       </div>
       {bronnen.map((b) => {
         const rule = matrix.find((r) => r.type === b.type);
@@ -44,12 +50,13 @@ export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { doss
         const required = rule?.documenten ?? [];
         const extra = rule?.drempel && (b.bedrag ?? 0) > rule.drempel && rule.aanvullend ? [rule.aanvullend] : [];
         const missing = [...required, ...extra].filter((r) => !bdocs.some((d) => d.meta.documentType === r));
+        const overig = bdocs.filter((d) => ![...required, ...extra].includes(d.meta.documentType as string));
         if (edit === b.id) return <BronForm key={b.id} dossierId={dossierId} bron={b} onCancel={() => setEdit(null)} />;
         return (
           <div key={b.id} id={`bron-${b.id}`} className="card p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="flex items-center gap-2 font-bold text-ink-900"><Euro className="h-4 w-4 text-brand-600" />{rule?.label ?? b.type} · {eur(b.bedrag)}</p>
+                <p className="flex items-center gap-2 font-semibold text-ink-900"><Euro className="h-4 w-4 text-brand-600" />{rule?.label ?? b.type} · {eur(b.bedrag)}</p>
                 <p className="mt-1 text-sm text-ink-500">{[b.details.opbouw, b.details.van, b.details.relatie, b.details.onderneming].filter(Boolean).join(" · ")}</p>
                 {(b.eigenaarGeld === "derde" || b.rekening === "iemand_anders" || b.rekening === "onderneming") && <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-warn-700"><AlertTriangle className="h-3.5 w-3.5" />Aandachtspunt voor de notaris: geld van een derde of via een onderneming</p>}
               </div>
@@ -66,6 +73,9 @@ export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { doss
                   </div>
                 );
               })}
+              {overig.length > 0 && (
+                <div className="rounded-xl bg-ink-50 p-3 text-sm text-ink-800"><p className="text-xs font-semibold text-ink-500">Overige bijlagen bij deze bron</p>{overig.map((h) => <span key={h.id} className="mt-1 flex items-center gap-1.5"><FileText className="h-3.5 w-3.5 shrink-0 text-ink-400" />{h.title}</span>)}</div>
+              )}
               {missing.length === 0 && <p className="text-xs font-semibold text-ok-700">Alle gevraagde stukken voor deze bron zijn aangeleverd.</p>}
             </div>
           </div>
@@ -82,7 +92,7 @@ function BronForm({ dossierId, bron, onCancel }: { dossierId: string; bron?: Wwf
   return (
     <form action={saveBron.bind(null, dossierId)} className="card space-y-4 border-brand-200 p-5">
       {bron && <input type="hidden" name="id" value={bron.id} />}
-      <div className="flex items-center justify-between"><p className="font-bold text-ink-900">{bron ? "Geldbron wijzigen" : "Waar komt het eigen geld vandaan?"}</p>{onCancel && <button type="button" onClick={onCancel} className="text-ink-400 hover:text-ink-700"><X className="h-5 w-5" /></button>}</div>
+      <div className="flex items-center justify-between"><p className="font-semibold text-ink-900">{bron ? "Geldbron wijzigen" : "Waar komt het eigen geld vandaan?"}</p>{onCancel && <button type="button" onClick={onCancel} className="text-ink-400 hover:text-ink-700"><X className="h-5 w-5" /></button>}</div>
       <div className="flex flex-wrap gap-2">
         {TYPES.map(([v, l]) => <label key={v} className="cursor-pointer"><input type="radio" name="type" value={v} checked={type === v} onChange={() => setType(v)} className="peer sr-only" required /><span className="btn btn-secondary btn-sm peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white">{l}</span></label>)}
       </div>

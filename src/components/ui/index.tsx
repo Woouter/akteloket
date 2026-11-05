@@ -43,7 +43,8 @@ export function StateChip({ state, label }: { state: StepState; label: string })
     na: "bg-ink-50 text-ink-400 ring-ink-100",
     todo: "bg-white text-ink-700 ring-ink-200",
   };
-  return <span className={cn("chip ring-1 max-w-full truncate", t[state])}>{label}</span>;
+  // Ellips werkt niet op een inline-flex container zelf; daarom een binnenste span.
+  return <span className={cn("chip ring-1 max-w-full", t[state])} title={label}><span className="min-w-0 truncate">{label}</span></span>;
 }
 
 export function Card({ children, className, ...rest }: { children: ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {

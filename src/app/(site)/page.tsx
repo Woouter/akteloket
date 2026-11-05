@@ -69,7 +69,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container-page" data-tour="home-usp">
+      <section className="container-page mt-24" data-tour="home-usp">
         <SectionTitle eyebrow="Waarom Akteloket" title="Notarieel net zo zorgvuldig. Voor jou een stuk eenvoudiger." intro="De notaris blijft verantwoordelijk voor alles wat juridisch telt. Wij zorgen dat al het voorwerk al gedaan is — snel, digitaal en duidelijk." />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {usps.map((u) => (

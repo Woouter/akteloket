@@ -8,6 +8,7 @@ import { BRAND, isDemo } from "@/lib/config";
 import { DemoBar } from "@/components/demo/demo-bar";
 import { TourProvider } from "@/components/demo/tour";
 import { mainDemoDossierId } from "@/lib/demo/main";
+import { MenuAutoClose } from "@/components/ui/menu-auto-close";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen antialiased">
         {demo && <DemoBar />}
         {children}
+        <Suspense fallback={null}><MenuAutoClose /></Suspense>
         {demo && (
           <Suspense fallback={null}>
             <TourProvider mainId={mainId} />

@@ -30,7 +30,7 @@ export function SiteHeader() {
       <div className="container-page flex h-[4.5rem] items-center gap-8">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Hoofdmenu">
-          <div className="group relative">
+          <div className="group relative" data-menu>
             <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-[0.9375rem] font-medium text-ink-700 hover:text-ink-900">
               Diensten <ChevronDown className="h-4 w-4 opacity-60 transition group-hover:rotate-180" />
             </button>
@@ -52,7 +52,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <Link href="/inloggen" className="btn btn-ghost hidden sm:inline-flex">Inloggen</Link>
           <Link href="/aanvraag" className="btn btn-primary hidden sm:inline-flex">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
-          <details className="group lg:hidden">
+          <details className="group lg:hidden" data-menu>
             <summary className="btn btn-secondary btn-sm list-none" aria-label="Menu openen"><Menu className="h-5 w-5 group-open:hidden" /><X className="hidden h-5 w-5 group-open:block" /></summary>
             <div className="absolute inset-x-0 top-[4.5rem] border-b border-ink-200 bg-white shadow-lift">
               <div className="container-page grid gap-1 py-4">

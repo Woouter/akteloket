@@ -9,6 +9,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Alleen voor lokaal naast elkaar draaien van demo- en productiebuild (standaard .next).
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   serverExternalPackages: ["@electric-sql/pglite", "pg", "nodemailer", "unpdf"],
   // Migraties en kennisbank worden op runtime gelezen (ook op Vercel).
   outputFileTracingIncludes: { "/**": ["./drizzle/**/*", "./content/**/*"] },

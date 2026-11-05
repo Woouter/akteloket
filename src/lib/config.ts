@@ -191,4 +191,4 @@ export const TERMS = {
   conceptBewaarDagen: 7,
 };
 
-export const DVO_VERSION = "DVO-2026.11-v1";
+export const DVO_VERSION = "v1.0";

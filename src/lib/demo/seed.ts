@@ -240,16 +240,36 @@ async function alignWithTimeline(dossierId: string) {
     volmacht_koper: "volmacht.koper", volmacht_verkoper: "volmacht.verkoper", verklaring_starters: "starters.verklaring", concept_leveringsakte: "akte.levering",
     concept_hypotheekakte: "akte.hypotheek", bankinstructie: "akte.hypotheek", aflosnota_verzoek: "aflosnota.voorbereid", wwft_bewijs: "wwft.ingediend",
   };
+  const [dossier] = await db.select().from(schema.dossiers).where(eq(schema.dossiers.id, dossierId));
+  const ingediend = dossier.data.wwft?.ingediendOp ? new Date(dossier.data.wwft.ingediendOp) : undefined;
   const docs = await db.select().from(schema.documents).where(eq(schema.documents.dossierId, dossierId));
   for (const doc of docs) {
-    const t = kindToEvent[doc.kind] && at(kindToEvent[doc.kind], doc.kind.startsWith("concept_"));
-    if (t) await db.update(schema.documents).set({ createdAt: new Date(t.getTime() - (doc.kind === "wwft_bewijs" || doc.kind === "bankinstructie" ? 3600_000 : 0)) }).where(eq(schema.documents.id, doc.id));
+    let t = kindToEvent[doc.kind] ? at(kindToEvent[doc.kind], doc.kind.startsWith("concept_")) : undefined;
+    if (!t && doc.kind === "wwft_bewijs" && ingediend) t = ingediend;
+    if (!t) t = evs[0]?.createdAt ?? dossier.createdAt;
+    await db.update(schema.documents).set({ createdAt: new Date(t.getTime() - (doc.kind === "wwft_bewijs" || doc.kind === "bankinstructie" ? 3600_000 : 0)) }).where(eq(schema.documents.id, doc.id));
+  }
+  // De datumcontrole gaat precies 14 dagen vóór de levering uit — niet ergens op de tijdlijn.
+  const lev = dossier.data.transaction.leveringsdatum;
+  const dc = evs.find((e) => e.type === "datum.gevraagd");
+  if (lev && dc) {
+    const t = new Date(Math.min(amsAt(addDays(lev, -14), 8, 45).getTime(), Date.now() - 3600_000));
+    await db.update(schema.events).set({ createdAt: t }).where(eq(schema.events.id, dc.id));
+    const mail = (await db.select().from(schema.emails).where(eq(schema.emails.dossierId, dossierId))).find((m) => m.template === "koper.datumcheck");
+    if (mail) await db.update(schema.emails).set({ createdAt: new Date(t.getTime() + 60_000), sentAt: new Date(t.getTime() + 60_000) }).where(eq(schema.emails.id, mail.id));
+    await updateDossier(dossierId, (d) => { if (d.datumCheck.gevraagdOp) d.datumCheck.gevraagdOp = t.toISOString(); });
   }
   const parties = await db.select().from(schema.parties).where(eq(schema.parties.dossierId, dossierId));
+  // Kopers met een account: actief vanaf het DVO-akkoord (de medekoper een paar dagen later).
+  const startKoper = dvo ?? evs[0]?.createdAt;
+  if (startKoper) for (const p of parties.filter((x) => x.side === "koper" && x.activatedAt)) {
+    await db.update(schema.parties).set({ activatedAt: new Date(Math.min(startKoper.getTime() + (p.isPrimary ? 0 : 3 * 86400_000), Date.now() - 3600_000)) }).where(eq(schema.parties.id, p.id));
+  }
   for (const e of evs.filter((x) => x.type === "verkoper.uitgenodigd")) {
     const p = parties.find((x) => x.side === "verkoper" && e.message.includes(x.displayName));
     if (!p) continue;
-    const activated = new Date(Math.min(e.createdAt.getTime() + 20 * 3600_000, Date.now() - 3600_000));
+    const day = new Date(e.createdAt.getTime() + amsOffset(e.createdAt) * 60000).toISOString().slice(0, 10);
+    const activated = new Date(Math.min((amsHour(e.createdAt) < 19 ? amsAt(day, 19, 40) : amsAt(addDays(day, 1), 9, 25)).getTime(), Date.now() - 3600_000));
     await db.update(schema.parties).set({ invitedAt: e.createdAt, ...(p.activatedAt ? { activatedAt: activated } : {}) }).where(eq(schema.parties.id, p.id));
   }
   const po = await db.select().from(schema.payoffs).where(eq(schema.payoffs.dossierId, dossierId));
@@ -300,13 +320,15 @@ async function seedPipeline() {
     const passed = e.stage === "gepasseerd";
     const levTs = (h: number, plusDays = 0) => amsAt(addDays(lev, plusDays), h);
     const spanDays = Math.max(8, 45 - Math.max(0, e.levering));
-    const timelineEnd = passed ? levTs(8, -1).getTime() : Date.now();
+    const timelineEnd = passed ? levTs(18, -1).getTime() : Date.now();
     const timelineStart = timelineEnd - spanDays * 86400_000;
+    const startDate = new Date(timelineStart).toISOString().slice(0, 10);
+    const afgewikkeld = amsAt(workday(addDays(lev, 1)), 11);
     await updateDossier(id, (d) => {
       d.property = { straat: e.adres, huisnummer: e.nr, postcode: e.postcode, plaats: e.plaats, soort: "woning" };
-      d.transaction = { koopprijs: e.prijs || undefined, leveringsdatum: lev, leveringsdatumOrigineel: lev, leveringsdatumStatus: passed ? "bevestigd" : "voorlopig", datumOndertekening: addDays(todayIso(), e.levering - 45) };
+      d.transaction = { koopprijs: e.prijs || undefined, leveringsdatum: lev, leveringsdatumOrigineel: lev, leveringsdatumStatus: passed ? "bevestigd" : "voorlopig", datumOndertekening: addDays(startDate, -3) };
       if (passed) d.datumCheck = { gevraagdOp: levTs(9, -14).toISOString(), antwoord: "ja", beantwoordOp: levTs(20, -13).toISOString() };
-      d.dvo = { version: DVO_VERSION, acceptedAt: new Date(timelineStart + 86400_000).toISOString(), acceptedBy: "demo", signatureName: `${e.koper[0]} ${e.koper[1]}`, checks: ["dvo", "voorwaarden", "volmacht", "juist"] };
+      d.dvo = { version: DVO_VERSION, acceptedAt: amsAt(addDays(startDate, -1), 9, 30).toISOString(), acceptedBy: "demo", signatureName: `${e.koper[0]} ${e.koper[1]}`, checks: ["dvo", "voorwaarden", "volmacht", "juist"] };
       d.koStatus = e.stage === "wacht" || e.service === "hypotheek" ? "ontbreekt" : "verwerkt";
       d.financing = { ...d.financing, hypotheek: e.service === "levering" ? "nee" : "ja", status: "offerte_geaccepteerd", eigenMiddelen: "ja", bevestigd: e.stage !== "wacht", geldverstrekker: e.service === "levering" ? undefined : "Demo Hypotheekbank N.V. (fictief)", hypotheekbedragIndicatie: e.prijs ? Math.round(e.prijs * 0.85) : 300000 };
     });
@@ -341,7 +363,7 @@ async function seedPipeline() {
       await runAutomations(id, "seed");
       await db.update(schema.checks).set({ status: "akkoord", decidedBy: "Lotte van Dam", decidedAt: levTs(16, -3) }).where(eq(schema.checks.dossierId, id));
       await updateDossier(id, (d) => {
-        d.gepasseerdOp = levTs(10).toISOString(); d.ingeschrevenOp = levTs(12).toISOString(); d.afgewikkeldOp = levTs(11, 1).toISOString();
+        d.gepasseerdOp = levTs(10).toISOString(); d.ingeschrevenOp = levTs(12).toISOString(); d.afgewikkeldOp = afgewikkeld.toISOString();
         if (d.notaKoper) d.notaKoper.status = "definitief";
         if (d.akteLevering) d.akteLevering.status = "definitief";
         if (d.notaVerkoper) { d.notaVerkoper.status = "definitief"; d.notaVerkoper.uitbetaaldOp = d.afgewikkeldOp; }
@@ -350,8 +372,9 @@ async function seedPipeline() {
     }
     if (e.stage === "bij_notaris") await runAutomations(id, "seed");
     await spreadTimeline(id, spanDays, timelineEnd);
+    await alignWithTimeline(id);
     if (passed) {
-      for (const [type, message, at] of [["akte.gepasseerd", "Akte van levering gepasseerd bij de notaris.", levTs(10)], ["kadaster.ingeschreven", "Akte ingeschreven in het Kadaster.", levTs(12)], ["dossier.afgewikkeld", "Dossier financieel afgewikkeld: verkoopopbrengst uitbetaald.", levTs(11, 1)]] as const) {
+      for (const [type, message, at] of [["akte.gepasseerd", "Akte van levering gepasseerd bij de notaris.", levTs(10)], ["kadaster.ingeschreven", "Akte ingeschreven in het Kadaster.", levTs(12)], ["dossier.afgewikkeld", "Dossier financieel afgewikkeld: verkoopopbrengst uitbetaald.", afgewikkeld]] as const) {
         await logEvent({ dossierId: id, actorType: type === "akte.gepasseerd" ? "notaris" : "systeem", actorName: type === "akte.gepasseerd" ? "Lotte van Dam" : undefined, type, message, visibleTo: "partijen" });
         const [ev] = await db.select().from(schema.events).where(and(eq(schema.events.dossierId, id), eq(schema.events.type, type)));
         if (ev) await db.update(schema.events).set({ createdAt: at }).where(eq(schema.events.id, ev.id));

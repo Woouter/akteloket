@@ -97,6 +97,15 @@ export function TourProvider({ mainId }: { mainId?: string }) {
   const step = tour && state ? tour.steps[state.index] : undefined;
   const onPage = !!step && resolve(step.path) === pathname;
 
+  // Op mobiel staat de popup onderin: geef de pagina tijdelijk extra scrollruimte, zodat ook
+  // een doel onderaan de pagina boven de popup kan komen.
+  useLayoutEffect(() => {
+    if (!onPage || window.innerWidth >= 640) return;
+    const prev = document.body.style.paddingBottom;
+    document.body.style.paddingBottom = "20rem";
+    return () => { document.body.style.paddingBottom = prev; };
+  }, [onPage]);
+
   // Zoek het doelelement, scrol het onder de header in beeld en volg het bij scroll/resize.
   useLayoutEffect(() => {
     if (!onPage || !step) { setRect(null); return; }

@@ -32,7 +32,6 @@ export default function Page() {
         { title: "Door naar de notaris", text: "Start met één klik de akte van levering; je gegevens staan al klaar." },
       ]}
       faqTags={["koopovereenkomst"]}
-      extraFaq={[{ q: "Is een koopovereenkomst zonder makelaar rechtsgeldig?", a: "Ja. Een koopovereenkomst hoeft niet door een makelaar te worden opgesteld. Voor een woning is wel een schriftelijke overeenkomst verplicht, en het is belangrijk dat de afspraken volledig en duidelijk zijn vastgelegd." }]}
       articles={["koopovereenkomst-huis", "bedenktijd-koopovereenkomst", "huis-kopen-zonder-makelaar", "waarborgsom-of-bankgarantie"]}
     />
   );

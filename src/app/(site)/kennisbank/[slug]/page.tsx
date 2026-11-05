@@ -30,15 +30,21 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: a.title, description: a.description, dateModified: a.updated, author: { "@type": "Organization", name: BRAND.name }, publisher: { "@type": "Organization", name: BRAND.name }, mainEntityOfPage: `${BRAND.url}/kennisbank/${a.slug}` }} />
       {a.faq.length > 0 && <FaqJsonLd items={a.faq} />}
       <header className="border-b border-ink-100">
-        <div className="container-page max-w-4xl py-14">
+        <div className="container-page max-w-6xl py-14"><div className="max-w-3xl">
           <nav className="text-sm text-ink-500"><Link href="/kennisbank" className="hover:text-ink-900">Kennisbank</Link> <span className="mx-1.5">/</span> {a.category}</nav>
-          <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">{a.title}</h1>
+          <h1 className="mt-4 text-4xl text-ink-900 sm:text-5xl">{a.title}</h1>
           <p className="mt-5 text-lg text-ink-600">{a.description}</p>
           <p className="mt-5 flex items-center gap-4 text-sm text-ink-500"><span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" />{a.readingTime} min lezen</span><span>Bijgewerkt {dateNl(a.updated)}</span></p>
-        </div>
+        </div></div>
       </header>
       <div className="container-page mt-12 grid max-w-6xl gap-12 lg:grid-cols-[1fr_18rem]">
         <div className="min-w-0">
+          {a.headings.length > 2 && (
+            <details className="group mb-8 rounded-lg border border-ink-200 bg-white p-4 text-sm lg:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-ink-900">In dit artikel<span className="text-ink-400 transition group-open:rotate-180">⌄</span></summary>
+              <ul className="mt-3 space-y-2">{a.headings.map((h) => <li key={h.id}><a href={`#${h.id}`} className="text-ink-600 hover:text-brand-700">{h.text}</a></li>)}</ul>
+            </details>
+          )}
           <div className="prose-site" dangerouslySetInnerHTML={{ __html: a.html }} />
           {a.faq.length > 0 && (
             <section className="mt-14">
@@ -47,21 +53,21 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </section>
           )}
         </div>
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:pb-2">
           {a.headings.length > 2 && (
-            <nav className="rounded-2xl border border-ink-100 bg-white p-5 text-sm">
+            <nav className="hidden rounded-lg border border-ink-200 bg-white p-5 text-sm lg:block">
               <p className="font-semibold text-ink-900">In dit artikel</p>
               <ul className="mt-3 space-y-2">{a.headings.map((h) => <li key={h.id}><a href={`#${h.id}`} className="text-ink-600 hover:text-brand-700">{h.text}</a></li>)}</ul>
             </nav>
           )}
-          <div className="rounded-2xl bg-ink-900 p-6 text-white">
-            <p className="text-sm font-semibold text-brand-300">{s.name}</p>
-            <p className="mt-1 text-3xl font-extrabold">€ {s.price}<span className="ml-1 text-sm font-normal text-ink-300">all-in</span></p>
+          <div className="rounded-lg bg-ink-900 p-6 text-white">
+            <p className="eyebrow !text-brass-300">{s.name}</p>
+            <p className="mt-2 font-serif text-4xl font-semibold tabular">€ {s.price}<span className="ml-1.5 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <p className="mt-2 text-sm text-ink-300">{s.description}</p>
-            <Link href={href} className="btn btn-primary mt-5 w-full">Meer over {s.short.toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>
+            <Link href={href} className="btn btn-brass mt-5 w-full">Meer over {s.short.toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>
           </div>
           {related.length > 0 && (
-            <div className="rounded-2xl border border-ink-100 bg-white p-5 text-sm">
+            <div className="rounded-lg border border-ink-200 bg-white p-5 text-sm">
               <p className="font-semibold text-ink-900">Gerelateerd</p>
               <ul className="mt-3 space-y-2.5">{related.map((r) => r && <li key={r.slug}><Link href={`/kennisbank/${r.slug}`} className="font-medium text-ink-700 hover:text-brand-700">{r.title}</Link></li>)}</ul>
             </div>

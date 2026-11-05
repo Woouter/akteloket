@@ -150,6 +150,12 @@ export function parseSeen(v: string | undefined | null): string[] {
   return (v ?? "").split(",").filter((k) => TOURS.some((t) => t.key === k));
 }
 
+/** De tour die een pad het meest specifiek uitlegt (voor de melding "kies eerst een tour"). */
+export function tourForPath(path: string): Tour | undefined {
+  const hits = TOURS.flatMap((t) => t.scope.filter((p) => under(path, p)).map((p) => ({ t, len: p.length + (t.key === "website" ? 0 : 0.5) })));
+  return hits.sort((a, b) => b.len - a.len)[0]?.t;
+}
+
 /** Mag dit pad bekeken worden met de lopende tour en de al bekeken tours? */
 export function demoPathAllowed(path: string, active: string | undefined | null, seen: string[]): boolean {
   if (ALWAYS_OPEN.some((p) => under(path, p))) return true;

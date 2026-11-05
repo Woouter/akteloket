@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ArrowUpRight, BookOpen, Check, Compass, Download, FileText, Inbox, PlayCircle, RotateCcw, Sparkles } from "lucide-react";
-import { SEEN_COOKIE, TOURS, parseSeen, tourByKey } from "@/lib/demo/tours";
+import { SEEN_COOKIE, TOURS, parseSeen, tourByKey, tourForPath } from "@/lib/demo/tours";
 import { DEMO } from "@/lib/demo/scenario";
 import { mainDemoDossierId } from "@/lib/demo/main";
 import { resetDemoAction } from "./actions";
@@ -26,6 +26,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
   const main = await mainDemoDossierId();
   const firstPage = (key: string) => tourByKey(key)!.steps[0].path.replace("{main}", main ?? "");
   const blocked = sp.van && sp.van.startsWith("/") ? sp.van : null;
+  const match = blocked ? tourForPath(blocked) : undefined;
 
   return (
     <div className="pb-20">
@@ -34,7 +35,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
           {sp.reset && <Notice tone="ok" className="mb-8">De demo is teruggezet naar de beginsituatie.</Notice>}
           {blocked && (
             <Notice tone="info" className="mb-8" title="Kies eerst een tour">
-              De pagina <span className="font-mono text-[0.85em]">{blocked}</span> hoort bij een deel dat u nog niet in een tour heeft gezien. Na de tour kunt u daar zelf verder rondkijken.
+              <p>De pagina <span className="font-mono text-[0.85em]">{blocked}</span> hoort bij een deel dat u nog niet in een tour heeft gezien. Na de tour kunt u daar zelf verder rondkijken.</p>
+              {match && <a href={`/demo/start/${match.key}`} className="btn btn-dark btn-sm mt-3"><PlayCircle className="h-4 w-4" />Start de tour “{match.title}”</a>}
             </Notice>
           )}
           <p className="eyebrow">Demo-omgeving Akteloket</p>
@@ -51,9 +53,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
               const rec = t.key === RECOMMENDED;
               return (
                 <li key={t.key} className={`relative flex flex-col rounded-lg border bg-white p-6 transition hover:shadow-lift ${rec ? "border-brass-400 ring-1 ring-brass-300" : "border-ink-200"}`}>
+                  {rec && <span className="chip absolute -top-3 left-6 bg-brass-500 text-ink-950">Aanbevolen voor de notaris</span>}
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="chip bg-ink-50 text-ink-600">{t.minutes} min · {t.steps.length} stappen</span>
-                    {rec && <span className="chip bg-brass-100 text-brass-700">Aanbevolen voor de notaris</span>}
                     {done && <span className="chip bg-ok-50 text-ok-700"><Check className="h-3 w-3" />Bekeken</span>}
                   </div>
                   <h2 className="mt-4 text-xl text-ink-900">{t.title}</h2>

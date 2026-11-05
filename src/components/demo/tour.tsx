@@ -130,13 +130,23 @@ export function TourProvider({ mainId }: { mainId?: string }) {
       setPop({ top: mobile ? h - ph - 16 : Math.max(minTop, h / 2 - ph / 2), left: mobile ? 16 : w / 2 - pw / 2, mobile });
       return;
     }
-    // Hoge doelen: popover vast rechtsonder, zodat hij de inhoud niet afdekt.
+    const roomLeft = rect.left - pw - 14 >= 16;
+    const roomRight = rect.right + pw + 14 <= w - 16;
+    const pl0 = step?.placement ?? "bottom";
+    // Hoge doelen: naast het doel als daar ruimte is (verticaal gecentreerd), anders in de
+    // benedenhoek die het minst van het doel afdekt.
     if (rect.height > (h - inset) * 0.55) {
-      setPop({ top: h - ph - 20, left: w - pw - 24, mobile });
+      const midTop = Math.min(h - ph - 12, Math.max(minTop, (inset + h) / 2 - ph / 2));
+      const side = pl0 === "left" && roomLeft ? "left" : pl0 === "right" && roomRight ? "right" : roomRight ? "right" : roomLeft ? "left" : null;
+      if (side) { setPop({ top: midTop, left: side === "left" ? rect.left - pw - 14 : rect.right + 14, mobile }); return; }
+      const top = h - ph - 20;
+      const cover = (l: number) => Math.max(0, Math.min(rect.right, l + pw) - Math.max(rect.left, l)) * Math.max(0, Math.min(rect.bottom, top + ph) - Math.max(rect.top, top));
+      const right = w - pw - 24, leftC = 24;
+      setPop({ top, left: cover(leftC) < cover(right) ? leftC : right, mobile });
       return;
     }
     let top = rect.bottom + 14, left = rect.left;
-    const pl = step?.placement ?? "bottom";
+    const pl = (pl0 === "left" && !roomLeft) || (pl0 === "right" && !roomRight) ? "bottom" : pl0;
     if (pl === "top") top = rect.top - ph - 14;
     if (pl === "left") { top = rect.top; left = rect.left - pw - 14; }
     if (pl === "right") { top = rect.top; left = rect.right + 14; }

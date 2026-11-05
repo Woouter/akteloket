@@ -88,4 +88,4 @@ Je kunt de koopovereenkomst laten inschrijven in de openbare registers van het K
 
 ## Zo helpt Akteloket bij je koopovereenkomst
 
-Koop je zonder makelaar, bijvoorbeeld van familie, buren of een particuliere verkoper? Dan kun je via Akteloket de [koopovereenkomst laten opstellen](/koopovereenkomst-opstellen) voor €395 all-in. Is de koopovereenkomst al getekend, dan upload je die bij ons. We lezen de gegevens automatisch uit en bereiden de akte van levering voor de aangesloten, onafhankelijke notaris voor. Meer over kopen zonder tussenpersoon lees je in [huis kopen zonder makelaar](/kennisbank/huis-kopen-zonder-makelaar).
+Koop je zonder makelaar, bijvoorbeeld van familie, buren of een particuliere verkoper? Dan kun je via Akteloket de [koopovereenkomst laten opstellen](/koopovereenkomst-opstellen) voor € 395 all-in. Is de koopovereenkomst al getekend, dan upload je die bij ons. We lezen de gegevens automatisch uit en bereiden de akte van levering voor de aangesloten, onafhankelijke notaris voor. Meer over kopen zonder tussenpersoon lees je in [huis kopen zonder makelaar](/kennisbank/huis-kopen-zonder-makelaar).

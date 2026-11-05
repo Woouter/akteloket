@@ -6,9 +6,10 @@ export const metadata: Metadata = { title: "Algemene voorwaarden", alternates: {
 
 export default function Page() {
   return (
-    <section className="container-page max-w-3xl py-16">
-      <h1 className="text-4xl font-extrabold tracking-tight text-ink-900">Algemene voorwaarden</h1>
-      <p className="mt-3 text-sm text-ink-500">Concepttekst ter juridische review vóór livegang.</p>
+    <section className="container-page max-w-3xl pt-16 lg:pt-20">
+      <p className="eyebrow">Juridisch</p>
+      <h1 className="mt-3 text-[2rem] leading-tight text-ink-900 sm:text-5xl">Algemene voorwaarden</h1>
+      <p className="mt-4 text-sm text-ink-500">Versie november 2026</p>
       <div className="prose-site mt-8">
         <p>Op de notariële dienstverlening zijn de <Link href="/dienstverleningsovereenkomst">dienstverleningsovereenkomst</Link> en de algemene voorwaarden van de aangesloten notaris van toepassing. Op het gebruik van het platform {BRAND.name} zijn daarnaast deze gebruiksvoorwaarden van toepassing.</p>
         <h2>Gebruik van het platform</h2>

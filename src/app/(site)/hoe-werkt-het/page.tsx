@@ -47,8 +47,8 @@ export default function Page() {
           <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Drie rollen, één dossier. Zo regelen we je overdracht online.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600">Er lopen twee klantreizen naast elkaar: een uitgebreide voor de koper en een eenvoudige voor de verkoper. Wij automatiseren en bereiden voor. De notaris controleert, beslist en passeert.</p>
           <div className="mt-10 grid gap-4 md:grid-cols-4">
-            {[{ i: User, t: "Koper", d: "12 stappen, meeste in een paar minuten", c: "bg-koper-50 text-koper-600" }, { i: Store, t: "Verkoper", d: "7 korte stappen in een eigen portaal", c: "bg-verkoper-50 text-verkoper-700" }, { i: Cpu, t: "Akteloket", d: "Automatisering en documentvoorbereiding", c: "bg-platform-50 text-platform-600" }, { i: Scale, t: "Notaris", d: "Controleert, stelt vast en passeert", c: "bg-notaris-50 text-notaris-700" }].map((r) => (
-              <div key={r.t} className="card flex items-center gap-4 p-5"><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${r.c}`}><r.i className="h-5 w-5" /></span><span><span className="block font-bold text-ink-900">{r.t}</span><span className="block text-sm text-ink-500">{r.d}</span></span></div>
+            {[{ i: User, t: "Koper", d: "12 stappen, meeste in een paar minuten" }, { i: Store, t: "Verkoper", d: "7 korte stappen in een eigen portaal" }, { i: Cpu, t: "Akteloket", d: "Automatisering en documentvoorbereiding" }, { i: Scale, t: "Notaris", d: "Controleert, stelt vast en passeert" }].map((r) => (
+              <div key={r.t} className="card flex items-center gap-4 p-5"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-brass-50 text-brass-700 ring-1 ring-brass-200"><r.i className="h-5 w-5" /></span><span><span className="block font-serif text-lg font-semibold text-ink-900">{r.t}</span><span className="block text-sm text-ink-500">{r.d}</span></span></div>
             ))}
           </div>
         </div>
@@ -59,10 +59,10 @@ export default function Page() {
         <ol className="mt-10 overflow-hidden rounded-3xl border border-ink-100 bg-white">
           {koper.map(([t, jij, wij], i) => (
             <li key={t} className="grid gap-4 border-b border-ink-100 p-5 last:border-0 md:grid-cols-[3rem_1fr_1.2fr_1.2fr] md:items-start md:gap-6 md:p-6">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-koper-500 text-sm font-bold text-white">{i + 1}</span>
-              <p className="font-bold text-ink-900">{t}</p>
-              <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-koper-600">Jij</span>{jij}</p>
-              <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-platform-600">Wij</span>{wij}</p>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brass-400 font-serif text-base font-semibold text-brass-600">{i + 1}</span>
+              <p className="font-serif text-lg font-semibold leading-snug text-ink-900">{t}</p>
+              <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-brass-700">Jij</span>{jij}</p>
+              <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-ink-500">Wij</span>{wij}</p>
             </li>
           ))}
         </ol>
@@ -74,7 +74,7 @@ export default function Page() {
           <ol className="mt-8 space-y-3">
             {verkoper.map(([t, d], i) => (
               <li key={t} className="flex gap-4 rounded-2xl border border-ink-100 bg-white p-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-verkoper-600 text-sm font-bold text-white">{String.fromCharCode(65 + i)}</span>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brass-400 font-serif text-sm font-semibold text-brass-600">{String.fromCharCode(65 + i)}</span>
                 <span><span className="block font-semibold text-ink-900">{t}</span><span className="block text-sm text-ink-600">{d}</span></span>
               </li>
             ))}
@@ -88,7 +88,7 @@ export default function Page() {
           <div className="mt-8 rounded-2xl bg-ink-900 p-6 text-ink-200">
             <p className="font-semibold text-white">Het resultaat</p>
             <p className="mt-2 text-sm leading-relaxed">Een compleet en compliant dossier, juiste Wwft-onderbouwing, geldige volmachten, gecontroleerde akten, een financieel correcte afwikkeling — en een snelle, foutarme overdracht.</p>
-            <Link href="/aanvraag" className="btn btn-primary mt-5">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/aanvraag" className="btn btn-brass mt-5">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>
       </section>

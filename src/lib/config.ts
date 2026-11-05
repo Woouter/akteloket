@@ -15,7 +15,8 @@ export const BRAND = {
   email: "hallo@akte-loket.nl",
   phone: "085 – 060 42 10",
   phoneHref: "tel:+31850604210",
-  kvk: "(KvK volgt)",
+  /** KvK-nummer; zet NEXT_PUBLIC_KVK zodra bekend (wordt anders niet getoond). */
+  kvk: process.env.NEXT_PUBLIC_KVK ? `KvK ${process.env.NEXT_PUBLIC_KVK}` : "",
   address: "Online · werkzaam in heel Nederland",
 } as const;
 

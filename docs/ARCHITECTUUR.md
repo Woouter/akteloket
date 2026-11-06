@@ -94,5 +94,6 @@ Een model (`src/lib/docgen/templates.ts`) bouwt een **tussenformaat** (`ir.ts`):
 
 - `ensureDemoSeed()` bouwt bij een lege database het voorbeelddossier en vier pijplijndossiers op, via dezelfde domeinfuncties als in productie.
 - De demo is alleen via tours te gebruiken. `src/proxy.ts` stuurt `/` en elke pagina buiten de lopende of al bekeken tours naar de tourkeuze `/demo`. De cookies `ak_tour` (lopende tour, gezet door `/demo/start/<tour>`) en `ak_seen` (bekeken tours) bepalen de toegang; per tour staat in `src/lib/demo/tours.ts` welk deel (`scope`) daarna vrij te bekijken is. `/demo/als/<rol>` logt in als de juiste rol en wordt alleen door de tours gebruikt. Uitzetten: `DEMO_GATE=uit`.
+- Het demoscenario is geversioneerd (`DEMO_SEED_VERSION`). Verhoog die bij elke wijziging in seed, scenario of demonotaris: een bestaande demodatabase wordt dan bij de volgende start één keer opnieuw opgebouwd (met een claim per versie, zodat maar één serverless-instance dat doet).
 - Demo-acties simuleren externe gebeurtenissen: klanten ronden hun stappen af, bankinstructie ontvangen, aflosnota ontvangen, volmachtafspraak afgerond, 14 dagen vooruitspoelen, cron.
 - Tours (`src/lib/demo/tours.ts`) verwijzen naar elementen met `data-tour="…"`.

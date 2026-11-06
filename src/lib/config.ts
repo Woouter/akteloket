@@ -20,13 +20,34 @@ export const BRAND = {
   address: "Online · werkzaam in heel Nederland",
 } as const;
 
-/** De aangesloten (pilot)notaris. In productie via env/settings te overschrijven. */
+/**
+ * Notaris in de demo-omgeving: de pilotnotaris, zodat de demo met het eigen kantoor
+ * wordt getoond (akten, volmachten, koopovereenkomst, inlogrol en begroeting).
+ */
+const DEMO_NOTARY = {
+  officeName: "Spek & Van den Beld Notariaat",
+  notaryName: "mr. A.H. Schrama",
+  notaryShort: "mr. A.H. Schrama",
+  city: "Leusden",
+  address: "Hamersveldseweg 65, Leusden",
+};
+/** Productie zonder NOTARY_*-variabelen: neutrale, fictieve tijdelijke gegevens. */
+const FALLBACK_NOTARY = {
+  officeName: "Notariskantoor Van Dam",
+  notaryName: "mr. L.M. (Lotte) van Dam",
+  notaryShort: "mr. L.M. van Dam",
+  city: "Amersfoort",
+  address: "Stationsplein 8, 3818 LE Amersfoort",
+};
+const notaryDefaults = process.env.APP_MODE === "production" ? FALLBACK_NOTARY : DEMO_NOTARY;
+
+/** De aangesloten (pilot)notaris. Via NOTARY_* te overschrijven (in productie verplicht). */
 export const NOTARY_OFFICE = {
-  officeName: process.env.NOTARY_OFFICE_NAME || "Notariskantoor Van Dam",
-  notaryName: process.env.NOTARY_NAME || "mr. L.M. (Lotte) van Dam",
-  notaryShort: process.env.NOTARY_SHORT || "mr. L.M. van Dam",
-  city: process.env.NOTARY_CITY || "Amersfoort",
-  address: process.env.NOTARY_ADDRESS || "Stationsplein 8, 3818 LE Amersfoort",
+  officeName: process.env.NOTARY_OFFICE_NAME || notaryDefaults.officeName,
+  notaryName: process.env.NOTARY_NAME || notaryDefaults.notaryName,
+  notaryShort: process.env.NOTARY_SHORT || notaryDefaults.notaryShort,
+  city: process.env.NOTARY_CITY || notaryDefaults.city,
+  address: process.env.NOTARY_ADDRESS || notaryDefaults.address,
   /** Medewerkers die als gevolmachtigde de akten ondertekenen. */
   proxyHolders: ["iedere medewerker van het kantoor van de notaris"],
   kwaliteitsrekening: "NL00 DEMO 0000 0000 00 (kwaliteitsrekening notaris)",

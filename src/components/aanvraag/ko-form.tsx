@@ -91,7 +91,7 @@ export function KoForm() {
           <label><span className="label">E-mail</span><input className="input" type="email" value={f.email ?? ""} onChange={(e) => set("email", e.target.value)} /></label>
           <label><span className="label">Telefoon</span><input className="input" type="tel" value={f.telefoon ?? ""} onChange={(e) => set("telefoon", e.target.value)} /></label>
         </div>
-        <label className="mt-5 flex cursor-pointer gap-3 text-sm text-ink-700"><input type="checkbox" checked={akkoord} onChange={(e) => setAkkoord(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-brand-600)]" />Ik ga akkoord met de <a href="/voorwaarden" target="_blank" rel="noopener" className="font-medium text-ink-900 underline underline-offset-2">voorwaarden</a> en de prijs van € 395 (incl. btw), te voldoen na juridische controle. Annuleren is kosteloos tot het concept is opgesteld.</label>
+        <label className="mt-5 flex cursor-pointer gap-3 text-sm text-ink-700"><input type="checkbox" checked={akkoord} onChange={(e) => setAkkoord(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-brand-600)]" />Ik ga akkoord met de <a href="/voorwaarden" target="_blank" rel="noopener" className="font-medium text-ink-900 underline underline-offset-2">voorwaarden</a> en de prijs van € 495 (incl. btw), te voldoen na juridische controle. Annuleren is kosteloos tot het concept is opgesteld.</label>
         <p className="mt-3 flex gap-2 text-xs text-ink-500"><Info className="h-4 w-4 shrink-0" />Na juridische controle tekenen koper en verkoper digitaal. De koper heeft daarna drie dagen bedenktijd.</p>
       </section>
       {err && <p className="rounded-xl bg-bad-50 p-4 text-sm text-bad-700">{err}</p>}

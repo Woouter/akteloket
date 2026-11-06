@@ -10,7 +10,7 @@ const usps = [
   { icon: Video, title: "Bijna nooit langskomen", text: "Eén volmacht, getekend tijdens één korte video-afspraak. Daarna tekent een medewerker van de notaris de akten namens jou." },
   { icon: Zap, title: "Je koopovereenkomst is je intake", text: "Upload hem en we lezen adres, koopprijs, partijen, data en voorwaarden automatisch uit. Jij controleert alleen." },
   { icon: Activity, title: "Altijd weten waar je staat", text: "Je persoonlijke portaal laat per stap zien wat klaar is, wat wij doen en wat er nog van jou nodig is." },
-  { icon: Euro, title: "Vaste all-in prijs", text: `Levering + hypotheekakte voor € ${SERVICES.beide.price}, inclusief btw en kadasterinschrijving. Geen verrassingen achteraf.` },
+  { icon: Euro, title: "Vaste all-in prijs", text: `Levering + hypotheekakte voor € ${SERVICES.beide.price.toLocaleString("nl-NL")}, inclusief btw en kadasterinschrijving. Geen verrassingen achteraf.` },
   { icon: Scale, title: "Een echte, onafhankelijke notaris", text: "Alle notariële controles, de akten en de geldstromen liggen bij een onafhankelijk notariskantoor. Wij nemen het voorwerk uit handen." },
   { icon: BookOpen, title: "Alles uitgelegd in gewone taal", text: "Van transportakte tot startersvrijstelling: bij elke stap leggen we uit wat het is en waarom het nodig is." },
 ];
@@ -62,7 +62,7 @@ export default function HomePage() {
               <Link href="/aanvraag" className="btn btn-primary btn-lg">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
               <Link href="/hoe-werkt-het" className="btn btn-secondary btn-lg">Bekijk hoe het werkt</Link>
             </div>
-            <p className="mt-4 text-sm text-ink-500">Levering + hypotheekakte <strong className="text-ink-900">€ {SERVICES.beide.price} all-in</strong> · geen betaling vooraf</p>
+            <p className="mt-4 text-sm text-ink-500">Levering + hypotheekakte <strong className="text-ink-900">€ {SERVICES.beide.price.toLocaleString("nl-NL")} all-in</strong> · geen betaling vooraf</p>
             <TrustStrip className="mt-8" />
           </div>
           <ScanVisual />
@@ -123,7 +123,7 @@ export default function HomePage() {
       <section className="container-page mt-24" data-tour="home-prices">
         <SectionTitle center eyebrow="Tarieven" title="Vaste prijzen. Alles inbegrepen." intro="Inclusief btw en de inschrijving van de akte(n) in het Kadaster. Je betaalt pas via de nota van afrekening." />
         <div className="mt-12"><PriceCards /></div>
-        <p className="mt-6 text-center text-sm text-ink-500">Zelf een koper of verkoper gevonden? <Link href="/koopovereenkomst-opstellen" className="font-semibold text-brand-700 underline underline-offset-4">Laat je koopovereenkomst opstellen voor € {SERVICES.koopovereenkomst.price}</Link>.</p>
+        <p className="mt-6 text-center text-sm text-ink-500">Zelf een koper of verkoper gevonden? <Link href="/koopovereenkomst-opstellen" className="font-semibold text-brand-700 underline underline-offset-4">Laat je koopovereenkomst opstellen voor € {SERVICES.koopovereenkomst.price.toLocaleString("nl-NL")}</Link>.</p>
       </section>
 
       <section className="container-page mt-28">

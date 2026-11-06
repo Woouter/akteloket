@@ -82,4 +82,4 @@ Twijfel je vóór de koop over de gevolgen van een erfdienstbaarheid? Bespreek h
 
 ## Zo regelt Akteloket dit voor je
 
-Bij Akteloket halen we de kadastrale stukken van je nieuwe woning automatisch op. De bijzondere lasten en beperkingen, zoals erfdienstbaarheden en kettingbedingen, nemen we over in de concept-akte van levering. De aangesloten, onafhankelijke notaris controleert of alles juist en volledig is en kan je uitleggen wat een bepaling betekent. Alleen de [akte van levering](/akte-van-levering) kost bij ons € 649 all-in.
+Bij Akteloket halen we de kadastrale stukken van je nieuwe woning automatisch op. De bijzondere lasten en beperkingen, zoals erfdienstbaarheden en kettingbedingen, nemen we over in de concept-akte van levering. De aangesloten, onafhankelijke notaris controleert of alles juist en volledig is en kan je uitleggen wat een bepaling betekent. Alleen de [akte van levering](/akte-van-levering) kost bij ons € 995 all-in.

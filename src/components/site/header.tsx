@@ -4,10 +4,10 @@ import { Logo } from "@/components/ui/logo";
 import { BRAND, SERVICES } from "@/lib/config";
 
 const services = [
-  { href: "/levering-en-hypotheekakte", title: "Levering + hypotheekakte", desc: `Voor de meeste kopers · € ${SERVICES.beide.price}`, icon: Layers },
-  { href: "/akte-van-levering", title: "Akte van levering", desc: `Kopen zonder hypotheek · € ${SERVICES.levering.price}`, icon: FileSignature },
-  { href: "/hypotheekakte", title: "Hypotheekakte", desc: `Bijv. bij oversluiten · € ${SERVICES.hypotheek.price}`, icon: Landmark },
-  { href: "/koopovereenkomst-opstellen", title: "Koopovereenkomst opstellen", desc: `Zonder makelaar · € ${SERVICES.koopovereenkomst.price}`, icon: FilePen },
+  { href: "/levering-en-hypotheekakte", title: "Levering + hypotheekakte", desc: `Voor de meeste kopers · € ${SERVICES.beide.price.toLocaleString("nl-NL")}`, icon: Layers },
+  { href: "/akte-van-levering", title: "Akte van levering", desc: `Kopen zonder hypotheek · € ${SERVICES.levering.price.toLocaleString("nl-NL")}`, icon: FileSignature },
+  { href: "/hypotheekakte", title: "Hypotheekakte", desc: `Bijv. bij oversluiten · € ${SERVICES.hypotheek.price.toLocaleString("nl-NL")}`, icon: Landmark },
+  { href: "/koopovereenkomst-opstellen", title: "Koopovereenkomst opstellen", desc: `Zonder makelaar · € ${SERVICES.koopovereenkomst.price.toLocaleString("nl-NL")}`, icon: FilePen },
 ];
 
 const nav = [

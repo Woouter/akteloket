@@ -91,7 +91,7 @@ Bij Akteloket upload je de getekende koopovereenkomst. Wij lezen de gegevens aut
 
 | Dienst | Vaste prijs (all-in) |
 |---|---|
-| Akte van levering + hypotheekakte | € 895 |
-| Alleen akte van levering | € 649 |
-| Alleen hypotheekakte | € 449 |
-| Koopovereenkomst opstellen | € 395 |
+| Akte van levering + hypotheekakte | € 1.395 |
+| Alleen akte van levering | € 995 |
+| Alleen hypotheekakte | € 695 |
+| Koopovereenkomst opstellen | € 495 |

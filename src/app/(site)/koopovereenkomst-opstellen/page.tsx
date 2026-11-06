@@ -4,8 +4,8 @@ import { Landing } from "@/components/site/landing";
 import { SERVICES } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Koopovereenkomst opstellen zonder makelaar — € 395",
-  description: `Koopovereenkomst laten opstellen voor je huis, zonder makelaar. Begeleide vragenlijst, juridisch gecontroleerd, digitaal tekenen. € ${SERVICES.koopovereenkomst.price} all-in.`,
+  title: "Koopovereenkomst opstellen zonder makelaar — € 495",
+  description: `Koopovereenkomst laten opstellen voor je huis, zonder makelaar. Begeleide vragenlijst, juridisch gecontroleerd, digitaal tekenen. € ${SERVICES.koopovereenkomst.price.toLocaleString("nl-NL")} all-in.`,
   alternates: { canonical: "/koopovereenkomst-opstellen" },
 };
 

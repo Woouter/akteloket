@@ -54,7 +54,7 @@ export function Landing(p: LandingProps) {
           <aside className="self-start">
             <div className="card p-7 shadow-lift">
               <p className="eyebrow">{s.short}</p>
-              <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-5xl font-semibold text-ink-900 tabular">€ {s.price}</span><span className="text-ink-500">all-in</span></p>
+              <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-5xl font-semibold text-ink-900 tabular">€ {s.price.toLocaleString("nl-NL")}</span><span className="text-ink-500">all-in</span></p>
               <p className="text-sm text-ink-500">Inclusief btw{p.service !== "koopovereenkomst" ? " en kadasterinschrijving" : ""}</p>
               <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
                 {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" />{i}</li>)}

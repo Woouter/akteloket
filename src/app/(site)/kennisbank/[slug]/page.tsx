@@ -62,7 +62,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           )}
           <div className="rounded-lg bg-ink-900 p-6 text-white">
             <p className="eyebrow !text-brass-300">{s.name}</p>
-            <p className="mt-2 font-serif text-4xl font-semibold tabular">€ {s.price}<span className="ml-1.5 font-sans text-sm font-normal text-ink-300">all-in</span></p>
+            <p className="mt-2 font-serif text-4xl font-semibold tabular">€ {s.price.toLocaleString("nl-NL")}<span className="ml-1.5 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <p className="mt-2 text-sm text-ink-300">{s.description}</p>
             <Link href={href} className="btn btn-brass mt-5 w-full">Meer over {s.short.toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>
           </div>

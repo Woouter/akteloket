@@ -130,7 +130,7 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
                 <span className="flex items-center justify-between"><span className={cn("flex h-10 w-10 items-center justify-center rounded-xl", service === c.key ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-600")}><c.icon className="h-5 w-5" /></span><span className={cn("flex h-5 w-5 items-center justify-center rounded-full border-2", service === c.key ? "border-brand-600 bg-brand-600" : "border-ink-300")}>{service === c.key && <Check className="h-3 w-3 text-white" strokeWidth={3} />}</span></span>
                 <span className="mt-4 font-bold text-ink-900">{c.title}</span>
                 <span className="mt-1 flex-1 text-sm text-ink-600">{c.text}</span>
-                <span className="mt-4 font-serif text-xl font-semibold text-ink-900 tabular">€ {c.price} <span className="text-xs font-medium text-ink-500">all-in</span></span>
+                <span className="mt-4 font-serif text-xl font-semibold text-ink-900 tabular">€ {c.price.toLocaleString("nl-NL")} <span className="text-xs font-medium text-ink-500">all-in</span></span>
               </button>
             ))}
           </div>
@@ -459,7 +459,7 @@ function FinishStep({ payload, service, dvo, checks, onBack, onDone, setError }:
           <div className="rounded-2xl bg-ink-900 p-6 text-white">
             <p className="text-sm text-ink-300">Je dienst</p>
             <p className="mt-1 text-lg font-semibold">{price.title}</p>
-            <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
+            <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price.toLocaleString("nl-NL")}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <ul className="mt-4 space-y-2 text-sm text-ink-200">
               <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Geen betaling vooraf — via de nota van afrekening</li>
               <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Kosteloos annuleren tot de concept-akte er is</li>

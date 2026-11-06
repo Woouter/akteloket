@@ -89,4 +89,4 @@ De overdrachtsbelasting staat op de [nota van afrekening](/kennisbank/nota-van-a
 
 ## Zo regelt Akteloket dit voor je
 
-Akteloket verzamelt de gegevens die de notaris nodig heeft om het juiste tarief toe te passen, zoals je geboortedatum, of je er zelf gaat wonen en de verklaringen die daarbij horen. De aangesloten, onafhankelijke notaris beoordeelt die gegevens, berekent de overdrachtsbelasting en draagt die af. Let op: de overdrachtsbelasting zelf zit niet in onze vaste prijs. Die prijs dekt de notariële afhandeling, zoals bij [levering en hypotheekakte](/levering-en-hypotheekakte) voor € 895 all-in.
+Akteloket verzamelt de gegevens die de notaris nodig heeft om het juiste tarief toe te passen, zoals je geboortedatum, of je er zelf gaat wonen en de verklaringen die daarbij horen. De aangesloten, onafhankelijke notaris beoordeelt die gegevens, berekent de overdrachtsbelasting en draagt die af. Let op: de overdrachtsbelasting zelf zit niet in onze vaste prijs. Die prijs dekt de notariële afhandeling, zoals bij [levering en hypotheekakte](/levering-en-hypotheekakte) voor € 1.395 all-in.

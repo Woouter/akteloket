@@ -11,7 +11,7 @@ faq:
   - q: "Mag je een huis kopen zonder makelaar?"
     a: "Ja. Een aankoopmakelaar is niet verplicht. Een notaris is wél verplicht, want alleen via een notariële akte die bij het Kadaster wordt ingeschreven, kan de woning op jouw naam komen."
   - q: "Wie stelt de koopovereenkomst op als er geen makelaar is?"
-    a: "Dat kun je laten doen door een notaris of een andere deskundige partij. Via Akteloket kun je de koopovereenkomst laten opstellen voor € 395 all-in."
+    a: "Dat kun je laten doen door een notaris of een andere deskundige partij. Via Akteloket kun je de koopovereenkomst laten opstellen voor € 495 all-in."
   - q: "Heb ik zonder makelaar een taxatie nodig?"
     a: "Neem je een hypotheek, dan vraagt je geldverstrekker meestal om een taxatierapport. Los daarvan helpt een taxatie je om te beoordelen of de prijs redelijk is."
   - q: "De verkoper heeft wel een makelaar. Kan die mij ook helpen?"
@@ -97,4 +97,4 @@ Zodra de koopovereenkomst is getekend, gaat het verder bij de notaris. Volgens g
 
 ## Zo helpt Akteloket als je zonder makelaar koopt
 
-Via Akteloket kun je de [koopovereenkomst laten opstellen](/koopovereenkomst-opstellen) voor € 395 all-in. Daarna upload je de getekende overeenkomst, lezen wij de gegevens automatisch uit en halen we de kadastrale stukken op. De aangesloten, onafhankelijke notaris verzorgt vervolgens de akte van levering en, als je een hypotheek hebt, de hypotheekakte, samen voor € 895 all-in.
+Via Akteloket kun je de [koopovereenkomst laten opstellen](/koopovereenkomst-opstellen) voor € 495 all-in. Daarna upload je de getekende overeenkomst, lezen wij de gegevens automatisch uit en halen we de kadastrale stukken op. De aangesloten, onafhankelijke notaris verzorgt vervolgens de akte van levering en, als je een hypotheek hebt, de hypotheekakte, samen voor € 1.395 all-in.

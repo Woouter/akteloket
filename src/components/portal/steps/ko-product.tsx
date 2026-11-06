@@ -59,7 +59,7 @@ export function KoProductStep({ a, stepKey }: { a: PartyAccess; stepKey: string 
           <Notice tone="ok" icon={<Check className="h-4 w-4 text-ok-600" />} title="Alle gegevens staan al klaar">Partijen, woning, koopprijs, leveringsdatum en voorwaarden nemen we over in je notarisdossier. De verkoper krijgt automatisch een uitnodiging.</Notice>
           <div className="grid gap-3 sm:grid-cols-2">
             {(["beide", "levering"] as const).map((s) => (
-              <label key={s} className="cursor-pointer"><input type="radio" name="service" value={s} defaultChecked={s === "beide"} className="peer sr-only" /><span className="card flex items-start gap-3 p-4 peer-checked:border-brand-500 peer-checked:shadow-[0_0_0_4px_rgb(31_63_110/0.12)]"><Layers className="h-5 w-5 shrink-0 text-brand-600" /><span><span className="block font-semibold text-ink-900">{SERVICES[s].name}</span><span className="block text-sm text-ink-500">€ {SERVICES[s].price} all-in</span></span></span></label>
+              <label key={s} className="cursor-pointer"><input type="radio" name="service" value={s} defaultChecked={s === "beide"} className="peer sr-only" /><span className="card flex items-start gap-3 p-4 peer-checked:border-brand-500 peer-checked:shadow-[0_0_0_4px_rgb(31_63_110/0.12)]"><Layers className="h-5 w-5 shrink-0 text-brand-600" /><span><span className="block font-semibold text-ink-900">{SERVICES[s].name}</span><span className="block text-sm text-ink-500">€ {SERVICES[s].price.toLocaleString("nl-NL")} all-in</span></span></span></label>
             ))}
           </div>
           <button className="btn btn-primary" disabled={!["bedenktijd", "definitief", "getekend"].includes(ko.status)}>Start de notariële afhandeling <ArrowRight className="h-4 w-4" /></button>

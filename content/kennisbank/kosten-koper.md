@@ -66,7 +66,7 @@ Stel: je koopt een bestaande woning van € 400.000 k.k. De overdrachtsbelasting
 | Je gaat er zelf wonen, maar bent geen starter | 2% | € 8.000 |
 | De woning wordt niet je hoofdverblijf | 8% | € 32.000 |
 
-Daarbovenop komen de notariskosten. Bij Akteloket betaal je voor de akte van levering en de hypotheekakte samen € 895 all-in, inclusief btw en de inschrijving van beide akten bij het Kadaster. Tel daar je eventuele financieringskosten en overige kosten bij op, en je hebt een realistisch beeld.
+Daarbovenop komen de notariskosten. Bij Akteloket betaal je voor de akte van levering en de hypotheekakte samen € 1.395 all-in, inclusief btw en de inschrijving van beide akten bij het Kadaster. Tel daar je eventuele financieringskosten en overige kosten bij op, en je hebt een realistisch beeld.
 
 ## Waar betaal je de kosten koper van?
 

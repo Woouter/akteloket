@@ -83,4 +83,4 @@ Je hypotheekadviseur kan je helpen bij de afweging.
 
 ## Zo regelt Akteloket de waarborgsom
 
-Bij Akteloket lezen we uit je koopovereenkomst af welke afspraak je hebt gemaakt over de waarborgsom of bankgarantie, en vóór welke datum. De aangesloten, onafhankelijke notaris beheert de kwaliteitsrekening, ontvangt de waarborgsom of bankgarantie en verwerkt die later op je nota van afrekening. De notariële afhandeling van [levering en hypotheekakte](/levering-en-hypotheekakte) kost bij ons € 895 all-in.
+Bij Akteloket lezen we uit je koopovereenkomst af welke afspraak je hebt gemaakt over de waarborgsom of bankgarantie, en vóór welke datum. De aangesloten, onafhankelijke notaris beheert de kwaliteitsrekening, ontvangt de waarborgsom of bankgarantie en verwerkt die later op je nota van afrekening. De notariële afhandeling van [levering en hypotheekakte](/levering-en-hypotheekakte) kost bij ons € 1.395 all-in.

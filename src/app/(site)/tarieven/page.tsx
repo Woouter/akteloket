@@ -6,7 +6,7 @@ import { FAQ } from "@/lib/content/faq";
 
 export const metadata: Metadata = {
   title: "Tarieven notaris: vaste all-in prijzen voor je woning",
-  description: "Akte van levering € 649, hypotheekakte € 449, levering + hypotheek € 895. All-in inclusief btw en kadasterinschrijving. Bekijk ook overdrachtsbelasting 2026.",
+  description: "Akte van levering € 995, hypotheekakte € 695, levering + hypotheek € 1.395. All-in inclusief btw en kadasterinschrijving. Bekijk ook overdrachtsbelasting 2026.",
   alternates: { canonical: "/tarieven" },
 };
 
@@ -25,9 +25,9 @@ export default function Page() {
         <div className="card p-7">
           <h2 className="text-xl font-bold text-ink-900">Optioneel</h2>
           <ul className="mt-4 divide-y divide-ink-100 text-sm">
-            {EXTRAS.map((e) => <li key={e.key} className="flex justify-between gap-4 py-3"><span className="text-ink-700">{e.name}</span><span className="shrink-0 font-semibold text-ink-900 tabular">{e.price ? `€ ${e.price}` : "gratis"}</span></li>)}
+            {EXTRAS.map((e) => <li key={e.key} className="flex justify-between gap-4 py-3"><span className="text-ink-700">{e.name}</span><span className="shrink-0 font-semibold text-ink-900 tabular">{e.price ? `€ ${e.price.toLocaleString("nl-NL")}` : "gratis"}</span></li>)}
           </ul>
-          <p className="mt-4 text-xs text-ink-500">Annuleren is kosteloos zolang de concept-akte nog niet is opgesteld. Daarna € 195.</p>
+          <p className="mt-4 text-xs text-ink-500">Annuleren is kosteloos zolang de concept-akte nog niet is opgesteld. Daarna € 295.</p>
         </div>
         <div className="card p-7">
           <h2 className="text-xl font-bold text-ink-900">Niet inbegrepen: overdrachtsbelasting</h2>

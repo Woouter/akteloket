@@ -33,7 +33,7 @@ export function PriceCards({ highlight = "beide", keys = ["levering", "beide", "
             <p className={cn("mt-2 font-serif text-xl font-semibold", hi ? "text-white" : "text-ink-900")}>{s.name}</p>
             <p className={cn("mt-2 text-sm leading-relaxed", hi ? "text-ink-300" : "text-ink-600")}>{s.description}</p>
             <p className="mt-6 flex items-baseline gap-1.5">
-              <span className={cn("font-serif text-[2.6rem] font-semibold leading-none tabular", hi ? "text-white" : "text-ink-900")}>€ {s.price}</span>
+              <span className={cn("font-serif text-[2.6rem] font-semibold leading-none tabular", hi ? "text-white" : "text-ink-900")}>€ {s.price.toLocaleString("nl-NL")}</span>
               <span className={cn("text-sm", hi ? "text-ink-300" : "text-ink-500")}>all-in</span>
             </p>
             <p className={cn("mt-1 text-xs", hi ? "text-ink-400" : "text-ink-500")}>{k === "koopovereenkomst" ? "incl. btw" : "incl. btw en kadasterinschrijving"}</p>

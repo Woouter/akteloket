@@ -88,4 +88,4 @@ Het voordeel van openbare registers is dat iedereen kan nagaan wie de eigenaar v
 
 ## Zo regelt Akteloket dit voor je
 
-Bij Akteloket halen we de kadastrale stukken van je nieuwe woning automatisch op en bereiden we de akte van levering voor. De aangesloten, onafhankelijke notaris controleert de registers, stelt de akte vast, laat hem passeren en zorgt voor de inschrijving bij het Kadaster. De inschrijving van de akte zit in onze vaste prijs. Alleen de [akte van levering](/akte-van-levering) kost € 649 all-in, inclusief btw.
+Bij Akteloket halen we de kadastrale stukken van je nieuwe woning automatisch op en bereiden we de akte van levering voor. De aangesloten, onafhankelijke notaris controleert de registers, stelt de akte vast, laat hem passeren en zorgt voor de inschrijving bij het Kadaster. De inschrijving van de akte zit in onze vaste prijs. Alleen de [akte van levering](/akte-van-levering) kost € 995 all-in, inclusief btw.

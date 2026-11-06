@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Scale, Cpu, User, Store, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Band, Tick } from "@/components/site/band";
+import { Glyph, type GlyphName } from "@/components/icons/glyphs";
 import { SectionTitle } from "@/components/ui";
 import { CtaBand } from "@/components/site/sections";
 import { TERMS } from "@/lib/config";
@@ -21,8 +23,8 @@ const koper = [
   ["Herkomst eigen geld", "Breng je eigen geld in? Dan geef je per bron aan waar het vandaan komt en upload je direct het juiste bewijs.", "We vragen alleen de stukken die de notaris nodig heeft."],
   ["Digitaal identificeren", "Via iDIN met je eigen bank of met de chip van je paspoort.", "We verwerken de ID-check en leggen die vast."],
   ["Eén volmacht", "Je plant een korte video-afspraak (of op kantoor) en tekent één volmacht voor alle akten.", "We zetten de volmacht klaar en registreren de ondertekening."],
-  ["Dossiervoorbereiding", "Niets — dit doen wij.", "We halen kadastrale stukken en de vorige akte op en maken de concept-leveringsakte."],
-  ["Bankinstructie", "Niets — je bank stuurt de instructie rechtstreeks aan de notaris.", "We bewaken de ontvangst en maken de concept-hypotheekakte."],
+  ["Dossiervoorbereiding", "Niets, dit doen wij.", "We halen kadastrale stukken en de vorige akte op en maken de concept-leveringsakte."],
+  ["Bankinstructie", "Niets. Je bank stuurt de instructie rechtstreeks aan de notaris.", "We bewaken de ontvangst en maken de concept-hypotheekakte."],
   ["Laatste check", `Circa ${TERMS.datumCheckDagenVooraf} dagen vooraf bevestig je de overdrachtsdatum en bekijk je de nota van afrekening.`, "We bewaken de termijnen en herinneren je vriendelijk."],
 ];
 
@@ -31,67 +33,80 @@ const verkoper = [
   ["Gegevens controleren", "Ook van eventuele mede-eigenaren."],
   ["Identificeren", "Digitaal, net als de koper."],
   ["IBAN voor uitbetaling", "Waarop de notaris de netto verkoopopbrengst overmaakt."],
-  ["Verkoopvolmacht", "Een eenvoudige volmacht voor de levering — zo hoef je niet langs."],
+  ["Verkoopvolmacht", "Een eenvoudige volmacht voor de levering, zodat je niet langs hoeft te komen."],
   ["Bestaande hypotheek", "Je bevestigt je geldverstrekker en leningnummer; de notaris vraagt de aflosnota op."],
   ["Nota van afrekening", "Je ziet precies wat je ontvangt. Na de inschrijving wordt het uitbetaald."],
 ];
 
 const notaris = ["Controleert de Wwft-uitvraag, de PEP-vraag en de identificatie", "Beoordeelt en accepteert de volmachten van koper en verkoper", "Controleert de concept-leveringsakte", "Controleert de concept-hypotheekakte en de bankinstructie", "Vraagt de aflosnota's op en regelt de doorhaling van bestaande hypotheken", "Stelt de nota's van afrekening vast", "Passeert de akten, laat ze inschrijven en wikkelt de transactie financieel af"];
 
+const ROLES: { glyph: GlyphName; t: string; d: string }[] = [
+  { glyph: "person", t: "Koper", d: "12 stappen, meeste in een paar minuten" },
+  { glyph: "house", t: "Verkoper", d: "7 korte stappen in een eigen portaal" },
+  { glyph: "cog", t: "Akteloket", d: "Automatisering en documentvoorbereiding" },
+  { glyph: "scales", t: "Notaris", d: "Controleert, stelt vast en passeert" },
+];
+
 export default function Page() {
   return (
     <>
-      <section className="border-b border-ink-100">
+      <section className="bg-white">
         <div className="container-page py-16 lg:py-20">
           <p className="eyebrow">Hoe werkt het</p>
-          <h1 className="mt-2 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Drie rollen, één dossier. Zo regelen we je overdracht online.</h1>
+          <h1 className="mt-3 max-w-3xl text-4xl leading-tight text-ink-900 sm:text-5xl">Drie rollen, één dossier. Zo regelen we je overdracht online.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600">Er lopen twee klantreizen naast elkaar: een uitgebreide voor de koper en een eenvoudige voor de verkoper. Wij automatiseren en bereiden voor. De notaris controleert, beslist en passeert.</p>
-          <div className="mt-10 grid gap-4 md:grid-cols-4">
-            {[{ i: User, t: "Koper", d: "12 stappen, meeste in een paar minuten" }, { i: Store, t: "Verkoper", d: "7 korte stappen in een eigen portaal" }, { i: Cpu, t: "Akteloket", d: "Automatisering en documentvoorbereiding" }, { i: Scale, t: "Notaris", d: "Controleert, stelt vast en passeert" }].map((r) => (
-              <div key={r.t} className="card flex items-center gap-4 p-5"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-brass-50 text-brass-700 ring-1 ring-brass-200"><r.i className="h-5 w-5" /></span><span><span className="block font-serif text-lg font-semibold text-ink-900">{r.t}</span><span className="block text-sm text-ink-500">{r.d}</span></span></div>
+          <div className="mt-12 grid gap-px border-y border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-4">
+            {ROLES.map((r) => (
+              <div key={r.t} className="flex items-start gap-4 bg-white py-6 sm:px-6">
+                <Glyph name={r.glyph} size={40} />
+                <span><span className="block font-serif text-lg font-semibold text-ink-900">{r.t}</span><span className="block text-sm text-ink-600">{r.d}</span></span>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="container-page mt-20">
-        <SectionTitle eyebrow="De koper" title="Twaalf stappen — waarvan je er een paar niet eens merkt" />
-        <ol className="mt-10 overflow-hidden rounded-3xl border border-ink-100 bg-white">
+      <Band tone="paper">
+        <SectionTitle eyebrow="De koper" title="Twaalf stappen, waarvan je er een paar niet eens merkt" />
+        <ol className="mt-12 border-t border-ink-900">
           {koper.map(([t, jij, wij], i) => (
-            <li key={t} className="grid gap-4 border-b border-ink-100 p-5 last:border-0 md:grid-cols-[3rem_1fr_1.2fr_1.2fr] md:items-start md:gap-6 md:p-6">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brass-400 font-serif text-base font-semibold text-brass-600">{i + 1}</span>
+            <li key={t} className="grid gap-3 border-b border-ink-200 py-6 md:grid-cols-[4rem_1fr_1.2fr_1.2fr] md:items-start md:gap-8">
+              <span className="font-serif text-3xl font-semibold leading-none text-ink-300">{String(i + 1).padStart(2, "0")}</span>
               <p className="font-serif text-lg font-semibold leading-snug text-ink-900">{t}</p>
               <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-brass-700">Jij</span>{jij}</p>
               <p className="text-sm leading-relaxed text-ink-600"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-ink-500">Wij</span>{wij}</p>
             </li>
           ))}
         </ol>
-      </section>
+      </Band>
 
-      <section className="container-page mt-20 grid gap-10 lg:grid-cols-2">
+      <Band tone="white" inner="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
+        <SectionTitle eyebrow="De verkoper" title="Een eigen, eenvoudig portaal" intro="Koper en verkoper zien elkaars persoonlijke en financiële gegevens niet." />
+        <ol className="border-t border-ink-900">
+          {verkoper.map(([t, d], i) => (
+            <li key={t} className="flex gap-5 border-b border-ink-200 py-4">
+              <span className="w-6 shrink-0 font-serif text-xl font-semibold leading-tight text-brass-600">{String.fromCharCode(65 + i)}</span>
+              <span><span className="block font-semibold text-ink-900">{t}</span><span className="block text-sm text-ink-600">{d}</span></span>
+            </li>
+          ))}
+        </ol>
+      </Band>
+
+      <Band tone="sand" inner="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <SectionTitle eyebrow="De verkoper" title="Een eigen, eenvoudig portaal" intro="Koper en verkoper zien elkaars persoonlijke en financiële gegevens niet." />
-          <ol className="mt-8 space-y-3">
-            {verkoper.map(([t, d], i) => (
-              <li key={t} className="flex gap-4 rounded-2xl border border-ink-100 bg-white p-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brass-400 font-serif text-sm font-semibold text-brass-600">{String.fromCharCode(65 + i)}</span>
-                <span><span className="block font-semibold text-ink-900">{t}</span><span className="block text-sm text-ink-600">{d}</span></span>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div>
-          <SectionTitle eyebrow="De notaris" title="Controlerend, onafhankelijk en eindverantwoordelijk" intro="De notaris hoeft de akten niet vanaf nul op te stellen, maar controleert, corrigeert en stelt alles definitief vast." />
-          <ul className="mt-8 space-y-3">
-            {notaris.map((n) => <li key={n} className="flex gap-3 rounded-2xl border border-notaris-100 bg-notaris-50/50 p-4 text-ink-800"><Check className="mt-0.5 h-5 w-5 shrink-0 text-notaris-600" />{n}</li>)}
-          </ul>
-          <div className="mt-8 rounded-2xl bg-ink-900 p-6 text-ink-200">
-            <p className="font-semibold text-white">Het resultaat</p>
-            <p className="mt-2 text-sm leading-relaxed">Een compleet en compliant dossier, juiste Wwft-onderbouwing, geldige volmachten, gecontroleerde akten, een financieel correcte afwikkeling — en een snelle, foutarme overdracht.</p>
+          <p className="eyebrow">De notaris</p>
+          <h2 className="mt-3 text-3xl leading-tight text-ink-900 sm:text-[2.5rem]">Controlerend, onafhankelijk en eindverantwoordelijk</h2>
+          <p className="mt-4 text-lg leading-relaxed text-ink-600">De notaris hoeft de akten niet vanaf nul op te stellen, maar controleert, corrigeert en stelt alles definitief vast.</p>
+          <div className="mt-10 border-l-[3px] border-brass-500 pl-5">
+            <p className="font-serif text-lg font-semibold text-ink-900">Het resultaat</p>
+            <p className="mt-2 text-sm leading-relaxed text-ink-600">Een compleet dossier met een juiste Wwft-onderbouwing, geldige volmachten, gecontroleerde akten en een financieel correcte afwikkeling. Zo verloopt de overdracht snel en zonder fouten.</p>
             <Link href="/aanvraag" className="btn btn-brass mt-5">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>
-      </section>
+        <ul className="border-t border-ink-900">
+          {notaris.map((n) => <li key={n} className="flex gap-3 border-b border-ink-300 py-4 text-ink-800"><Tick />{n}</li>)}
+        </ul>
+      </Band>
 
       <CtaBand />
     </>

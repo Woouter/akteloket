@@ -60,7 +60,7 @@ export function overdrachtsbelasting(view: DossierView): { regels: OBRegel[]; to
     const uitkomst = s.uitkomst ?? startersUitkomst(s) ?? (s.hoofdverblijf === "nee" ? "8%" : "2%");
     const tarief = uitkomst === "vrijstelling" ? 0 : uitkomst === "8%" ? tax.tariefOverigeWoning : tax.tariefHoofdverblijf;
     const grondslag = Math.round(prijs * aandeel * 100) / 100;
-    const grond = uitkomst === "vrijstelling" ? "startersvrijstelling (art. 15 lid 1 onderdeel p WBR)" : tarief === tax.tariefHoofdverblijf ? `verlaagd tarief ${(tarief * 100).toFixed(0)}% — hoofdverblijf` : `tarief ${(tarief * 100).toFixed(1).replace(".0", "")}% — geen hoofdverblijf`;
+    const grond = uitkomst === "vrijstelling" ? "startersvrijstelling (art. 15 lid 1 onderdeel p WBR)" : tarief === tax.tariefHoofdverblijf ? `verlaagd tarief ${(tarief * 100).toFixed(0)}% (hoofdverblijf)` : `tarief ${(tarief * 100).toFixed(1).replace(".0", "")}% (geen hoofdverblijf)`;
     return { partyId: p.id, naam: p.displayName, aandeel, grondslag, tarief, bedrag: Math.round(grondslag * tarief * 100) / 100, grond };
   });
   return { regels, totaal: Math.round(regels.reduce((s, r) => s + r.bedrag, 0) * 100) / 100 };
@@ -118,7 +118,7 @@ export function notaVerkoper(view: DossierView): NotaState {
   if (v.ozb) lines.push({ label: `Verrekening onroerendezaakbelasting (${v.dagen} dagen)`, bedrag: v.ozb, richting: "credit" });
   if (v.waterschap) lines.push({ label: `Verrekening waterschapslasten (${v.dagen} dagen)`, bedrag: v.waterschap, richting: "credit" });
   for (const p of view.payoffs) {
-    lines.push({ label: `Aflossing hypotheek ${p.lender}${p.loanNumbers ? ` (${p.loanNumbers})` : ""}${p.status === "ontvangen" || p.status === "gecontroleerd" ? "" : " — aflosnota volgt"}`, bedrag: p.amount ? p.amount / 100 : 0, richting: "debet" });
+    lines.push({ label: `Aflossing hypotheek ${p.lender}${p.loanNumbers ? ` (${p.loanNumbers})` : ""}${p.status === "ontvangen" || p.status === "gecontroleerd" ? "" : " (aflosnota volgt)"}`, bedrag: p.amount ? p.amount / 100 : 0, richting: "debet" });
     lines.push({ label: `Kosten doorhaling hypotheekinschrijving ${p.inschrijving ?? ""}`.trim(), bedrag: p.doorhalingKosten ? p.doorhalingKosten / 100 : COST_DEFAULTS.doorhalingPerHypotheek, richting: "debet" });
   }
   const saldo = r2(lines.reduce((s, l) => s + (l.richting === "credit" ? l.bedrag : -l.bedrag), 0));

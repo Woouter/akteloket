@@ -79,7 +79,7 @@ function agg(states: StepState[]): StepState {
  * "x van y gereed". De labels per persoon staan in de stappenlijst zelf.
  */
 export function summaryLabel(pp: { state: StepState; label: string }[]): string {
-  if (!pp.length) return "—";
+  if (!pp.length) return "–";
   const labels = [...new Set(pp.map((p) => p.label))];
   if (labels.length === 1) return labels[0];
   const rel = pp.filter((p) => p.state !== "na");
@@ -153,7 +153,7 @@ export function koperSteps(view: DossierView): Step[] {
     if (!lev) { st = "na"; label = "Niet van toepassing"; }
     else if (locked) { st = "locked"; label = "Na upload koopovereenkomst"; }
     else if (!s || !s.preselectie) { st = "waiting"; label = "Toets volgt automatisch"; }
-    else if (s.preselectie === "niet") { st = "done"; label = s.reden ? `Niet van toepassing — ${s.reden}` : "Niet van toepassing"; }
+    else if (s.preselectie === "niet") { st = "done"; label = s.reden ? `Niet van toepassing (${s.reden})` : "Niet van toepassing"; }
     else if (s.uitkomst === "vrijstelling" && s.verklaringGetekendOp) { st = "done"; label = "Verklaring getekend"; }
     else if (s.uitkomst && s.uitkomst !== "vrijstelling") { st = "done"; label = s.uitkomst === "controle_notaris" ? "Controle door notaris" : `Geen vrijstelling (${s.uitkomst})`; }
     else if (s.wilGebruiken === "ja" && !s.verklaringGetekendOp) { st = "todo"; label = "Verklaring tekenen"; }
@@ -228,7 +228,7 @@ export function koperSteps(view: DossierView): Step[] {
   if (locked) { dState = "locked"; dLabel = "Na upload koopovereenkomst"; }
   else if (kad === "nader_onderzoek") { dState = "attention"; dLabel = "Kadaster: nader onderzoek"; }
   else if (!lev && kad === "opgehaald") { dState = "done"; dLabel = "Kadastrale stukken opgehaald"; }
-  else if (akte && akte.status === "gegenereerd" && !view.kopers.every((p) => personDataComplete(p) && p.data.gegevensBevestigd)) { dState = "in_progress"; dLabel = "Eerste concept klaar — wacht op je gegevens"; }
+  else if (akte && akte.status === "gegenereerd" && !view.kopers.every((p) => personDataComplete(p) && p.data.gegevensBevestigd)) { dState = "in_progress"; dLabel = "Eerste concept klaar, wacht op je gegevens"; }
   else if (akte && akte.status !== "in_voorbereiding") { dState = "done"; dLabel = akte.status === "goedgekeurd" ? "Concept-leveringsakte goedgekeurd" : akte.status === "definitief" ? "Leveringsakte definitief" : akte.status === "ter_controle_notaris" ? "Concept-leveringsakte bij de notaris" : "Concept-leveringsakte gegenereerd"; }
   else if (kad === "opgehaald") { dState = "in_progress"; dLabel = "Concept-leveringsakte in voorbereiding"; }
   steps.push({
@@ -346,7 +346,7 @@ export function verkoperSteps(view: DossierView): Step[] {
     zState = "in_progress";
     const lab = { op_te_vragen: "op te vragen", aangevraagd: "aangevraagd", ontvangen: "ontvangen", gecontroleerd: "gecontroleerd" };
     const ontvangen = pos.filter((p) => p.status === "ontvangen" || p.status === "gecontroleerd").length;
-    zLabel = pos.length === 1 ? `Aflosnota ${lab[pos[0].status]}${pos[0].status === "ontvangen" ? " — notaris controleert" : ""}` : `${ontvangen} van ${pos.length} aflosnota's ontvangen`;
+    zLabel = pos.length === 1 ? `Aflosnota ${lab[pos[0].status]}${pos[0].status === "ontvangen" ? ", notaris controleert" : ""}` : `${ontvangen} van ${pos.length} aflosnota's ontvangen`;
   }
   steps.push({
     key: "zekerheden", nr: "F", title: "Bestaande zekerheden en aflosnota's",
@@ -359,8 +359,8 @@ export function verkoperSteps(view: DossierView): Step[] {
   let nState: StepState = "waiting";
   let nLabel = "Nota van afrekening: in voorbereiding";
   if (nota?.uitbetaaldOp) { nState = "done"; nLabel = "Uitbetaald"; }
-  else if (nota?.status === "definitief") { nState = "done"; nLabel = "Nota definitief — uitbetaling na overdracht"; }
-  else if (nota?.status === "beschikbaar") { nState = "todo"; nLabel = "Nota beschikbaar — bekijk en bevestig"; }
+  else if (nota?.status === "definitief") { nState = "done"; nLabel = "Nota definitief, uitbetaling na overdracht"; }
+  else if (nota?.status === "beschikbaar") { nState = "todo"; nLabel = "Nota beschikbaar, bekijk en bevestig"; }
   steps.push({
     key: "nota", nr: "G", title: "Nota van afrekening en uitbetaling",
     description: "De notaris stelt de nota van afrekening op (verkoopprijs, aflossingen, kosten doorhaling). Het restant wordt na de overdracht uitbetaald op je IBAN.",
@@ -415,7 +415,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "wwft_id", nr: "N1", title: "Wwft-uitvraag (incl. PEP) en identificatie",
     description: "Controleert de Wwft-uitvraag, PEP-antwoorden en de identificatie van koper(s) en verkoper(s).",
     applicable: true, ready: idsDone && pepDone && wwftDone,
-    readyLabel: idsDone && pepDone && wwftDone ? "Alle informatie aangeleverd" : `${all.filter((p) => p.data.idcheck?.status === "voltooid").length}/${all.length} geïdentificeerd · Wwft ${wwftDone ? "aangeleverd" : "open"}`,
+    readyLabel: idsDone && pepDone && wwftDone ? "Alle informatie aangeleverd" : `${all.filter((p) => p.data.idcheck?.status === "voltooid").length}/${all.length} geïdentificeerd, Wwft ${wwftDone ? "aangeleverd" : "open"}`,
     status: st("wwft_id"), flags: flags1,
   });
 
@@ -437,7 +437,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "leveringsakte", nr: "N3", title: "Concept-leveringsakte",
     description: "Controleert de automatisch opgestelde concept-leveringsakte met bronverwijzingen en controlepunten.",
     applicable: lev, ready: !!ak && ak.status !== "in_voorbereiding",
-    readyLabel: ak ? `Versie ${ak.version} · ${ak.controlepunten.length} controlepunten` : "In voorbereiding",
+    readyLabel: ak ? `Versie ${ak.version}, ${ak.controlepunten.length} controlepunten` : "In voorbereiding",
     status: st("leveringsakte"), flags: flags3,
   });
 
@@ -447,7 +447,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "hypotheekakte", nr: "N4", title: "Concept-hypotheekakte (en bankinstructie)",
     description: "Controleert de concept-hypotheekakte tegen de actuele bankinstructie van de geldverstrekker.",
     applicable: hyp, ready: !!ah && ah.status !== "in_voorbereiding",
-    readyLabel: ah ? `Versie ${ah.version} · ${ah.controlepunten.length} controlepunten` : d.financing.bankinstructieStatus === "ontvangen" ? "Instructie ontvangen" : "Wacht op bankinstructie",
+    readyLabel: ah ? `Versie ${ah.version}, ${ah.controlepunten.length} controlepunten` : d.financing.bankinstructieStatus === "ontvangen" ? "Instructie ontvangen" : "Wacht op bankinstructie",
     status: st("hypotheekakte"), flags: (ah?.controlepunten ?? []).map((t) => ({ tekst: t, ernst: "let_op" as const })),
   });
 
@@ -466,7 +466,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "nota", nr: "N6", title: "Nota's van afrekening",
     description: "Stelt de nota('s) van afrekening op voor koper en verkoper (automatisch voorbereid).",
     applicable: true, ready: !!d.notaKoper && (!lev || !!d.notaVerkoper),
-    readyLabel: d.notaKoper ? `Koper: ${NOTA_STATUS[d.notaKoper.status] ?? d.notaKoper.status}${lev ? ` · Verkoper: ${d.notaVerkoper ? NOTA_STATUS[d.notaVerkoper.status] ?? d.notaVerkoper.status : "nog in voorbereiding"}` : ""}` : "Nog in voorbereiding",
+    readyLabel: d.notaKoper ? `Koper: ${NOTA_STATUS[d.notaKoper.status] ?? d.notaKoper.status}${lev ? `, verkoper: ${d.notaVerkoper ? NOTA_STATUS[d.notaVerkoper.status] ?? d.notaVerkoper.status : "nog in voorbereiding"}` : ""}` : "Nog in voorbereiding",
     status: st("nota"), flags: [],
   });
 
@@ -477,7 +477,7 @@ export function notaryChecks(view: DossierView): NotaryCheck[] {
     key: "passeren", nr: "N7", title: "Passeren en definitieve afwikkeling",
     description: "Passeert de akte(n), laat inschrijven in het Kadaster en wikkelt de transactie financieel af.",
     applicable: true, ready: prior && datumOk,
-    readyLabel: d.afgewikkeldOp ? "Afgewikkeld" : d.gepasseerdOp ? "Gepasseerd — afwikkeling loopt" : prior ? (datumOk ? "Gereed om te passeren" : "Wacht op bevestiging datum") : "Wacht op N1–N6",
+    readyLabel: d.afgewikkeldOp ? "Afgewikkeld" : d.gepasseerdOp ? "Gepasseerd, afwikkeling loopt" : prior ? (datumOk ? "Gereed om te passeren" : "Wacht op bevestiging datum") : "Wacht op N1–N6",
     status: st("passeren"), flags: datumOk ? [] : [{ tekst: "Overdrachtsdatum nog niet bevestigd door koper.", ernst: "info" }],
   });
 

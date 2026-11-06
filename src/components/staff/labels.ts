@@ -28,7 +28,7 @@ export const WWFT_DETAIL: Map = {
 };
 
 /** Waarde uit een labelmap; onbekende waarden zonder underscores, ontbrekende als streepje. */
-export function label(map: Map, v: string | undefined | null, fallback = "—"): string {
+export function label(map: Map, v: string | undefined | null, fallback = "–"): string {
   if (!v) return fallback;
   return map[v] ?? v.replace(/_/g, " ");
 }

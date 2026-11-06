@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, ChevronDown, FileSignature, Landmark, Layers, FilePen, Menu, X, Phone, Scale } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, X, Phone, Scale } from "lucide-react";
+import { Glyph, type GlyphName } from "@/components/icons/glyphs";
 import { Logo } from "@/components/ui/logo";
 import { BRAND, SERVICES } from "@/lib/config";
 
 const services = [
-  { href: "/levering-en-hypotheekakte", title: "Levering + hypotheekakte", desc: `Voor de meeste kopers · € ${SERVICES.beide.price}`, icon: Layers },
-  { href: "/akte-van-levering", title: "Akte van levering", desc: `Kopen zonder hypotheek · € ${SERVICES.levering.price}`, icon: FileSignature },
-  { href: "/hypotheekakte", title: "Hypotheekakte", desc: `Bijv. bij oversluiten · € ${SERVICES.hypotheek.price}`, icon: Landmark },
-  { href: "/koopovereenkomst-opstellen", title: "Koopovereenkomst opstellen", desc: `Zonder makelaar · € ${SERVICES.koopovereenkomst.price}`, icon: FilePen },
+  { href: "/levering-en-hypotheekakte", title: "Levering + hypotheekakte", desc: `Voor de meeste kopers, € ${SERVICES.beide.price.toLocaleString("nl-NL")}`, glyph: "stack" as GlyphName },
+  { href: "/akte-van-levering", title: "Akte van levering", desc: `Kopen zonder hypotheek, € ${SERVICES.levering.price.toLocaleString("nl-NL")}`, glyph: "key" as GlyphName },
+  { href: "/hypotheekakte", title: "Hypotheekakte", desc: `Bijv. bij oversluiten, € ${SERVICES.hypotheek.price.toLocaleString("nl-NL")}`, glyph: "bank" as GlyphName },
+  { href: "/koopovereenkomst-opstellen", title: "Koopovereenkomst opstellen", desc: `Zonder makelaar, € ${SERVICES.koopovereenkomst.price.toLocaleString("nl-NL")}`, glyph: "signature" as GlyphName },
 ];
 
 const nav = [
@@ -38,7 +39,7 @@ export function SiteHeader() {
               <div className="card p-2">
                 {services.map((s) => (
                   <Link key={s.href} href={s.href} className="flex items-start gap-3 rounded-md p-3 hover:bg-ink-50">
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brass-50 text-brass-700 ring-1 ring-brass-200"><s.icon className="h-4.5 w-4.5" /></span>
+                    <Glyph name={s.glyph} size={34} className="mt-0.5" />
                     <span><span className="block font-serif text-[1.05rem] font-semibold text-ink-900">{s.title}</span><span className="block text-sm text-ink-500">{s.desc}</span></span>
                   </Link>
                 ))}

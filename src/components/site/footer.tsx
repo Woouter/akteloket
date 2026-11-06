@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Lock, ShieldCheck, Scale } from "lucide-react";
+import { Glyph } from "@/components/icons/glyphs";
 import { Logo } from "@/components/ui/logo";
 import { BRAND, NOTARY_OFFICE } from "@/lib/config";
 
@@ -11,16 +11,16 @@ const cols = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-ink-200 bg-sand-100 text-ink-600">
+    <footer className="border-t border-ink-200 bg-sand-100 text-ink-600">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_repeat(3,1fr)]">
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-500">{BRAND.tagline} De notariële werkzaamheden worden uitgevoerd door {NOTARY_OFFICE.officeName}, een onafhankelijk notariskantoor.</p>
-          <div className="mt-6 flex flex-wrap gap-2 text-xs">
-            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><Scale className="h-3.5 w-3.5" />Onafhankelijke notaris</span>
-            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><Lock className="h-3.5 w-3.5" />Versleutelde opslag</span>
-            <span className="chip bg-white text-ink-700 ring-1 ring-ink-200"><ShieldCheck className="h-3.5 w-3.5" />AVG-proof</span>
-          </div>
+          <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
+            <li className="flex items-center gap-2.5"><Glyph name="scales" size={22} />Onafhankelijke notaris</li>
+            <li className="flex items-center gap-2.5"><Glyph name="lock" size={22} />Versleutelde opslag</li>
+            <li className="flex items-center gap-2.5"><Glyph name="shield" size={22} />Werkt volgens de AVG</li>
+          </ul>
         </div>
         {cols.map((c) => (
           <div key={c.title}>
@@ -33,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-ink-200">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.address}{BRAND.kvk ? ` · ${BRAND.kvk}` : ""}</p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1"><span>© {new Date().getFullYear()} {BRAND.name}</span><span>{BRAND.address}</span>{BRAND.kvk && <span>{BRAND.kvk}</span>}</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="inline-block py-1.5 hover:text-ink-900">Privacy</Link>
             <Link href="/voorwaarden" className="inline-block py-1.5 hover:text-ink-900">Voorwaarden</Link>

@@ -12,7 +12,7 @@ export async function irToDocx(ir: DocIR, footerText: string): Promise<Buffer> {
         : new TextRun({ text: r.t, bold, font: FONT, size: 22, highlight: r.k === "filled" ? undefined : "yellow", color: r.k === "missing" ? "B91C1C" : r.k === "check" ? "B45309" : undefined, underline: r.k === "filled" ? { type: "dotted", color: "34B27B" } : undefined }),
     );
   const children: (Paragraph | Table)[] = [];
-  if (ir.concept) children.push(new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "CONCEPT — ter controle en vaststelling door de notaris", bold: true, color: "B45309", size: 18, font: "Arial" })] }));
+  if (ir.concept) children.push(new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: "CONCEPT, ter controle en vaststelling door de notaris", bold: true, color: "B45309", size: 18, font: "Arial" })] }));
   for (const b of ir.blocks) {
     switch (b.type) {
       case "title": children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 200, after: 120 }, children: [new TextRun({ text: b.text, bold: true, size: 30, font: FONT })] })); break;
@@ -35,7 +35,7 @@ export async function irToDocx(ir: DocIR, footerText: string): Promise<Buffer> {
     }
   }
   if (ir.controlepunten.length || ir.bronnen.length) {
-    children.push(new Paragraph({ pageBreakBefore: true, children: [new TextRun({ text: "BIJLAGE VOOR DE NOTARIS — niet opnemen in de definitieve akte", bold: true, size: 20, font: "Arial", color: "B45309" })] }));
+    children.push(new Paragraph({ pageBreakBefore: true, children: [new TextRun({ text: "BIJLAGE VOOR DE NOTARIS (niet opnemen in de definitieve akte)", bold: true, size: 20, font: "Arial", color: "B45309" })] }));
     if (ir.controlepunten.length) {
       children.push(new Paragraph({ spacing: { before: 200, after: 80 }, children: [new TextRun({ text: "Controlepunten", bold: true, size: 22, font: "Arial" })] }));
       ir.controlepunten.forEach((c, i) => children.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: `${i + 1}. ${c}`, size: 20, font: "Arial" })] })));

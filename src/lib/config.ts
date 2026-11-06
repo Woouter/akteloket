@@ -13,11 +13,11 @@ export const BRAND = {
   demoUrl: "https://demo.akte-loket.nl",
   tagline: "Je notaris voor je woning, volledig online geregeld.",
   email: "hallo@akte-loket.nl",
-  phone: "085 – 060 42 10",
+  phone: "085 060 42 10",
   phoneHref: "tel:+31850604210",
   /** KvK-nummer; zet NEXT_PUBLIC_KVK zodra bekend (wordt anders niet getoond). */
   kvk: process.env.NEXT_PUBLIC_KVK ? `KvK ${process.env.NEXT_PUBLIC_KVK}` : "",
-  address: "Online · werkzaam in heel Nederland",
+  address: "Online, werkzaam in heel Nederland",
 } as const;
 
 /**
@@ -89,7 +89,7 @@ export const SERVICES: Record<ServiceKey, ServiceDef> = {
     name: "Leveringsakte + hypotheekakte",
     short: "Levering + hypotheek",
     description: "Voor de meeste kopers: de overdracht van je woning én de hypotheekakte in één dossier.",
-    price: 895,
+    price: 1395,
     includes: [
       "Akte van levering en hypotheekakte",
       "Eén gecombineerde volmacht voor beide akten",
@@ -105,7 +105,7 @@ export const SERVICES: Record<ServiceKey, ServiceDef> = {
     name: "Akte van levering",
     short: "Leveringsakte",
     description: "Je koopt zonder hypotheek, of je hypotheekakte loopt elders: alleen de eigendomsoverdracht.",
-    price: 649,
+    price: 995,
     includes: [
       "Akte van levering (transportakte)",
       "Volmacht voor de levering",
@@ -121,7 +121,7 @@ export const SERVICES: Record<ServiceKey, ServiceDef> = {
     name: "Hypotheekakte",
     short: "Hypotheekakte",
     description: "Alleen de hypotheekakte, bijvoorbeeld bij oversluiten of als de levering al geregeld is.",
-    price: 449,
+    price: 695,
     includes: [
       "Hypotheekakte op basis van de bankinstructie",
       "Volmacht voor de hypotheekakte",
@@ -137,7 +137,7 @@ export const SERVICES: Record<ServiceKey, ServiceDef> = {
     name: "Koopovereenkomst opstellen",
     short: "Koopovereenkomst",
     description: "Zelf een huis verkocht of gekocht zonder makelaar? Wij stellen een sluitende koopovereenkomst op.",
-    price: 395,
+    price: 495,
     includes: [
       "Begeleide online vragenlijst",
       "Koopovereenkomst volgens vaste structuur, juridisch gecontroleerd",
@@ -151,8 +151,8 @@ export const SERVICES: Record<ServiceKey, ServiceDef> = {
 };
 
 export const EXTRAS = [
-  { key: "spoed", name: "Spoedafhandeling (passeren binnen 10 werkdagen)", price: 195 },
-  { key: "extra_hypotheek", name: "Tweede hypotheekakte (bijv. overbrugging of tweede geldverstrekker)", price: 225 },
+  { key: "spoed", name: "Spoedafhandeling (passeren binnen 10 werkdagen)", price: 295 },
+  { key: "extra_hypotheek", name: "Tweede hypotheekakte (bijv. overbrugging of tweede geldverstrekker)", price: 395 },
   { key: "inschrijving_ko", name: "Inschrijving koopovereenkomst in het Kadaster", price: 125 },
   { key: "volmacht_kantoor", name: "Volmacht tekenen op kantoor i.p.v. video (geen meerprijs)", price: 0 },
 ];

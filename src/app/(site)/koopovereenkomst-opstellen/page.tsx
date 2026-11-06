@@ -4,8 +4,8 @@ import { Landing } from "@/components/site/landing";
 import { SERVICES } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Koopovereenkomst opstellen zonder makelaar — € 395",
-  description: `Koopovereenkomst laten opstellen voor je huis, zonder makelaar. Begeleide vragenlijst, juridisch gecontroleerd, digitaal tekenen. € ${SERVICES.koopovereenkomst.price} all-in.`,
+  title: "Koopovereenkomst opstellen zonder makelaar voor € 495",
+  description: `Koopovereenkomst laten opstellen voor je huis, zonder makelaar. Begeleide vragenlijst, juridisch gecontroleerd, digitaal tekenen. € ${SERVICES.koopovereenkomst.price.toLocaleString("nl-NL")} all-in.`,
   alternates: { canonical: "/koopovereenkomst-opstellen" },
 };
 
@@ -15,7 +15,7 @@ export default function Page() {
       path="/koopovereenkomst-opstellen"
       service="koopovereenkomst"
       ctaLabel="Stel je koopovereenkomst op"
-      eyebrow="Koopovereenkomst opstellen · huis kopen of verkopen zonder makelaar"
+      eyebrow="Koopovereenkomst opstellen zonder makelaar"
       h1={<>Een <span className="italic text-brass-600">sluitende koopovereenkomst</span>, ook zonder makelaar</>}
       intro="Heb je zelf een koper of verkoper gevonden? Dan moet de koop schriftelijk worden vastgelegd. Een fout in de ontbindende voorwaarden of de waarborgsom kan je duizenden euro's kosten. Met onze begeleide vragenlijst stel je in een kwartier een complete koopovereenkomst op, die juridisch wordt gecontroleerd."
       heroPoints={["Begeleide vragenlijst in gewone taal", "Ontbindende voorwaarden goed geregeld", "Digitaal tekenen door koper en verkoper", "Met één klik door naar de akte van levering"]}

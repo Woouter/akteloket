@@ -68,7 +68,7 @@ Zo voorkom je dat een lage prijs later toch hoger uitvalt. Meer tips over de keu
 
 Wie een huis ziet staan met ‘k.k.’ achter de prijs, weet dat er kosten bij komen. Die kosten koper zijn breder dan alleen de notaris. De grootste post is meestal de overdrachtsbelasting. In 2026 is die 2% als je de woning zelf als hoofdverblijf gaat bewonen, 0% als je aan de voorwaarden van de startersvrijstelling voldoet, en 8% als de woning niet je hoofdverblijf wordt.
 
-Een rekenvoorbeeld: bij een koopprijs van € 400.000 en eigen bewoning betaal je € 8.000 overdrachtsbelasting. Dat is meestal veel meer dan de notariskosten. Lees meer in [overdrachtsbelasting 2026](/kennisbank/overdrachtsbelasting-2026) en in het overzicht van alle [kosten koper](/kennisbank/kosten-koper).
+Een rekenvoorbeeld: bij een koopprijs van € 400.000 en eigen bewoning betaal je € 8.000 overdrachtsbelasting. Dat is meestal veel meer dan de notariskosten. Lees meer in [overdrachtsbelasting 2026](/kennisbank/overdrachtsbelasting-2026) en in het overzicht van alle [kosten koper](/kennisbank/kosten-koper).
 
 > **Goed om te weten:** de kosten van de hypotheekakte zijn financieringskosten. Die kunnen onder voorwaarden aftrekbaar zijn in je aangifte inkomstenbelasting. De kosten van de akte van levering en de overdrachtsbelasting zijn dat niet. Je hypotheekadviseur of de Belastingdienst kan je vertellen wat voor jou geldt.
 
@@ -91,7 +91,7 @@ Bij Akteloket upload je de getekende koopovereenkomst. Wij lezen de gegevens aut
 
 | Dienst | Vaste prijs (all-in) |
 |---|---|
-| Akte van levering + hypotheekakte | € 895 |
-| Alleen akte van levering | € 649 |
-| Alleen hypotheekakte | € 449 |
-| Koopovereenkomst opstellen | € 395 |
+| Akte van levering + hypotheekakte | € 1.395 |
+| Alleen akte van levering | € 995 |
+| Alleen hypotheekakte | € 695 |
+| Koopovereenkomst opstellen | € 495 |

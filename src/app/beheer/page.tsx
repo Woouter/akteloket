@@ -24,9 +24,9 @@ export default async function Page() {
     const d = s.view.data;
     if (d.extractie && (d.extractie.ontbrekend.length || d.extractie.onzeker.length)) attention.push({ s, why: `Koopovereenkomst: ${d.extractie.ontbrekend.length} ontbrekend, ${d.extractie.onzeker.length} onzeker` });
     if (d.kadaster.status === "nader_onderzoek") attention.push({ s, why: "Kadaster: nader onderzoek nodig" });
-    if (s.view.dossier.status === "wacht_op_ko") attention.push({ s, why: "Wacht op getekende koopovereenkomst — klant opvolgen" });
+    if (s.view.dossier.status === "wacht_op_ko") attention.push({ s, why: "Wacht op getekende koopovereenkomst: klant opvolgen" });
     const lev = d.transaction.leveringsdatum;
-    if (lev && d.financing.hypotheek !== "nee" && !["ontvangen", "in_behandeling"].includes(d.financing.bankinstructieStatus ?? "") && daysBetween(todayIso(), addDays(lev, -TERMS.bankinstructieUiterlijkDagenVooraf)) <= 0 && d.service !== "levering") attention.push({ s, why: "Bankinstructie nog niet ontvangen binnen 10 dagen vóór passeren — adviseur benaderen" });
+    if (lev && d.financing.hypotheek !== "nee" && !["ontvangen", "in_behandeling"].includes(d.financing.bankinstructieStatus ?? "") && daysBetween(todayIso(), addDays(lev, -TERMS.bankinstructieUiterlijkDagenVooraf)) <= 0 && d.service !== "levering") attention.push({ s, why: "Bankinstructie nog niet ontvangen binnen 10 dagen vóór passeren: adviseur benaderen" });
     const steps = [...koperSteps(s.view), ...(s.view.verkopers.length ? verkoperSteps(s.view) : [])];
     const stuck = steps.filter((x) => x.owner === "klant" && (x.state === "todo" || x.state === "attention") && x.actionable).length;
     if (stuck >= 4 && s.daysToPassing !== undefined && s.daysToPassing < 21) attention.push({ s, why: `${stuck} open klantstappen terwijl passeren over ${s.daysToPassing} dagen is` });
@@ -39,7 +39,7 @@ export default async function Page() {
   ];
   return (
     <>
-      <PageTitle title="Platformoverzicht" sub="Wat wij doen: automatiseren, voorbereiden, bewaken en klanten helpen — zodat de notaris alleen controleert." />
+      <PageTitle title="Platformoverzicht" sub="Wat wij doen: automatiseren, voorbereiden, bewaken en klanten helpen, zodat de notaris alleen hoeft te controleren." />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-tour="b-kpis">
         {tiles.map((t) => <Card key={t.label} className="flex items-center gap-4 p-5"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-platform-50 text-platform-600"><t.icon className="h-5 w-5" /></span><span><span className="block font-serif text-3xl font-semibold text-ink-900 tabular">{t.value}</span><span className="block text-sm text-ink-500">{t.label}</span></span></Card>)}
       </div>
@@ -55,7 +55,7 @@ export default async function Page() {
         <Card className="min-w-0 p-0" data-tour="b-stream">
           <div className="border-b border-ink-100 p-5"><CardTitle icon={<Activity className="h-4 w-4 shrink-0 text-platform-600" />}>Live automatiseringslog</CardTitle></div>
           <ul className="max-h-[32rem] divide-y divide-ink-100 overflow-auto">
-            {evs.map((e) => <li key={e.id} className="flex gap-3 p-4 text-sm"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><span className="min-w-0"><span className="block text-ink-800">{humanize(e.message)}</span><span className="block text-xs text-ink-500">{timeAgo(e.createdAt)} · {e.actorName ?? e.actorType} · <span className="font-mono">{e.type}</span></span></span></li>)}
+            {evs.map((e) => <li key={e.id} className="flex gap-3 p-4 text-sm"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><span className="min-w-0"><span className="block text-ink-800">{humanize(e.message)}</span><span className="block text-xs text-ink-500">{timeAgo(e.createdAt)}, {e.actorName ?? e.actorType}, <span className="font-mono">{e.type}</span></span></span></li>)}
           </ul>
         </Card>
       </div>

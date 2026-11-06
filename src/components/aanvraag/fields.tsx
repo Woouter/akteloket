@@ -8,8 +8,8 @@ export type FState = { state: "extracted" | "uncertain" | "missing" | "manual" |
 export function SourceTag({ s, className }: { s: FState; className?: string }) {
   if (!s) return null;
   const base = cn("inline-flex items-center gap-1 text-[11px] font-semibold", className);
-  if (s.state === "extracted") return <span title={s.snippet} className={cn(base, "text-ok-700")}><CheckCircle2 className="h-3 w-3 shrink-0" />Uit koopovereenkomst{s.page ? ` · p.${s.page}` : ""}</span>;
-  if (s.state === "uncertain") return <span title={s.snippet} className={cn(base, "text-warn-700")}><AlertTriangle className="h-3 w-3 shrink-0" />Controleer{s.page ? ` · p.${s.page}` : ""}</span>;
+  if (s.state === "extracted") return <span title={s.snippet} className={cn(base, "text-ok-700")}><CheckCircle2 className="h-3 w-3 shrink-0" />Uit koopovereenkomst{s.page ? ` (p. ${s.page})` : ""}</span>;
+  if (s.state === "uncertain") return <span title={s.snippet} className={cn(base, "text-warn-700")}><AlertTriangle className="h-3 w-3 shrink-0" />Controleer{s.page ? ` (p. ${s.page})` : ""}</span>;
   if (s.state === "missing") return <span className={cn(base, "text-bad-700")}><CircleDashed className="h-3 w-3 shrink-0" />Vul aan</span>;
   if (s.state === "edited") return <span title={s.snippet ? `Oorspronkelijk: ${s.snippet}` : undefined} className={cn(base, "text-ink-600")}><PencilLine className="h-3 w-3 shrink-0" />Zelf aangepast</span>;
   return <span className={cn(base, "text-ink-500")}><PencilLine className="h-3 w-3 shrink-0" />Zelf ingevuld</span>;

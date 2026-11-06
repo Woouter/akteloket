@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { Glyph } from "@/components/icons/glyphs";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CalendarClock, CheckCircle2, Cpu, MessageSquareWarning, PartyPopper, Phone, Scale, Send, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarClock, CheckCircle2, Cpu, MessageSquareWarning, Phone, Scale, Send } from "lucide-react";
 import { requireParty } from "@/lib/auth/guards";
 import { koopovereenkomstSteps, koperSteps, stateFor, verkoperSteps } from "@/lib/workflow/steps";
 import { StepsList } from "@/components/portal/steps-list";
@@ -23,8 +24,7 @@ const SAVED: Record<string, [string, string]> = {
   datum: ["Overdrachtsdatum doorgegeven", "Dank je wel. De notaris is op de hoogte."],
   zekerheden: ["Zekerheden bevestigd", "De notaris vraagt de aflosnota op bij je geldverstrekker."],
   nota: ["Nota bekeken", "We hebben vastgelegd dat je de nota van afrekening hebt gezien."],
-  verzoek: ["Verzoek beantwoord", "De notaris heeft je antwoord ontvangen."],
-};
+  verzoek: ["Verzoek beantwoord", "De notaris heeft je antwoord ontvangen."] };
 
 const DATUM_STATUS: Record<string, string> = { voorlopig: "voorlopig", bevestigd: "bevestigd", gewijzigd: "gewijzigd", nog_te_bepalen: "nog te bepalen" };
 
@@ -65,11 +65,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
       <div className="min-w-0 space-y-6">
-        {sp.welkom && <Notice tone="ok" icon={<PartyPopper className="h-5 w-5 text-ok-600" />} title={isKo ? "Je aanvraag is ontvangen!" : "Je aanvraag is bevestigd!"}>Je dossier {view.dossier.reference} is aangemaakt. {welkomTekst} We hebben je ook een e-mail gestuurd.</Notice>}
+        {sp.welkom && <Notice tone="ok" icon={<Glyph name="route" size={24} />} title={isKo ? "Je aanvraag is ontvangen!" : "Je aanvraag is bevestigd!"}>Je dossier {view.dossier.reference} is aangemaakt. {welkomTekst} We hebben je ook een e-mail gestuurd.</Notice>}
         {saved && !sp.welkom && <Notice tone="ok" icon={<CheckCircle2 className="h-5 w-5 text-ok-600" />} title={saved[0]}>{saved[1]}</Notice>}
         {sp.uitgenodigd && <Notice tone="ok" icon={<Send className="h-5 w-5 text-ok-600" />} title="Uitnodiging verstuurd">De uitnodiging is per e-mail verstuurd. Je ziet in de stappen wanneer de persoonlijke stappen zijn afgerond.</Notice>}
         {sp.fout && <Notice tone="bad" icon={<AlertTriangle className="h-5 w-5 text-bad-700" />} title="Dat lukte niet">{sp.fout}</Notice>}
-        {gepasseerd && <Notice tone="ok" icon={<PartyPopper className="h-5 w-5 text-ok-600" />} title={side === "koper" ? "Gefeliciteerd met je nieuwe woning!" : "De woning is overgedragen"}>De akte is gepasseerd op {dateNl(d.gepasseerdOp)} en ingeschreven in het Kadaster{d.ingeschrevenOp ? ` (${dateNl(d.ingeschrevenOp)})` : ""}.</Notice>}
+        {gepasseerd && <Notice tone="ok" icon={<Glyph name="key" size={24} />} title={side === "koper" ? "Gefeliciteerd met je nieuwe woning!" : "De woning is overgedragen"}>De akte is gepasseerd op {dateNl(d.gepasseerdOp)} en ingeschreven in het Kadaster{d.ingeschrevenOp ? ` (${dateNl(d.ingeschrevenOp)})` : ""}.</Notice>}
 
         {requests.map((r) => (
           <Card key={r.id} className="border-warn-100 bg-warn-50/60 p-5">
@@ -83,7 +83,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         {next && !gepasseerd && (
           <div className="relative overflow-hidden rounded-2xl bg-ink-900 p-6 text-white" data-tour="portal-next">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brass-400/70 to-transparent" />
-            <p className="eyebrow flex items-center gap-2 !text-brass-300"><Sparkles className="h-3.5 w-3.5" />{koOntbreekt && next.key === "koopovereenkomst" ? "Status: wachten op je getekende koopovereenkomst" : "Jouw volgende stap"}</p>
+            <p className="eyebrow flex items-center gap-2 !text-brass-300">{koOntbreekt && next.key === "koopovereenkomst" ? "Status: wachten op je getekende koopovereenkomst" : "Jouw volgende stap"}</p>
             <p className="mt-2 font-serif text-2xl font-semibold">{next.nr}. {next.title}</p>
             <p className="mt-1 text-sm text-ink-300">{koOntbreekt && next.key === "koopovereenkomst" ? "Zodra we hem hebben, lezen we de gegevens automatisch uit en openen we de rest van je stappen." : next.description}</p>
             {koOntbreekt && next.key === "koopovereenkomst"
@@ -92,7 +92,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </div>
         )}
         {!next && !gepasseerd && (!koOntbreekt || isKo) && (
-          <Notice tone="info" icon={<CheckCircle2 className="h-5 w-5 text-brand-600" />} title="Je bent helemaal bij">Er staat op dit moment niets voor je klaar. Wij en de notaris ronden de rest af — je hoort het zodra er iets van je nodig is.</Notice>
+          <Notice tone="info" icon={<CheckCircle2 className="h-5 w-5 text-brand-600" />} title="Je bent helemaal bij">Er staat op dit moment niets voor je klaar. Wij en de notaris ronden de rest af. Je hoort het zodra we iets van je nodig hebben.</Notice>
         )}
 
         <div>

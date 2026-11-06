@@ -12,7 +12,7 @@ import { MenuAutoClose } from "@/components/ui/menu-auto-close";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
-  title: { default: `${BRAND.name} — Online notaris voor je akte van levering en hypotheekakte`, template: `%s | ${BRAND.name}` },
+  title: { default: `Online notaris voor je akte van levering en hypotheekakte | ${BRAND.name}`, template: `%s | ${BRAND.name}` },
   description: "Regel je akte van levering en hypotheekakte volledig online. Upload je koopovereenkomst, wij doen de rest. Vaste all-in prijs, onafhankelijke notaris, bijna nooit langskomen.",
   applicationName: BRAND.name,
   openGraph: { type: "website", locale: "nl_NL", siteName: BRAND.name },

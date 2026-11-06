@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               <li key={d.id} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ink-50 text-ink-500"><FileText className="h-5 w-5" /></span>
-                  <div className="min-w-0"><p className="truncate font-semibold text-ink-900">{d.title}</p><p className="text-xs text-ink-500">{DOCUMENT_KINDS[d.kind]} · {dateNl(d.createdAt, { short: true })}{d.version > 1 ? ` · versie ${d.version}` : ""}</p></div>
+                  <div className="min-w-0"><p className="truncate font-semibold text-ink-900">{d.title}</p><p className="text-xs text-ink-500">{DOCUMENT_KINDS[d.kind]}, {dateNl(d.createdAt, { short: true })}{d.version > 1 ? `, versie ${d.version}` : ""}</p></div>
                 </div>
                 <div className="flex gap-2">
                   {viewable && <Link href={`/portaal/${id}/document/${d.id}`} className="btn btn-secondary btn-sm"><Eye className="h-4 w-4" />Bekijken</Link>}

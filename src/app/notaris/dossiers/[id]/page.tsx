@@ -33,7 +33,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <div>
           <div className="flex flex-wrap items-center gap-2"><Badge tone="dark">{STATUS_LABEL[view.dossier.status]}</Badge><Badge>{SERVICES[view.data.service].name}</Badge><span className="font-mono text-xs text-ink-400">{view.dossier.reference}</span></div>
           <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">{propertyLine(view.data.property) || "(adres volgt)"}</h1>
-          <p className="mt-1 text-sm text-ink-600">Passeren {dateNl(view.data.transaction.leveringsdatum, { weekday: true })} · controles {done}/{total} akkoord</p>
+          <p className="mt-1 text-sm text-ink-600">Passeren op {dateNl(view.data.transaction.leveringsdatum, { weekday: true })}, {done} van {total} controles akkoord</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href={`/notaris/dossiers/${id}/overdracht`} className="btn btn-secondary btn-sm"><PackageOpen className="h-4 w-4" />Dossieroverdracht ({view.handovers.length})</Link>
@@ -51,14 +51,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <CardTitle icon={<FileStack className="h-4 w-4 shrink-0 text-brand-600" />}>Documenten ({view.documents.length})</CardTitle>
             <ul className="mt-3 space-y-2.5">
               {view.documents.map((d) => (
-                <li key={d.id} className="text-sm"><a href={(d.meta as { ir?: unknown }).ir ? `/notaris/dossiers/${id}/akte/doc-${d.id}` : `/api/documenten/${d.id}?inline=1`} target={(d.meta as { ir?: unknown }).ir ? undefined : "_blank"} className="flex gap-2 font-medium text-ink-800 hover:text-brand-700"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0"><span className="block truncate">{d.title}</span><span className="block text-xs font-normal text-ink-400">{DOCUMENT_KINDS[d.kind] && DOCUMENT_KINDS[d.kind] !== d.title ? `${DOCUMENT_KINDS[d.kind]} · ` : ""}{d.source}{d.version > 1 ? ` · v${d.version}` : ""} · {dateNl(d.createdAt, { short: true })}</span></span></a></li>
+                <li key={d.id} className="text-sm"><a href={(d.meta as { ir?: unknown }).ir ? `/notaris/dossiers/${id}/akte/doc-${d.id}` : `/api/documenten/${d.id}?inline=1`} target={(d.meta as { ir?: unknown }).ir ? undefined : "_blank"} className="flex gap-2 font-medium text-ink-800 hover:text-brand-700"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0"><span className="block truncate">{d.title}</span><span className="block text-xs font-normal text-ink-400">{DOCUMENT_KINDS[d.kind] && DOCUMENT_KINDS[d.kind] !== d.title ? `${DOCUMENT_KINDS[d.kind]}, ` : ""}{d.source}{d.version > 1 ? `, versie ${d.version}` : ""}, {dateNl(d.createdAt, { short: true })}</span></span></a></li>
               ))}
             </ul>
           </Card>
           <Card className="p-5">
             <CardTitle>Tijdlijn</CardTitle>
             <ol className="mt-3 space-y-3 border-l-2 border-ink-100 pl-4">
-              {events.map((e) => <li key={e.id} className="relative text-sm"><span className={`absolute -left-[23px] top-1.5 h-2.5 w-2.5 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><p className="text-ink-700">{humanize(e.message)}</p><p className="text-xs text-ink-400" title={dateTimeNl(e.createdAt)}>{timeAgo(e.createdAt)} · {e.actorName ?? e.actorType}</p></li>)}
+              {events.map((e) => <li key={e.id} className="relative text-sm"><span className={`absolute -left-[23px] top-1.5 h-2.5 w-2.5 rounded-full ${e.actorType === "systeem" ? "bg-platform-600" : e.actorType === "notaris" ? "bg-notaris-600" : "bg-koper-500"}`} /><p className="text-ink-700">{humanize(e.message)}</p><p className="text-xs text-ink-400" title={dateTimeNl(e.createdAt)}>{timeAgo(e.createdAt)}, {e.actorName ?? e.actorType}</p></li>)}
             </ol>
           </Card>
         </aside>

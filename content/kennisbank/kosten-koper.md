@@ -54,19 +54,19 @@ Overdrachtsbelasting is meestal de grootste kostenpost. In 2026 gelden voor woni
 - **2%** als je de woning zelf, en niet tijdelijk, als hoofdverblijf gaat gebruiken;
 - **8%** als de woning niet je hoofdverblijf wordt, bijvoorbeeld als belegging of tweede woning. Dit tarief is per 1 januari 2026 verlaagd van 10,4%.
 
-Of je de [startersvrijstelling](/kennisbank/startersvrijstelling) kunt gebruiken, hangt af van je leeftijd, of je de vrijstelling al eerder hebt gebruikt en de waarde van de woning. In 2026 ligt de grens op € 555.000. Alle details staan in ons artikel over [overdrachtsbelasting 2026](/kennisbank/overdrachtsbelasting-2026).
+Of je de [startersvrijstelling](/kennisbank/startersvrijstelling) kunt gebruiken, hangt af van je leeftijd, of je de vrijstelling al eerder hebt gebruikt en de waarde van de woning. In 2026 ligt de grens op € 555.000. Alle details staan in ons artikel over [overdrachtsbelasting 2026](/kennisbank/overdrachtsbelasting-2026).
 
 ## Rekenvoorbeeld 2026
 
-Stel: je koopt een bestaande woning van € 400.000 k.k. De overdrachtsbelasting is dan:
+Stel: je koopt een bestaande woning van € 400.000 k.k. De overdrachtsbelasting is dan:
 
 | Jouw situatie | Tarief | Overdrachtsbelasting |
 |---|---|---|
-| Starter die aan alle voorwaarden voldoet | 0% | € 0 |
-| Je gaat er zelf wonen, maar bent geen starter | 2% | € 8.000 |
-| De woning wordt niet je hoofdverblijf | 8% | € 32.000 |
+| Starter die aan alle voorwaarden voldoet | 0% | € 0 |
+| Je gaat er zelf wonen, maar bent geen starter | 2% | € 8.000 |
+| De woning wordt niet je hoofdverblijf | 8% | € 32.000 |
 
-Daarbovenop komen de notariskosten. Bij Akteloket betaal je voor de akte van levering en de hypotheekakte samen € 895 all-in, inclusief btw en de inschrijving van beide akten bij het Kadaster. Tel daar je eventuele financieringskosten en overige kosten bij op, en je hebt een realistisch beeld.
+Daarbovenop komen de notariskosten. Bij Akteloket betaal je voor de akte van levering en de hypotheekakte samen € 1.395 all-in, inclusief btw en de inschrijving van beide akten bij het Kadaster. Tel daar je eventuele financieringskosten en overige kosten bij op, en je hebt een realistisch beeld.
 
 ## Waar betaal je de kosten koper van?
 
@@ -84,7 +84,7 @@ Kosten zoals advies, taxatie en keuring betaal je meestal rechtstreeks aan die p
 
 ## En in 2027?
 
-Koop je nu, maar wordt de woning pas in 2027 geleverd? Dan gelden de regels op de datum van de akte van levering. De woningwaardegrens voor de startersvrijstelling is vanaf 1 januari 2027 al vastgesteld op € 615.000. In het Belastingplan 2027 is daarnaast voorgesteld om het tarief van 8% te verlagen naar 7%. Dat voorstel is nog niet definitief.
+Koop je nu, maar wordt de woning pas in 2027 geleverd? Dan gelden de regels op de datum van de akte van levering. De woningwaardegrens voor de startersvrijstelling is vanaf 1 januari 2027 al vastgesteld op € 615.000. In het Belastingplan 2027 is daarnaast voorgesteld om het tarief van 8% te verlagen naar 7%. Dat voorstel is nog niet definitief.
 
 ## Zo houdt Akteloket je notariskosten overzichtelijk
 

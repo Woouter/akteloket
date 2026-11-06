@@ -23,7 +23,7 @@ const ITEMS: { key: string; title: string; now: string }[] = [
   { key: "Termijnen en herinneringen", title: "Termijnen en herinneringen", now: "Datumcheck 14 dagen vooraf, herinnering na 3 dagen, signaal aan notaris na nog 2 dagen; bankinstructie uiterlijk 10 dagen vooraf; herinneringen max. eens per 3 dagen." },
   { key: "Aflosnota's", title: "Aflosnota's, royement en nota van afrekening verkoper", now: "Hypotheken uit Kadaster → aflosnota op te vragen; verkoper vult leningnummer + toestemming; notaris verzendt verzoek met één klik, registreert bedrag; nota verkoper automatisch." },
   { key: "Dossieroverdracht", title: "Inhoud en moment van de dossieroverdracht", now: "Overdracht 1 als koperskant compleet en concept-leveringsakte klaar; aanvulling bij hypotheekakte; alle onderdelen uit hoofdstuk 11 + ZIP." },
-  { key: "DVO en tarieven", title: "Dienstverleningsovereenkomst, rolverdeling en tarieven", now: "Notaris als opdrachtnemer, Akteloket als verwerker; vaste all-in prijzen (€ 895 / € 649 / € 449), geen betaling vooraf, kosteloos annuleren tot concept-akte." },
+  { key: "DVO en tarieven", title: "Dienstverleningsovereenkomst, rolverdeling en tarieven", now: "Notaris als opdrachtnemer, Akteloket als verwerker; vaste all-in prijzen (€ 1.395 / € 995 / € 695), geen betaling vooraf, kosteloos annuleren tot concept-akte." },
 ];
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ opgeslagen?: string }> }) {
@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
                 <textarea name="comment" rows={1} className="textarea" placeholder="Toelichting (optioneel)" aria-label={`Toelichting bij ${it.title}`} />
                 <button className="btn btn-dark btn-sm">Opslaan</button>
               </form>
-              {mine.length > 0 && <ul className="mt-4 space-y-2 border-t border-ink-100 pt-3">{mine.map((f) => <li key={f.id} className="flex gap-2 text-xs text-ink-600"><MessageSquareText className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span><strong>{f.author}</strong> · {f.verdict} · {dateTimeNl(f.createdAt)}{f.comment ? ` — ${f.comment}` : ""}</span></li>)}</ul>}
+              {mine.length > 0 && <ul className="mt-4 space-y-2 border-t border-ink-100 pt-3">{mine.map((f) => <li key={f.id} className="flex gap-2 text-xs text-ink-600"><MessageSquareText className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span><strong>{f.author}</strong>, {f.verdict}, {dateTimeNl(f.createdAt)}{f.comment ? `: ${f.comment}` : ""}</span></li>)}</ul>}
             </Card>
           );
         })}

@@ -29,7 +29,7 @@ export async function dvoPdf(service: ServiceKey, akkoord: DvoAkkoord): Promise<
   let page: PDFPage = doc.addPage(A4);
   let y = A4[1] - M;
   let n = 1;
-  const footer = () => page.drawText(safe(`${akkoord.version} · pagina ${n}`), { x: M, y: 28, size: 8, font, color: MUTED });
+  const footer = () => page.drawText(safe(`Dienstverleningsovereenkomst ${akkoord.version}, pagina ${n}`), { x: M, y: 28, size: 8, font, color: MUTED });
   const ensure = (h: number) => { if (y - h < M) { footer(); page = doc.addPage(A4); n++; y = A4[1] - M; } };
   const text = (raw: string, o: { size?: number; f?: PDFFont; color?: ReturnType<typeof rgb>; indent?: number; gap?: number } = {}) => {
     const size = o.size ?? 10;
@@ -50,7 +50,7 @@ export async function dvoPdf(service: ServiceKey, akkoord: DvoAkkoord): Promise<
 
   text(BRAND.name.toUpperCase(), { size: 8, f: bold, color: BRASS, gap: 6 });
   text("Dienstverleningsovereenkomst", { size: 20, f: serif, gap: 2 });
-  text(`Versie ${akkoord.version} · ${NOTARY_OFFICE.officeName}, ${NOTARY_OFFICE.city}`, { size: 9, color: MUTED, gap: 14 });
+  text(`${NOTARY_OFFICE.officeName}, ${NOTARY_OFFICE.city} (${akkoord.version})`, { size: 9, color: MUTED, gap: 14 });
   for (const s of dvoSections(service)) {
     ensure(40);
     text(s.title, { size: 11.5, f: bold, gap: 4 });

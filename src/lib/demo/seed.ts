@@ -36,7 +36,7 @@ export async function ensureBaseSettings() {
  * demo-notaris: een bestaande demodatabase (bijv. op Vercel/Supabase) wordt dan bij de
  * eerstvolgende start automatisch één keer opnieuw opgebouwd. Feedback blijft bewaard.
  */
-export const DEMO_SEED_VERSION = "2026-11-06.1";
+export const DEMO_SEED_VERSION = "2026-11-06.2";
 const MARKER = "demo_seed";
 
 export async function ensureDemoSeed() {

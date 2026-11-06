@@ -30,7 +30,7 @@ export default async function Page() {
   ];
   return (
     <>
-      <PageTitle title={`${hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond"}, ${user.name.split(" ")[0]}`} sub={`${dateNl(new Date(), { weekday: true })} · ${open.length} lopende dossiers`} />
+      <PageTitle title={`${hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond"}, ${user.name.split(" ")[0]}`} sub={`${dateNl(new Date(), { weekday: true })}, ${open.length} lopende dossiers`} />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {tiles.map((t) => <Card key={t.label} className="flex items-center gap-4 p-5"><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${t.tone}`}><t.icon className="h-5 w-5" /></span><span><span className="block font-serif text-3xl font-semibold text-ink-900 tabular">{t.value}</span><span className="block text-sm text-ink-500">{t.label}</span></span></Card>)}
       </div>
@@ -41,13 +41,13 @@ export default async function Page() {
             <ul className="divide-y divide-ink-100">
               {review.slice(0, REVIEW_MAX).map(({ s, c }) => (
                 <li key={s.view.dossier.id + c.key}><Link href={`/notaris/dossiers/${s.view.dossier.id}#${c.key}`} className="flex items-center justify-between gap-4 p-4 hover:bg-ink-50/60">
-                  <span className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-600 font-mono text-xs font-bold text-white">{c.nr}</span><span className="min-w-0"><span className="block truncate font-semibold text-ink-900">{c.title}</span><span className="block truncate text-xs text-ink-500">{propertyLine(s.view.data.property)} · {humanize(c.readyLabel)}{c.flags.length ? ` · ${c.flags.length} signalering${c.flags.length > 1 ? "en" : ""}` : ""}</span></span></span>
+                  <span className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-600 font-mono text-xs font-bold text-white">{c.nr}</span><span className="min-w-0"><span className="block truncate font-semibold text-ink-900">{c.title}</span><span className="block truncate text-xs text-ink-500">{propertyLine(s.view.data.property)}, {humanize(c.readyLabel)}{c.flags.length ? `, ${c.flags.length} signalering${c.flags.length > 1 ? "en" : ""}` : ""}</span></span></span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-ink-300" />
                 </Link></li>
               ))}
             </ul>
           )}
-          {review.length > REVIEW_MAX && <div className="border-t border-ink-100 px-5 py-3 text-sm"><Link href="/notaris/dossiers" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 hover:text-brand-900">Nog {review.length - REVIEW_MAX} onderdelen · alle dossiers bekijken<ArrowRight className="h-4 w-4" /></Link></div>}
+          {review.length > REVIEW_MAX && <div className="border-t border-ink-100 px-5 py-3 text-sm"><Link href="/notaris/dossiers" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 hover:text-brand-900">Alle dossiers bekijken (nog {review.length - REVIEW_MAX} onderdelen)<ArrowRight className="h-4 w-4" /></Link></div>}
         </Card>
         <div className="min-w-0 space-y-6">
           <Card className="p-5">
@@ -63,7 +63,7 @@ export default async function Page() {
               {signals.length === 0 && <li className="text-ink-500">Geen open signaleringen.</li>}
               {signals.slice(0, SIGNALS_MAX).map(({ s, x }, i) => <li key={i} className="rounded-lg bg-warn-50 p-3"><p className="text-ink-800">{x.tekst}</p><Link href={`/notaris/dossiers/${s.view.dossier.id}`} className="text-xs font-semibold text-warn-700">{propertyLine(s.view.data.property)} →</Link></li>)}
             </ul>
-            {signals.length > SIGNALS_MAX && <p className="mt-3 text-sm"><Link href="/notaris/dossiers" className="font-semibold text-brand-700 hover:text-brand-900">Nog {signals.length - SIGNALS_MAX} signaleringen · alle dossiers →</Link></p>}
+            {signals.length > SIGNALS_MAX && <p className="mt-3 text-sm"><Link href="/notaris/dossiers" className="font-semibold text-brand-700 hover:text-brand-900">Alle dossiers bekijken (nog {signals.length - SIGNALS_MAX} signaleringen) →</Link></p>}
           </Card>
         </div>
       </div>

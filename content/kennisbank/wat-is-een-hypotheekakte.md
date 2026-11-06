@@ -15,7 +15,7 @@ faq:
   - q: "Wanneer wordt het hypotheekgeld uitbetaald?"
     a: "De notaris vraagt het hypotheekgeld op bij je geldverstrekker, zodat het vóór het passeren op de kwaliteitsrekening van de notaris staat. Na het passeren gebruikt de notaris het geld om de verkoper te betalen."
   - q: "Wat kost een hypotheekakte bij Akteloket?"
-    a: "Alleen de hypotheekakte kost € 449 all-in. Samen met de akte van levering betaal je € 895. Dat is inclusief btw en de inschrijving van de akten bij het Kadaster."
+    a: "Alleen de hypotheekakte kost € 695 all-in. Samen met de akte van levering betaal je € 1.395. Dat is inclusief btw en de inschrijving van de akten bij het Kadaster."
 ---
 
 Koop je een huis met een hypotheek, dan teken je bij de notaris niet één, maar twee akten. De eerste is de akte van levering: daarmee word je eigenaar. De tweede is de hypotheekakte. Wat is dat precies, wat staat erin en wat merk je er zelf van? Dat lees je hier.
@@ -76,8 +76,8 @@ De volgorde is logisch: je kunt alleen een hypotheekrecht geven op een woning di
 
 Notarissen bepalen hun eigen tarieven. Vergelijk daarom niet alleen de prijs, maar ook wat erin zit. Vraag of de inschrijving bij het Kadaster en de btw zijn inbegrepen. Bij Akteloket werken we met vaste all-in prijzen:
 
-- **Levering + hypotheekakte:** € 895
-- **Alleen hypotheekakte:** € 449
+- **Levering + hypotheekakte:** € 1.395
+- **Alleen hypotheekakte:** € 695
 
 Kosten van derden, zoals kosten die je geldverstrekker zelf rekent, vallen daar buiten. De kosten voor de hypotheekakte kunnen onder voorwaarden fiscaal aftrekbaar zijn als financieringskosten. Je hypotheekadviseur of de Belastingdienst kan je vertellen wat voor jou geldt.
 

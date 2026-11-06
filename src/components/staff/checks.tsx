@@ -36,7 +36,7 @@ export function CheckCard({ view, c, matrix, isNotary }: { view: DossierView; c:
             </ul>
           )}
           <CheckBody view={view} c={c} matrix={matrix} isNotary={isNotary} />
-          {check?.comment && <p className="rounded-lg bg-ink-50 p-3 text-xs text-ink-600"><strong>{check.decidedBy}</strong> · {dateTimeNl(check.decidedAt)}: {check.comment}</p>}
+          {check?.comment && <p className="rounded-lg bg-ink-50 p-3 text-xs text-ink-600"><strong>{check.decidedBy}</strong>, {dateTimeNl(check.decidedAt)}: {check.comment}</p>}
           {isNotary && c.key !== "passeren" && !view.data.afgewikkeldOp && (
             <div className="flex flex-col gap-3 border-t border-ink-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
               {c.status === "akkoord" ? (
@@ -69,7 +69,7 @@ function RequestForm({ dossierId, checkKey, hasVerkoper }: { dossierId: string; 
         </div>
         <input name="title" className="input" placeholder="Bijv. bankafschrift ontvangst schenking" required />
         <textarea name="description" className="textarea" rows={2} placeholder="Toelichting voor de klant" />
-        <p className="text-xs text-ink-500">De klant krijgt alleen deze vraag — zonder het formulier opnieuw te hoeven invullen.</p>
+        <p className="text-xs text-ink-500">De klant krijgt alleen deze vraag en hoeft het formulier niet opnieuw in te vullen.</p>
         <button className="btn btn-dark btn-sm justify-self-start"><Send className="h-4 w-4" />Verstuur verzoek</button>
       </form>
     </details>
@@ -92,26 +92,26 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
               <thead className="text-left text-xs text-ink-500"><tr><th className="py-2 pr-4 font-medium">Betrokkene</th><th className="py-2 pr-4 font-medium">Identificatie</th><th className="py-2 pr-4 font-medium">Match koopovereenkomst</th><th className="py-2 font-medium">PEP</th></tr></thead>
               <tbody className="divide-y divide-ink-100">
                 {view.parties.map((p) => (
-                  <tr key={p.id} className="align-middle"><td className="py-2.5 pr-4"><span className="flex flex-wrap items-center gap-x-2 gap-y-1"><span className="font-medium text-ink-900">{p.displayName}</span><Badge tone={p.side === "koper" ? "koper" : "verkoper"}>{p.side}</Badge></span></td><td className="py-2.5 pr-4"><span className="inline-flex items-center gap-1.5"><StateIcon state={p.data.idcheck?.status === "voltooid" ? "done" : p.data.idcheck?.status === "in_behandeling" ? "in_progress" : "todo"} size="sm" />{p.data.idcheck?.provider ?? cap(label(ID_METHODE, p.data.idcheck?.methode, label(ID_STATUS, p.data.idcheck?.status, "te starten")))}{p.data.idcheck?.resultaat?.documentType ? ` · ${p.data.idcheck.resultaat.documentType}` : ""}</span></td><td className="whitespace-nowrap py-2.5 pr-4">{p.data.idcheck?.match ? (p.data.idcheck.match.naam && p.data.idcheck.match.geboortedatum ? <span className="inline-flex items-center gap-1 text-ok-700"><Check className="h-3.5 w-3.5" />naam en geboortedatum</span> : <span className="text-warn-700">afwijking</span>) : <span className="text-ink-400">—</span>}</td><td>{p.side === "verkoper" ? <span className="text-ink-400">n.v.t.</span> : p.data.pep?.antwoord === "ja" ? <Badge tone="bad">Ja</Badge> : p.data.pep?.antwoord === "nee" ? "Nee" : <span className="text-ink-400">open</span>}</td></tr>
+                  <tr key={p.id} className="align-middle"><td className="py-2.5 pr-4"><span className="flex flex-wrap items-center gap-x-2 gap-y-1"><span className="font-medium text-ink-900">{p.displayName}</span><Badge tone={p.side === "koper" ? "koper" : "verkoper"}>{p.side}</Badge></span></td><td className="py-2.5 pr-4"><span className="inline-flex items-center gap-1.5"><StateIcon state={p.data.idcheck?.status === "voltooid" ? "done" : p.data.idcheck?.status === "in_behandeling" ? "in_progress" : "todo"} size="sm" />{p.data.idcheck?.provider ?? cap(label(ID_METHODE, p.data.idcheck?.methode, label(ID_STATUS, p.data.idcheck?.status, "te starten")))}{p.data.idcheck?.resultaat?.documentType ? ` (${p.data.idcheck.resultaat.documentType})` : ""}</span></td><td className="whitespace-nowrap py-2.5 pr-4">{p.data.idcheck?.match ? (p.data.idcheck.match.naam && p.data.idcheck.match.geboortedatum ? <span className="inline-flex items-center gap-1 text-ok-700"><Check className="h-3.5 w-3.5" />naam en geboortedatum</span> : <span className="text-warn-700">afwijking</span>) : <span className="text-ink-400">–</span>}</td><td>{p.side === "verkoper" ? <span className="text-ink-400">n.v.t.</span> : p.data.pep?.antwoord === "ja" ? <Badge tone="bad">Ja</Badge> : p.data.pep?.antwoord === "nee" ? "Nee" : <span className="text-ink-400">open</span>}</td></tr>
                 ))}
               </tbody>
             </table>
           </div>
           {d.financing.eigenMiddelen === "nee" ? <p className="text-sm text-ink-600">Koper brengt geen eigen middelen in.</p> : (
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-ink-400">Herkomst eigen middelen {d.wwft.ingediendOp ? `· aangeleverd ${dateTimeNl(d.wwft.ingediendOp)}` : "· nog niet ingediend"}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-400">Herkomst eigen middelen {d.wwft.ingediendOp ? `(aangeleverd ${dateTimeNl(d.wwft.ingediendOp)})` : "(nog niet ingediend)"}</p>
               {d.wwft.bronnen.map((b) => {
                 const rule = matrix.find((r) => r.type === b.type);
                 const docs = view.documents.filter((x) => b.documentIds.includes(x.id));
                 return (
                   <div key={b.id} className="rounded-xl border border-ink-100 p-3 text-sm">
-                    <div className="flex flex-wrap justify-between gap-2"><span className="font-semibold text-ink-900">{rule?.label ?? b.type} · {euro(b.bedrag)}</span><span className="text-xs text-ink-500">{[label(WWFT_BESCHIKBAAR, b.beschikbaar, "beschikbaarheid onbekend"), label(WWFT_REKENING, b.rekening, "rekening onbekend"), label(WWFT_EIGENAAR, b.eigenaarGeld, "eigenaar onbekend")].join(" · ")}</span></div>
-                    {Object.keys(b.details).length > 0 && <p className="mt-1 text-xs text-ink-600">{Object.entries(b.details).filter(([, v]) => v).map(([k, v]) => `${WWFT_DETAIL[k] ?? cap(k)}: ${v}`).join(" · ")}</p>}
+                    <div className="flex flex-wrap justify-between gap-2"><span className="font-semibold text-ink-900">{rule?.label ?? b.type}: {euro(b.bedrag)}</span><span className="text-xs text-ink-500">{[label(WWFT_BESCHIKBAAR, b.beschikbaar, "beschikbaarheid onbekend"), label(WWFT_REKENING, b.rekening, "rekening onbekend"), label(WWFT_EIGENAAR, b.eigenaarGeld, "eigenaar onbekend")].join(", ")}</span></div>
+                    {Object.keys(b.details).length > 0 && <p className="mt-1 text-xs text-ink-600">{Object.entries(b.details).filter(([, v]) => v).map(([k, v]) => `${WWFT_DETAIL[k] ?? cap(k)}: ${v}`).join("; ")}</p>}
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">{docs.length ? docs.map((x) => <DocLink key={x.id} id={x.id} title={x.title} />) : <span className="text-xs text-warn-700">Geen bewijsstukken</span>}</div>
                   </div>
                 );
               })}
-              <p className="text-xs text-ink-500">Totaal opgegeven: <strong>{euro(d.wwft.bronnen.reduce((s, b) => s + (b.bedrag ?? 0), 0))}</strong>. Status voor klant: “Wwft-informatie aangeleverd” — de beoordeling ligt bij u.</p>
+              <p className="text-xs text-ink-500">Totaal opgegeven: <strong>{euro(d.wwft.bronnen.reduce((s, b) => s + (b.bedrag ?? 0), 0))}</strong>. Status voor de klant: “Wwft-informatie aangeleverd”. De beoordeling ligt bij u.</p>
             </div>
           )}
         </div>
@@ -125,7 +125,7 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
             return (
               <li key={p.id} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                 <span className="flex items-center gap-2"><StateIcon state={["ondertekend", "verwerkt"].includes(v.status) ? "done" : v.status === "gepland" ? "in_progress" : "todo"} size="sm" /><span className="font-medium text-ink-900">{p.displayName}</span><Badge tone={p.side === "koper" ? "koper" : "verkoper"}>{p.side}</Badge></span>
-                <span className="text-ink-600">{{ te_plannen: "Te plannen", gepland: `Gepland ${appt ? dateTimeNl(appt.startsAt) + ` (${appt.mode})` : ""}`, ondertekend: `Ondertekend ${dateNl(v.ondertekendOp, { short: true })}${v.ondertekeningMethode ? ` · ${v.ondertekeningMethode}` : ""}`, verwerkt: "Door notaris verwerkt" }[v.status]}{v.legalisatie === "vereist" ? " · legalisatie vereist" : v.legalisatie === "afgerond" ? " · gelegaliseerd" : ""}</span>
+                <span className="text-ink-600">{{ te_plannen: "Te plannen", gepland: `Gepland ${appt ? dateTimeNl(appt.startsAt) + ` (${appt.mode})` : ""}`, ondertekend: `Ondertekend ${dateNl(v.ondertekendOp, { short: true })}${v.ondertekeningMethode ? ` (${v.ondertekeningMethode})` : ""}`, verwerkt: "Door notaris verwerkt" }[v.status]}{v.legalisatie === "vereist" ? ", legalisatie vereist" : v.legalisatie === "afgerond" ? ", gelegaliseerd" : ""}</span>
               </li>
             );
           })}
@@ -140,7 +140,7 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
         <div className="space-y-3">
           {c.key === "hypotheekakte" && (
             <div className="rounded-xl bg-ink-50 p-3 text-sm">
-              <p><span className="text-ink-500">Bankinstructie:</span> <strong>{label(BANK_STATUS, d.financing.bankinstructieStatus, "nog niet verwacht")}</strong>{d.financing.bankinstructie?.geldverstrekker ? ` · ${d.financing.bankinstructie.geldverstrekker}` : ""}{d.financing.bankinstructie?.kenmerk ? ` · kenmerk ${d.financing.bankinstructie.kenmerk}` : ""}</p>
+              <p><span className="text-ink-500">Bankinstructie:</span> <strong>{label(BANK_STATUS, d.financing.bankinstructieStatus, "nog niet verwacht")}</strong>{d.financing.bankinstructie?.geldverstrekker ? `, ${d.financing.bankinstructie.geldverstrekker}` : ""}{d.financing.bankinstructie?.kenmerk ? `, kenmerk ${d.financing.bankinstructie.kenmerk}` : ""}</p>
               {d.financing.bankinstructie?.documentId && <div className="mt-1"><DocLink id={d.financing.bankinstructie.documentId} title="Originele hypotheekinstructie" /></div>}
               {isNotary && (
                 <form action={`/api/notaris/${id}/bankinstructie`} method="post" encType="multipart/form-data" className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -155,7 +155,7 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
             <div className="flex flex-wrap items-center gap-2">
               <Link href={`/notaris/dossiers/${id}/akte/${kind}`} className="btn btn-primary btn-sm"><Eye className="h-4 w-4" />Bekijk concept (versie {a.version})</Link>
               {a.documentId && <a href={`/api/documenten/${a.documentId}`} className="btn btn-secondary btn-sm"><Download className="h-4 w-4" />Download Word</a>}
-              <span className="text-xs text-ink-500">{a.controlepunten.length} controlepunten · {a.bronnen.length} bronverwijzingen · {dateTimeNl(a.generatedAt)}</span>
+              <span className="text-xs text-ink-500">{a.controlepunten.length} controlepunten en {a.bronnen.length} bronverwijzingen, {dateTimeNl(a.generatedAt)}</span>
             </div>
           ) : <p className="text-sm text-ink-500">{c.key === "leveringsakte" ? "Wordt gegenereerd zodra koopovereenkomst en kadastrale stukken verwerkt zijn." : "Wordt gegenereerd zodra de bankinstructie is gedeeld."}</p>}
         </div>
@@ -168,7 +168,7 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
           {view.payoffs.map((p) => (
             <div key={p.id} className="rounded-xl border border-ink-100 p-3 text-sm">
               <div className="flex flex-wrap items-center justify-between gap-2"><span className="font-semibold text-ink-900">{p.lender}</span><Badge tone={p.status === "gecontroleerd" ? "ok" : p.status === "ontvangen" ? "brand" : "neutral"}>{{ op_te_vragen: "Op te vragen", aangevraagd: "Aangevraagd", ontvangen: "Ontvangen", gecontroleerd: "Gecontroleerd" }[p.status]}</Badge></div>
-              <p className="mt-1 text-xs text-ink-500">{p.inschrijving} · leningnummer {p.loanNumbers ?? "onbekend"} · toestemming verkoper: {p.toestemmingVerkoper ? "ja" : "nog niet"}{p.amount ? ` · af te lossen ${euro(p.amount / 100)}` : ""}{p.validUntil ? ` · geldig t/m ${dateNl(p.validUntil, { short: true })}` : ""}</p>
+              <p className="mt-1 text-xs text-ink-500">{p.inschrijving}, leningnummer {p.loanNumbers ?? "onbekend"}, toestemming verkoper: {p.toestemmingVerkoper ? "ja" : "nog niet"}{p.amount ? `, af te lossen ${euro(p.amount / 100)}` : ""}{p.validUntil ? `, geldig t/m ${dateNl(p.validUntil, { short: true })}` : ""}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {p.requestDocumentId && <DocLink id={p.requestDocumentId} title="Verzoek aflosnota (concept)" />}
                 {p.documentId && <DocLink id={p.documentId} title="Aflosnota" />}
@@ -195,8 +195,8 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
       return (
         <div className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-xl border border-ink-100 p-4"><p className="text-sm font-semibold text-ink-900">Koper <span className="font-normal text-ink-500">· {label(NOTA_STATUS, d.notaKoper?.status, "in voorbereiding")}</span></p><NotaTable nota={nk} side="koper" audience="staf" /><p className="mt-2 text-xs text-ink-500">Restant naar: {formatIban(d.koperIban.iban) || "—"} t.n.v. {d.koperIban.tenaamstelling ?? "—"}</p></div>
-            {nv && <div className="rounded-xl border border-ink-100 p-4"><p className="text-sm font-semibold text-ink-900">Verkoper <span className="font-normal text-ink-500">· {label(NOTA_STATUS, d.notaVerkoper?.status, "in voorbereiding")}</span></p><NotaTable nota={nv} side="verkoper" audience="staf" /><p className="mt-2 text-xs text-ink-500">Uitbetaling naar: {formatIban(view.verkopers[0]?.data.iban?.iban) || "—"} t.n.v. {view.verkopers[0]?.data.iban?.tenaamstelling ?? "—"}</p></div>}
+            <div className="rounded-xl border border-ink-100 p-4"><p className="text-sm font-semibold text-ink-900">Koper <span className="font-normal text-ink-500">({label(NOTA_STATUS, d.notaKoper?.status, "in voorbereiding")})</span></p><NotaTable nota={nk} side="koper" audience="staf" /><p className="mt-2 text-xs text-ink-500">Restant naar: {formatIban(d.koperIban.iban) || "–"} t.n.v. {d.koperIban.tenaamstelling ?? "–"}</p></div>
+            {nv && <div className="rounded-xl border border-ink-100 p-4"><p className="text-sm font-semibold text-ink-900">Verkoper <span className="font-normal text-ink-500">({label(NOTA_STATUS, d.notaVerkoper?.status, "in voorbereiding")})</span></p><NotaTable nota={nv} side="verkoper" audience="staf" /><p className="mt-2 text-xs text-ink-500">Uitbetaling naar: {formatIban(view.verkopers[0]?.data.iban?.iban) || "–"} t.n.v. {view.verkopers[0]?.data.iban?.tenaamstelling ?? "–"}</p></div>}
           </div>
           {isNotary && !d.afgewikkeldOp && !(d.notaKoper?.status === "definitief" && (!nv || d.notaVerkoper?.status === "definitief")) && (
             <div className="flex flex-wrap gap-2">
@@ -216,8 +216,8 @@ function CheckBody({ view, c, matrix, isNotary }: { view: DossierView; c: Notary
             <li className="flex items-center gap-2"><StateIcon state="waiting" size="sm" />Her-recherche Kadaster en ontvangst gelden op kwaliteitsrekening (buiten platform)</li>
           </ul>
           {isNotary && !d.gepasseerdOp && <form action={passeren.bind(null, id)}><button className="btn btn-primary w-full whitespace-normal text-left sm:w-auto" disabled={!c.ready}><Gavel className="h-4 w-4 shrink-0" />Passeren en aanbieden ter inschrijving</button></form>}
-          {d.gepasseerdOp && <p className="rounded-xl bg-ok-50 p-3 text-ok-700">Gepasseerd {dateTimeNl(d.gepasseerdOp)}{d.ingeschrevenOp ? ` · ingeschreven ${dateTimeNl(d.ingeschrevenOp)}` : ""}</p>}
-          {isNotary && d.gepasseerdOp && !d.afgewikkeldOp && <form action={afwikkelen.bind(null, id)}><button className="btn btn-ok w-full whitespace-normal text-left sm:w-auto"><Check className="h-4 w-4" />Inschrijving bevestigd — afwikkelen en uitbetalen</button></form>}
+          {d.gepasseerdOp && <p className="rounded-xl bg-ok-50 p-3 text-ok-700">Gepasseerd {dateTimeNl(d.gepasseerdOp)}{d.ingeschrevenOp ? `, ingeschreven ${dateTimeNl(d.ingeschrevenOp)}` : ""}</p>}
+          {isNotary && d.gepasseerdOp && !d.afgewikkeldOp && <form action={afwikkelen.bind(null, id)}><button className="btn btn-ok w-full whitespace-normal text-left sm:w-auto"><Check className="h-4 w-4" />Inschrijving bevestigd: afwikkelen en uitbetalen</button></form>}
           {d.afgewikkeldOp && <p className="rounded-xl bg-ok-50 p-3 text-ok-700">Afgewikkeld {dateTimeNl(d.afgewikkeldOp)}</p>}
         </div>
       );

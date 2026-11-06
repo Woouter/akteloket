@@ -52,7 +52,7 @@ function comparitiePersoon(b: IRBuilder, p: Party, nr: number): Run[] {
   ];
   if ((d.burgerlijkeStaat === "gehuwd" || d.burgerlijkeStaat === "geregistreerd_partner") && d.partnerNaam) runs.push(" met ", b.f(d.partnerNaam, `Partner ${p.side} ${nr}`, BRON.klant));
   if (d.huwelijkseVoorwaarden === "ja") runs.push(" ", b.check(`Huwelijkse/partnerschapsvoorwaarden ${personName(d)}: beoordelen of toestemming echtgenoot/partner nodig is en of voorwaarden zijn ingeschreven`));
-  if (d.huwelijkseVoorwaarden === "weet_niet") b.check(`${personName(d)} weet niet of er huwelijkse voorwaarden zijn — huwelijksgoederenregister raadplegen`);
+  if (d.huwelijkseVoorwaarden === "weet_niet") b.check(`${personName(d)} weet niet of er huwelijkse voorwaarden zijn: huwelijksgoederenregister raadplegen`);
   runs.push(p.data.idcheck?.resultaat?.documentType ? `, zich legitimerende met ${p.data.idcheck.resultaat.documentType.toLowerCase()} nummer ${p.data.idcheck.resultaat.documentNummerMasked ?? "[NUMMER]"}` : ", ", p.data.idcheck?.resultaat ? "" : b.f(undefined, `Legitimatie ${p.side} ${nr}`, BRON.id), ";");
   return runs;
 }
@@ -88,17 +88,17 @@ export function buildLeveringsakte(view: DossierView): DocIR {
   const d = view.data;
   const t = d.transaction;
   b.title("LEVERING");
-  b.subtitle(`${propertyLine(d.property)} · dossier ${view.dossier.reference}`);
+  b.subtitle(`${propertyLine(d.property)}, dossier ${view.dossier.reference}`);
   b.p("Heden, ", b.f(t.leveringsdatum ? dateNl(t.leveringsdatum) : undefined, "Passeerdatum", `${BRON.ko}; actuele datum`), ", verscheen voor mij, ", NOTARY_OFFICE.notaryName.replace(/ \(.*\)/, "") + `, notaris te ${NOTARY_OFFICE.city}:`);
   b.p(gevolmachtigde() + ",");
   b.p("te dezen handelend als schriftelijk gevolmachtigde van:");
   view.verkopers.forEach((p, i) => b.li("", ...comparitiePersoon(b, p, i + 1)));
-  b.p(`hierna${view.verkopers.length > 1 ? " — tezamen en ieder afzonderlijk —" : ""} te noemen: "verkoper";`);
+  b.p(`hierna${view.verkopers.length > 1 ? ", tezamen en ieder afzonderlijk," : ""} te noemen: "verkoper";`);
   b.p("en als schriftelijk gevolmachtigde van:");
   view.kopers.forEach((p, i) => b.li("", ...comparitiePersoon(b, p, i + 1)));
-  b.p(`hierna${view.kopers.length > 1 ? " — tezamen en ieder afzonderlijk —" : ""} te noemen: "koper".`);
+  b.p(`hierna${view.kopers.length > 1 ? ", tezamen en ieder afzonderlijk," : ""} te noemen: "koper".`);
   b.p("Van de volmachten blijkt uit onderhandse akten van volmacht, die aan deze akte zullen worden gehecht.");
-  if (view.parties.some((p) => (p.data.volmacht?.status ?? "te_plannen") === "te_plannen" || p.data.volmacht?.status === "gepland")) b.check("Nog niet alle volmachten zijn ondertekend — volmachten controleren vóór passeren");
+  if (view.parties.some((p) => (p.data.volmacht?.status ?? "te_plannen") === "te_plannen" || p.data.volmacht?.status === "gepland")) b.check("Nog niet alle volmachten zijn ondertekend: volmachten controleren vóór passeren");
 
   b.h("Koopovereenkomst");
   b.p("De comparant, handelend als gemeld, verklaarde dat tussen verkoper en koper een koopovereenkomst is gesloten met betrekking tot het hierna te omschrijven registergoed, blijkende uit een door partijen op ", b.f(t.datumOndertekening ? dateNl(t.datumOndertekening) : undefined, "Datum ondertekening koopovereenkomst", BRON.ko), ` ondertekende onderhandse akte, hierna te noemen: de "Koopovereenkomst".`);
@@ -135,21 +135,21 @@ export function buildLeveringsakte(view: DossierView): DocIR {
     }
   }
   const hyps = regs.filter((r) => r.type === "hypotheek");
-  for (const h of hyps) b.check(`Bestaande hypotheekinschrijving ${h.partij ?? ""} (Hyp4 deel ${h.deel} nr. ${h.nummer}) — aflosnota en doorhaling regelen`);
-  if (regs.some((r) => r.type === "beslag")) b.check("Beslaglegging ingeschreven — nader onderzoek vereist");
-  b.check(`Kadastrale recherche d.d. ${dateNl(d.kadaster.opgehaaldOp)} — her-recherche vlak vóór passeren`);
+  for (const h of hyps) b.check(`Bestaande hypotheekinschrijving ${h.partij ?? ""} (Hyp4 deel ${h.deel} nr. ${h.nummer}): aflosnota en doorhaling regelen`);
+  if (regs.some((r) => r.type === "beslag")) b.check("Beslaglegging ingeschreven: nader onderzoek vereist");
+  b.check(`Kadastrale recherche d.d. ${dateNl(d.kadaster.opgehaaldOp)}: her-recherche vlak vóór passeren`);
 
   b.h("Bepalingen uit de Koopovereenkomst");
   b.p("Partijen verklaren dat de bepalingen van de Koopovereenkomst, voor zover in deze akte niet anders is bepaald en voor zover deze na het verlijden van deze akte nog werking hebben, onverminderd tussen hen van kracht blijven. In het bijzonder geldt het volgende:");
   b.li("1.", "Feitelijke levering en risico: het Registergoed wordt heden feitelijk geleverd, leeg en ontruimd. Het Registergoed is vanaf heden voor rekening en risico van koper.");
   b.li("2.", "Zakelijke lasten: de onroerendezaakbelasting en overige zakelijke lasten worden verrekend per heden, zoals blijkt uit de nota van afrekening.");
   (t.bijzondereBepalingen ?? []).forEach((bep, i) => b.li(`${i + 3}.`, b.f(`${bep.titel}: ${bep.tekst}`, `Bijzondere bepaling "${bep.titel}"`, `${BRON.ko}${bep.page ? `, pagina ${bep.page}` : ""}`)));
-  if ((t.bijzondereBepalingen ?? []).length) b.check("Bijzondere bepalingen uit koopovereenkomst zijn automatisch overgenomen — beoordelen welke na levering nog werking hebben");
+  if ((t.bijzondereBepalingen ?? []).length) b.check("Bijzondere bepalingen uit koopovereenkomst zijn automatisch overgenomen: beoordelen welke na levering nog werking hebben");
 
   b.h("Ontbindende voorwaarden");
   b.p("Partijen verklaren dat de in de Koopovereenkomst opgenomen ontbindende voorwaarden niet zijn vervuld, dan wel dat partijen hierop geen beroep meer kunnen doen, en dat de Koopovereenkomst niet is ontbonden.");
-  if (t.financieringsvoorbehoud?.datum) b.check(`Financieringsvoorbehoud tot ${dateNl(t.financieringsvoorbehoud.datum)} (${euro(t.financieringsvoorbehoud.bedrag)}) — bevestigen dat het is vervallen`);
-  for (const v of t.overigeVoorbehouden ?? []) b.check(`Voorbehoud "${v.omschrijving}"${v.datum ? ` tot ${dateNl(v.datum)}` : ""} — bevestigen dat het is vervallen`);
+  if (t.financieringsvoorbehoud?.datum) b.check(`Financieringsvoorbehoud tot ${dateNl(t.financieringsvoorbehoud.datum)} (${euro(t.financieringsvoorbehoud.bedrag)}): bevestigen dat het is vervallen`);
+  for (const v of t.overigeVoorbehouden ?? []) b.check(`Voorbehoud "${v.omschrijving}"${v.datum ? ` tot ${dateNl(v.datum)}` : ""}: bevestigen dat het is vervallen`);
 
   if (needsLevering(view)) {
     b.h("Overdrachtsbelasting");
@@ -161,7 +161,7 @@ export function buildLeveringsakte(view: DossierView): DocIR {
       if (r.tarief === 0) {
         b.li("•", b.f(`${r.naam}`, `Koper (vrijstelling)`, BRON.klant), ` doet voor het door hem/haar verkregen aandeel (${Math.round(r.aandeel * 100)}%) een beroep op de vrijstelling van artikel 15, eerste lid, onderdeel p, van de Wet op belastingen van rechtsverkeer en heeft daartoe de voorgeschreven verklaring afgelegd, die aan deze akte wordt gehecht.`);
         if (!s?.verklaringGetekendOp) b.check(`Verklaring startersvrijstelling ${r.naam} nog niet ondertekend`);
-        b.check(`Startersvrijstelling ${r.naam}: leeftijd ${s?.leeftijdOpLevering ?? "?"} op leveringsdatum, woningwaardegrens ${tax.year} € ${tax.startersGrens.toLocaleString("nl-NL")}${tax.status === "onder voorbehoud" ? " (onder voorbehoud)" : ""} — notaris toetst`);
+        b.check(`Startersvrijstelling ${r.naam}: leeftijd ${s?.leeftijdOpLevering ?? "?"} op leveringsdatum, woningwaardegrens ${tax.year} € ${tax.startersGrens.toLocaleString("nl-NL")}${tax.status === "onder voorbehoud" ? " (onder voorbehoud)" : ""}, ter toetsing door de notaris`);
       } else {
         b.li("•", `${r.naam}: verschuldigd over ${Math.round(r.aandeel * 100)}% van de koopprijs, `, b.f(r.grond, `Tarief overdrachtsbelasting ${r.naam}`, BRON.sys), `, bedragende ${euro(r.bedrag)}.`);
         if (r.tarief === tax.tariefHoofdverblijf) b.p(`${r.naam} verklaart het Registergoed anders dan tijdelijk als hoofdverblijf te gaan gebruiken (artikel 14, tweede lid, Wet op belastingen van rechtsverkeer).`);
@@ -174,7 +174,7 @@ export function buildLeveringsakte(view: DossierView): DocIR {
   b.p(`WAARVAN AKTE, in minuut verleden te ${NOTARY_OFFICE.city} op de datum in het hoofd van deze akte vermeld. De zakelijke inhoud van de akte is aan de comparant opgegeven en toegelicht. De comparant heeft verklaard op volledige voorlezing van de akte geen prijs te stellen, tijdig voor het verlijden van de inhoud daarvan te hebben kennisgenomen en daarmee in te stemmen. Onmiddellijk na beperkte voorlezing is deze akte door de comparant en mij, notaris, ondertekend.`);
 
   for (const a of d.aandachtspunten.filter((x) => !x.opgelost && x.ernst !== "info")) b.check(a.tekst);
-  return b.build("Concept-leveringsakte", `${propertyLine(d.property)} — ${view.dossier.reference}`);
+  return b.build("Concept-leveringsakte", `${propertyLine(d.property)}, dossier ${view.dossier.reference}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -187,11 +187,11 @@ export function buildHypotheekakte(view: DossierView): DocIR {
   const bi = d.financing.bankinstructie ?? {};
   const bron = `${BRON.bank}${bi.kenmerk ? ` (kenmerk ${bi.kenmerk})` : ""}`;
   b.title("HYPOTHEEK");
-  b.subtitle(`${bi.geldverstrekker ?? "Geldverstrekker"} · ${propertyLine(d.property)} · dossier ${view.dossier.reference}`);
+  b.subtitle(`${bi.geldverstrekker ?? "Geldverstrekker"}, ${propertyLine(d.property)}, dossier ${view.dossier.reference}`);
   b.p("Heden, ", b.f(d.transaction.leveringsdatum ? dateNl(d.transaction.leveringsdatum) : undefined, "Passeerdatum", BRON.ko), ", verscheen voor mij, ", NOTARY_OFFICE.notaryName.replace(/ \(.*\)/, "") + `, notaris te ${NOTARY_OFFICE.city}:`);
   b.p("1. " + gevolmachtigde() + ", te dezen handelend als schriftelijk gevolmachtigde van:");
   view.kopers.forEach((p, i) => b.li("", ...comparitiePersoon(b, p, i + 1)));
-  b.p(`hierna${view.kopers.length > 1 ? " — tezamen en ieder afzonderlijk —" : ""} te noemen: "hypotheekgever" en ook "schuldenaar";`);
+  b.p(`hierna${view.kopers.length > 1 ? ", tezamen en ieder afzonderlijk," : ""} te noemen: "hypotheekgever" en ook "schuldenaar";`);
   b.p("2. ", "[NAAM MEDEWERKER], te dezen handelend als gevolmachtigde van ", b.f(bi.geldverstrekker, "Geldverstrekker", bron), `, hierna te noemen: "geldverstrekker".`);
   b.check("Volmacht geldverstrekker (doorlopende volmacht aan kantoormedewerkers) controleren");
 
@@ -206,7 +206,7 @@ export function buildHypotheekakte(view: DossierView): DocIR {
 
   b.h("Toepasselijke voorwaarden");
   b.p("Op deze hypotheekverlening zijn van toepassing de ", b.f(bi.algemeneVoorwaarden, "Algemene voorwaarden geldverstrekker", bron), ", waarvan hypotheekgever een exemplaar heeft ontvangen en die aan deze akte worden gehecht. Hypotheekgever verklaart met de inhoud daarvan bekend te zijn.");
-  b.check(`Modeltekst hypotheekakte van ${bi.geldverstrekker ?? "geldverstrekker"} — verplichte bankteksten uitsluitend volgens actuele instructie/model`);
+  b.check(`Modeltekst hypotheekakte van ${bi.geldverstrekker ?? "geldverstrekker"}: verplichte bankteksten uitsluitend volgens actuele instructie/model`);
 
   if (bi.bijzondereVoorwaarden?.length) {
     b.h("Bijzondere voorwaarden uit de hypotheekinstructie");
@@ -229,7 +229,7 @@ export function buildHypotheekakte(view: DossierView): DocIR {
   b.h("Woonplaatskeuze en slot");
   b.p("Partijen kiezen ter zake van de uitvoering van deze akte woonplaats ten kantore van de bewaarder van deze akte.");
   b.p(`WAARVAN AKTE, in minuut verleden te ${NOTARY_OFFICE.city} op de datum in het hoofd van deze akte vermeld. De zakelijke inhoud van de akte is aan de comparanten opgegeven en toegelicht. De comparanten hebben verklaard op volledige voorlezing van de akte geen prijs te stellen en tijdig van de inhoud kennis te hebben genomen. Onmiddellijk na beperkte voorlezing is deze akte door de comparanten en mij, notaris, ondertekend.`);
-  return b.build("Concept-hypotheekakte", `${bi.geldverstrekker ?? ""} — ${view.dossier.reference}`);
+  return b.build("Concept-hypotheekakte", `${bi.geldverstrekker ?? "Geldverstrekker"}, dossier ${view.dossier.reference}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -250,7 +250,7 @@ function signStatus(parties: Party[]): { allSigned: boolean; note?: string } {
   const signed = parties.filter(isSigned);
   if (!signed.length) return { allSigned: false };
   const open = parties.filter((p) => !isSigned(p));
-  if (!open.length) return { allSigned: true, note: `Ondertekend door ${signed.map((p) => personName(p.data.person)).join(" en ")} — ter beoordeling bij de notaris.` };
+  if (!open.length) return { allSigned: true, note: `Ondertekend door ${signed.map((p) => personName(p.data.person)).join(" en ")}, ter beoordeling bij de notaris.` };
   return { allSigned: false, note: `Ondertekend door ${signed.map((p) => personName(p.data.person)).join(" en ")}; ${open.map((p) => personName(p.data.person)).join(" en ")} ${open.length > 1 ? "tekenen" : "tekent"} nog.` };
 }
 
@@ -260,7 +260,7 @@ export function buildVolmachtKoper(view: DossierView): DocIR {
   const lev = needsLevering(view);
   const hyp = needsHypotheek(view);
   b.title("VOLMACHT");
-  b.subtitle(`${lev && hyp ? "Levering en hypotheekverlening" : lev ? "Levering" : "Hypotheekverlening"} · ${propertyLine(d.property)}`);
+  b.subtitle(`${lev && hyp ? "Levering en hypotheekverlening" : lev ? "Levering" : "Hypotheekverlening"}: ${propertyLine(d.property)}`);
   const status = signStatus(view.kopers);
   if (status.note) b.note(status.note);
   b.p("De ondergetekenden:");
@@ -273,7 +273,7 @@ export function buildVolmachtKoper(view: DossierView): DocIR {
   }
   if (hyp) {
     b.li(`${n++}.`, "ten behoeve van de geldverstrekker die blijkt uit de hypotheekinstructie die de geldverstrekker rechtstreeks aan de notaris verstrekt", d.financing.geldverstrekker ? ` (naar verwachting ${d.financing.geldverstrekker})` : "", ", een recht van hypotheek te verlenen op voormeld registergoed, tot zekerheid voor een geldlening met een hoofdsom van maximaal ", b.f(d.financing.hypotheekbedragIndicatie ?? d.transaction.financieringsvoorbehoud?.bedrag ? euro(d.financing.hypotheekbedragIndicatie ?? d.transaction.financieringsvoorbehoud?.bedrag) : undefined, "Maximale hoofdsom", BRON.klant), ", met toepasselijkheid van de algemene voorwaarden van die geldverstrekker, en daartoe de hypotheekakte te tekenen, de schuld te erkennen en alle bepalingen overeen te komen die de geldverstrekker voorschrijft;");
-    b.check("Reikwijdte volmacht hypotheek: geldverstrekker/hoofdsom bij ondertekening mogelijk nog niet definitief — tekst en reikwijdte door notaris vast te stellen");
+    b.check("Reikwijdte volmacht hypotheek: geldverstrekker/hoofdsom bij ondertekening mogelijk nog niet definitief. Tekst en reikwijdte door notaris vast te stellen");
   }
   b.li(`${n++}.`, "kwijting te geven en te ontvangen, de nota van afrekening goed te keuren, woonplaats te kiezen en verder al datgene te doen wat de gevolmachtigde ter uitvoering van deze volmacht nodig of nuttig acht.");
   b.p("De gevolmachtigde is bevoegd deze volmacht ook te gebruiken als tegenpartij van volmachtgever of als gevolmachtigde van een of meer andere partijen (onder meer de verkoper en de geldverstrekker). Deze volmacht is onherroepelijk voor zover dit voor de uitvoering nodig is en eindigt niet door de dood van volmachtgever. Op deze volmacht is Nederlands recht van toepassing.");
@@ -306,7 +306,7 @@ export function buildStartersVerklaring(view: DossierView, p: Party): DocIR {
   const b = new IRBuilder();
   const tax = taxYearFor(view.data.transaction.leveringsdatum);
   b.title("VERKLARING OVERDRACHTSBELASTING STARTERSVRIJSTELLING");
-  b.subtitle("Art. 15, eerste lid, onderdeel p, Wet op belastingen van rechtsverkeer — in te vullen volgens het actuele model van de Belastingdienst");
+  b.subtitle("Art. 15, eerste lid, onderdeel p, Wet op belastingen van rechtsverkeer (in te vullen volgens het actuele model van de Belastingdienst)");
   b.p("Ondergetekende:");
   b.li("", ...comparitiePersoon(b, p, 1));
   b.p("verkrijgt (een aandeel van ", b.f(p.data.eigendom?.aandeel ?? `1/${view.kopers.length}`, "Aandeel", BRON.klant), " in) de woning ", b.f(propertyLine(view.data.property), "Adres woning", BRON.ko), " en verklaart dat:");
@@ -316,7 +316,7 @@ export function buildStartersVerklaring(view: DossierView, p: Party): DocIR {
   b.p(`Woningwaardegrens voor verkrijgingen in ${tax.year}: € ${tax.startersGrens.toLocaleString("nl-NL")}${tax.status === "onder voorbehoud" ? " (onder voorbehoud)" : ""}.`);
   b.check("Gebruik het actuele door de Belastingdienst voorgeschreven model van de verklaring");
   b.sig([`Ondertekend door ${personName(p.data.person)} ____________________   datum: ${p.data.starters?.verklaringGetekendOp ? dateNl(p.data.starters.verklaringGetekendOp) : "__________"}`]);
-  return b.build("Verklaring startersvrijstelling", `${personName(p.data.person)} — ${view.dossier.reference}`);
+  return b.build("Verklaring startersvrijstelling", `${personName(p.data.person)}, dossier ${view.dossier.reference}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -327,11 +327,11 @@ export function buildNota(view: DossierView, side: "koper" | "verkoper", nota: N
   const b = new IRBuilder();
   const d = view.data;
   b.title(`NOTA VAN AFREKENING ${side.toUpperCase()}`);
-  b.subtitle(`${propertyLine(d.property)} · passeerdatum ${dateNl(d.transaction.leveringsdatum)} · dossier ${view.dossier.reference}`);
+  b.subtitle(`${propertyLine(d.property)}, passeerdatum ${dateNl(d.transaction.leveringsdatum)}, dossier ${view.dossier.reference}`);
   const parties = side === "koper" ? view.kopers : view.verkopers;
   b.p("Ten name van: ", parties.map((p) => personName(p.data.person)).join(" en "));
   b.table([
-    ...nota.regels.map((r) => ({ label: r.label + (r.toelichting ? ` — ${r.toelichting}` : ""), value: [`${r.richting === (side === "koper" ? "credit" : "debet") ? "− " : ""}${euro(r.bedrag)}`] as Run[] })),
+    ...nota.regels.map((r) => ({ label: r.label + (r.toelichting ? `: ${r.toelichting}` : ""), value: [`${r.richting === (side === "koper" ? "credit" : "debet") ? "− " : ""}${euro(r.bedrag)}`] as Run[] })),
     { label: side === "koper" ? (nota.saldo >= 0 ? "Door u te voldoen" : "Aan u uit te keren") : "Aan u uit te betalen", value: [euro(Math.abs(nota.saldo))], strong: true },
   ]);
   if (side === "koper" && nota.saldo > 0) b.p(`Wij verzoeken u het saldo tijdig over te maken naar de kwaliteitsrekening van de notaris: ${NOTARY_OFFICE.kwaliteitsrekening}, onder vermelding van ${view.dossier.reference}. De notaris geeft de uiterste datum van ontvangst aan.`);
@@ -340,7 +340,7 @@ export function buildNota(view: DossierView, side: "koper" | "verkoper", nota: N
     const ib = view.verkopers[0]?.data.iban;
     b.p(`Uitbetaling na inschrijving van de akte en controle van de openbare registers op ${formatIban(ib?.iban) || "[IBAN]"} t.n.v. ${ib?.tenaamstelling ?? "[TENAAMSTELLING]"}${ib?.verdeling ? ` (verdeling: ${ib.verdeling})` : ""}.`);
   }
-  b.note(nota.status === "definitief" ? "Definitieve nota, vastgesteld door de notaris." : "Concept — bedragen kunnen nog wijzigen tot de notaris de nota definitief vaststelt.");
+  b.note(nota.status === "definitief" ? "Definitieve nota, vastgesteld door de notaris." : "Concept: bedragen kunnen nog wijzigen tot de notaris de nota definitief vaststelt.");
   return b.build(`Nota van afrekening ${side}`, view.dossier.reference, nota.status !== "definitief");
 }
 
@@ -348,7 +348,7 @@ export function buildAflosnotaVerzoek(view: DossierView, p: Payoff): DocIR {
   const b = new IRBuilder();
   const d = view.data;
   b.title("VERZOEK AFLOSNOTA");
-  b.subtitle(`${p.lender} · ${propertyLine(d.property)}`);
+  b.subtitle(`${p.lender}, onderpand ${propertyLine(d.property)}`);
   b.p(`Aan: ${p.lender}, afdeling aflossingen`);
   b.p(`Van: ${NOTARY_OFFICE.notaryName.replace(/ \(.*\)/, "")}, notaris te ${NOTARY_OFFICE.city} (${NOTARY_OFFICE.officeName})`);
   b.p("Geachte heer/mevrouw,");
@@ -361,7 +361,7 @@ export function buildAflosnotaVerzoek(view: DossierView, p: Payoff): DocIR {
   ]);
   b.p("Schuldenaren hebben mij gemachtigd deze gegevens bij u op te vragen. Ik verzoek u de aflosnota rechtstreeks aan mij te zenden onder vermelding van ons kenmerk ", view.dossier.reference, ".");
   b.sig(["Met vriendelijke groet,", NOTARY_OFFICE.notaryName.replace(/ \(.*\)/, "")]);
-  return b.build("Verzoek aflosnota", `${p.lender} — ${view.dossier.reference}`, false);
+  return b.build("Verzoek aflosnota", `${p.lender}, dossier ${view.dossier.reference}`, false);
 }
 
 // ---------------------------------------------------------------------------
@@ -375,8 +375,8 @@ export function buildKoopovereenkomst(view: DossierView): DocIR {
   const bron = "Vragenlijst koopovereenkomst (opgave partijen)";
   const persoon = (p: Party, i: number): Run[] => [`${i + 1}. `, b.f(personName(p.data.person), `Naam ${p.side} ${i + 1}`, bron), p.data.person.geboortedatum ? `, geboren op ${dateNl(p.data.person.geboortedatum)}` : "", p.data.person.geboorteplaats ? ` te ${p.data.person.geboorteplaats}` : "", p.data.person.adres ? `, wonende te ${[p.data.person.postcode, p.data.person.woonplaats].filter(Boolean).join(" ")}, ${p.data.person.adres}` : "", ";"];
   b.title("KOOPOVEREENKOMST WOONHUIS");
-  b.subtitle(`${propertyLine(d.property)} · concept ${view.dossier.reference}`);
-  b.note("Concept — wordt juridisch gecontroleerd voordat koper en verkoper digitaal tekenen.");
+  b.subtitle(`${propertyLine(d.property)}, concept ${view.dossier.reference}`);
+  b.note("Concept: wordt juridisch gecontroleerd voordat koper en verkoper digitaal tekenen.");
   b.p("DE ONDERGETEKENDEN:");
   view.verkopers.forEach((p, i) => b.li("", ...persoon(p, i)));
   b.p(`hierna${view.verkopers.length > 1 ? " samen" : ""} te noemen: "verkoper",`);
@@ -384,30 +384,30 @@ export function buildKoopovereenkomst(view: DossierView): DocIR {
   view.kopers.forEach((p, i) => b.li("", ...persoon(p, i)));
   b.p(`hierna${view.kopers.length > 1 ? " samen" : ""} te noemen: "koper",`);
   b.p("VERKLAREN TE ZIJN OVEREENGEKOMEN:");
-  b.h("Artikel 1 — Onroerende zaak en koopprijs");
+  b.h("Artikel 1 – Onroerende zaak en koopprijs");
   b.p("1.1 Verkoper verkoopt aan koper, die van verkoper koopt: ", ...objectRuns(b, view), `, hierna te noemen: "de onroerende zaak".`);
   b.p("1.2 De koopprijs bedraagt ", b.f(t.koopprijs ? euro(t.koopprijs) : undefined, "Koopprijs", bron), ", kosten koper.");
   if (t.roerendeZaken) b.p("1.3 In de koop zijn begrepen de roerende zaken op de bijgevoegde lijst van zaken, waarvoor partijen een prijs van ", b.f(euro(t.roerendeZaken), "Roerende zaken", bron), " overeenkomen.");
   if (view.kopers.length > 1) b.p("1.4 Koper verkrijgt de onroerende zaak ieder voor ", b.f(view.kopers[0].data.eigendom?.aandeel ?? `1/${view.kopers.length}`, "Eigendomsverhouding", bron), " onverdeeld aandeel.");
-  b.h("Artikel 2 — Notariële levering");
+  b.h("Artikel 2 – Notariële levering");
   b.p("2.1 De akte van levering wordt verleden ten overstaan van ", b.f(t.notarisInKo ?? `${NOTARY_OFFICE.notaryShort}, notaris te ${NOTARY_OFFICE.city}`, "Notaris", bron), ", of diens waarnemer, door koper aangewezen.");
   b.p("2.2 De levering zal plaatsvinden op ", b.f(t.leveringsdatum ? dateNl(t.leveringsdatum) : undefined, "Leveringsdatum", bron), " of zoveel eerder of later als partijen nader overeenkomen. De feitelijke levering vindt plaats bij het passeren van de akte, leeg en ontruimd.");
-  b.h("Artikel 3 — Kosten en belastingen");
+  b.h("Artikel 3 – Kosten en belastingen");
   b.p("3.1 De kosten van de akte van levering, de kadastrale inschrijving en de overdrachtsbelasting zijn voor rekening van koper. De zakelijke lasten worden per de dag van levering verrekend.");
-  b.h("Artikel 4 — Waarborgsom of bankgarantie");
+  b.h("Artikel 4 – Waarborgsom of bankgarantie");
   b.p("4.1 Koper zal uiterlijk op ", b.f(t.waarborgsom?.uiterlijk ? dateNl(t.waarborgsom.uiterlijk) : undefined, "Uiterste datum waarborgsom", bron), ` bij de notaris een ${t.waarborgsom?.type === "bankgarantie" ? "bankgarantie stellen" : "waarborgsom storten"} van `, b.f(t.waarborgsom?.bedrag ? euro(t.waarborgsom.bedrag) : undefined, "Waarborgsom", bron), ".");
-  b.h("Artikel 5 — Ontbindende voorwaarden");
+  b.h("Artikel 5 – Ontbindende voorwaarden");
   if (t.financieringsvoorbehoud?.bedrag) b.p("5.1 Financieringsvoorbehoud: koper kan deze overeenkomst ontbinden indien hij uiterlijk op ", b.f(t.financieringsvoorbehoud.datum ? dateNl(t.financieringsvoorbehoud.datum) : undefined, "Datum financieringsvoorbehoud", bron), " voor een bedrag van ", b.f(euro(t.financieringsvoorbehoud.bedrag), "Bedrag financiering", bron), ` geen hypothecaire geldlening heeft verkregen${t.financieringsvoorbehoud.nhg ? " onder Nationale Hypotheek Garantie" : ""}. Koper zal zich naar beste vermogen inspannen de financiering te verkrijgen en desgevraagd twee afwijzingen overleggen.`);
   (t.overigeVoorbehouden ?? []).forEach((v, i) => b.p(`5.${i + 2} ${v.omschrijving}: koper kan deze overeenkomst ontbinden indien uiterlijk op `, b.f(v.datum ? dateNl(v.datum) : undefined, v.omschrijving, bron), " niet aan deze voorwaarde is voldaan."));
-  if (!t.financieringsvoorbehoud?.bedrag && !(t.overigeVoorbehouden ?? []).length) b.p("5.1 Partijen zijn geen ontbindende voorwaarden overeengekomen. ", b.check("Bewust geen financieringsvoorbehoud — koper hierop wijzen"));
-  b.h("Artikel 6 — Staat en gebruik");
+  if (!t.financieringsvoorbehoud?.bedrag && !(t.overigeVoorbehouden ?? []).length) b.p("5.1 Partijen zijn geen ontbindende voorwaarden overeengekomen. ", b.check("Bewust geen financieringsvoorbehoud: koper hierop wijzen"));
+  b.h("Artikel 6 – Staat en gebruik");
   b.p("6.1 De onroerende zaak wordt geleverd in de staat waarin zij zich bij het tot stand komen van deze overeenkomst bevindt, vrij van huur, hypotheken en beslagen. Verkoper staat ervoor in dat de onroerende zaak bij de levering de feitelijke eigenschappen bezit die nodig zijn voor normaal gebruik als woning.");
-  b.h("Artikel 7 — Bedenktijd");
+  b.h("Artikel 7 – Bedenktijd");
   b.p("7.1 Koper heeft het recht gedurende drie dagen na terhandstelling van de door partijen ondertekende overeenkomst deze te ontbinden (artikel 7:2 BW).");
-  b.h("Artikel 8 — Ingebrekestelling en boete");
+  b.h("Artikel 8 – Ingebrekestelling en boete");
   b.p("8.1 Indien een partij, na in gebreke te zijn gesteld, tekortschiet in de nakoming, is zij aan de wederpartij een direct opeisbare boete verschuldigd van drie promille van de koopprijs per dag, met een maximum van tien procent van de koopprijs, onverminderd het recht op nakoming of ontbinding.");
   if ((t.bijzondereBepalingen ?? []).length) {
-    b.h("Artikel 9 — Bijzondere afspraken");
+    b.h("Artikel 9 – Bijzondere afspraken");
     (t.bijzondereBepalingen ?? []).forEach((bep, i) => b.p(`9.${i + 1} `, b.f(bep.tekst, `Bijzondere afspraak ${i + 1}`, bron)));
     b.check("Bijzondere afspraken juridisch formuleren en toetsen");
   }

@@ -313,3 +313,47 @@ h1, h2, h3 {
 h1 { line-height: 1.12; }
 /* Uitzondering: kopjes in akten blijven klein, sans en gespatieerd. */
 .prose-akte h2 { font-weight: 700; letter-spacing: 0.08em; }
+
+/* Eigen iconenset (src/components/icons/glyphs.tsx): verschoven messingvlak achter de lijnen. */
+.akte-glyph { color: var(--color-ink-900); }
+.akte-glyph-accent { fill: var(--color-brass-300); }
+.akte-glyph-dark { color: white; }
+.akte-glyph-dark .akte-glyph-accent { fill: var(--color-brass-500); opacity: 0.85; }
+
+/* Hero-illustratie (src/components/site/hero-visual.tsx) */
+.hero-step { animation: hero-step 0.5s ease-out both; }
+.hero-when { animation: hero-fade 0.4s ease-out both; }
+.hero-rail { transform: scaleY(0); animation: hero-rail linear both; }
+.hero-seal { animation: hero-seal 0.45s cubic-bezier(0.2, 0.8, 0.25, 1.25) both; }
+@keyframes hero-step { from { opacity: 0.28; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes hero-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hero-rail { to { transform: scaleY(1); } }
+@keyframes hero-seal { from { opacity: 0; transform: scale(1.8) rotate(-24deg); } to { opacity: 1; transform: scale(1) rotate(-8deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-step, .hero-when, .hero-seal { animation: none; }
+  .hero-rail { animation: none; transform: none; }
+  .hero-seal { transform: rotate(-8deg); }
+}
+
+/*
+ * Labels zonder "pil": geen ronde achtergrond meer, maar gekleurde tekst met een klein
+ * ruitje ervoor (zoals een markering in een akte). Bewust buiten @layer, zodat de
+ * achtergrond- en ring-utilities op bestaande labels worden overstemd.
+ */
+.chip {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  gap: 0.5rem;
+  letter-spacing: 0.01em;
+}
+.chip::before {
+  content: "";
+  width: 0.38rem;
+  height: 0.38rem;
+  flex-shrink: 0;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.chip.text-white { color: var(--color-ink-900) !important; }

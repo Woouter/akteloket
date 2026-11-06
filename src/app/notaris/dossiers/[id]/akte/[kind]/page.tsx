@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: Promise<{ id: string; k
         <div>
           <Link href={`/notaris/dossiers/${id}${checkKey ? `#${checkKey}` : ""}`} className="btn btn-ghost btn-sm -ml-2"><ArrowLeft className="h-4 w-4" />Terug naar het dossier</Link>
           <h1 className="mt-1 font-serif text-xl font-semibold text-ink-900">{ir.title} {akte && <Badge className="ml-2">versie {akte.version}</Badge>}</h1>
-          <p className="text-sm text-ink-500">{view.dossier.reference} · gegenereerd {dateTimeNl(doc.createdAt)}</p>
+          <p className="text-sm text-ink-500">{view.dossier.reference}, gegenereerd op {dateTimeNl(doc.createdAt)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <a href={`/api/documenten/${doc.id}`} className="btn btn-secondary btn-sm"><Download className="h-4 w-4" />Download Word</a>
@@ -54,7 +54,7 @@ export default async function Page({ params }: { params: Promise<{ id: string; k
               {ir.bronnen.map((b) => <li key={b.label}><span className="font-semibold text-ink-800">{b.label}</span><span className="block text-ink-500">{b.bron}</span></li>)}
             </ul>
           </Card>
-          <p className="text-xs leading-relaxed text-ink-500"><span className="field-filled">groen</span> = overgenomen gegeven met bron · <span className="field-mark">geel ⚑</span> = controlepunt · <span className="field-mark !bg-bad-100">rood</span> = ontbreekt (niet aangenomen). Het model en de clausulebibliotheek worden vóór livegang door u goedgekeurd.</p>
+          <p className="text-xs leading-relaxed text-ink-500"><span className="field-filled">groen</span>: overgenomen gegeven met bron; <span className="field-mark">geel ⚑</span>: controlepunt; <span className="field-mark !bg-bad-100">rood</span>: ontbreekt (niet aangenomen). Het model en de clausulebibliotheek worden vóór livegang door u goedgekeurd.</p>
         </aside>
       </div>
     </>

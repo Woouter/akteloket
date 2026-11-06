@@ -42,7 +42,7 @@ export function dvoSections(service: ServiceKey): DvoSection[] {
         `De vaste prijs bedraagt € ${s.price.toLocaleString("nl-NL")},- inclusief btw en inclusief de kosten van inschrijving van de akte(n) in het Kadaster.`,
         "Niet inbegrepen: overdrachtsbelasting, kosten van je geldverstrekker of adviseur, en kosten van derden die je zelf inschakelt (zoals legalisatie van een handtekening). Deze staan, voor zover via de notaris betaald, op de nota van afrekening.",
         "Je betaalt niet vooraf. Het bedrag wordt verrekend via de nota van afrekening en voldaan vóór het passeren.",
-        "Gaat de koop niet door (bijvoorbeeld door een ontbindende voorwaarde of bedenktijd), dan betaal je niets zolang de concept-akte nog niet is opgesteld. Daarna is een vergoeding van € 195,- (incl. btw) verschuldigd.",
+        "Gaat de koop niet door (bijvoorbeeld door een ontbindende voorwaarde of bedenktijd), dan betaal je niets zolang de concept-akte nog niet is opgesteld. Daarna is een vergoeding van € 295,- (incl. btw) verschuldigd.",
       ],
     },
     {

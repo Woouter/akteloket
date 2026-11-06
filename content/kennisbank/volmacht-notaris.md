@@ -89,4 +89,4 @@ Bij een woningaankoop met hypotheek worden twee akten getekend: eerst de akte va
 
 ## Zo regelt Akteloket je volmacht
 
-Bij Akteloket teken je één gecombineerde volmacht voor de akte van levering en de hypotheekakte, tijdens één korte afspraak: online via video of op kantoor. De aangesloten, onafhankelijke notaris stelt daarbij je identiteit vast. Daarna hoef je meestal nergens meer heen: een medewerker van de notaris tekent de akten namens jou. Op [hoe werkt het](/hoe-werkt-het) zie je alle stappen, en bij [levering en hypotheekakte](/levering-en-hypotheekakte) vind je de vaste prijs van € 895 all-in.
+Bij Akteloket teken je één gecombineerde volmacht voor de akte van levering en de hypotheekakte, tijdens één korte afspraak: online via video of op kantoor. De aangesloten, onafhankelijke notaris stelt daarbij je identiteit vast. Daarna hoef je meestal nergens meer heen: een medewerker van de notaris tekent de akten namens jou. Op [hoe werkt het](/hoe-werkt-het) zie je alle stappen, en bij [levering en hypotheekakte](/levering-en-hypotheekakte) vind je de vaste prijs van € 1.395 all-in.

@@ -1,6 +1,6 @@
 ---
 title: "Startersvrijstelling overdrachtsbelasting 2026: voorwaarden en grens"
-description: "Startersvrijstelling overdrachtsbelasting: de voorwaarden in 2026, de woningwaardegrens van € 555.000 (€ 615.000 in 2027) en wat er geldt als je samen koopt."
+description: "Startersvrijstelling overdrachtsbelasting: de voorwaarden in 2026, de woningwaardegrens van € 555.000 (€ 615.000 in 2027) en wat er geldt als je samen koopt."
 keyword: "startersvrijstelling overdrachtsbelasting"
 category: "Kosten & belasting"
 readingTime: 6
@@ -9,7 +9,7 @@ cta: "beide"
 related: ["overdrachtsbelasting-2026", "kosten-koper", "passeren-en-sleuteloverdracht"]
 faq:
   - q: "Wat is de woningwaardegrens voor de startersvrijstelling in 2026?"
-    a: "€ 555.000. Vanaf 1 januari 2027 is de grens € 615.000. Ligt de waarde boven de grens, dan vervalt de vrijstelling helemaal en betaal je 2% over het hele bedrag."
+    a: "€ 555.000. Vanaf 1 januari 2027 is de grens € 615.000. Ligt de waarde boven de grens, dan vervalt de vrijstelling helemaal en betaal je 2% over het hele bedrag."
   - q: "Telt mijn leeftijd bij het tekenen van de koopovereenkomst?"
     a: "Nee. Bepalend is je leeftijd op de datum van de akte van levering bij de notaris. Je moet dan 18 jaar of ouder en jonger dan 35 zijn."
   - q: "Wat als ik samen met mijn partner koop en één van ons 35 of ouder is?"
@@ -44,8 +44,8 @@ Belangrijk: voor de leeftijd en de woningwaardegrens telt de datum van de notari
 
 | Datum van de akte van levering | Woningwaardegrens |
 |---|---|
-| Tot en met 31 december 2026 | € 555.000 |
-| Vanaf 1 januari 2027 | € 615.000 |
+| Tot en met 31 december 2026 | € 555.000 |
+| Vanaf 1 januari 2027 | € 615.000 |
 
 De grens voor 2027 is al vastgesteld. Dat is handig om te weten als je nu koopt en de levering pas na de jaarwisseling plaatsvindt.
 
@@ -53,7 +53,7 @@ De grens voor 2027 is al vastgesteld. Dat is handig om te weten als je nu koopt 
 
 De woningwaardegrens werkt als een harde grens. Is de woning ook maar iets meer waard dan de grens, dan vervalt de vrijstelling **helemaal**. Je betaalt dan 2% over het hele bedrag, niet alleen over het deel boven de grens.
 
-Een voorbeeld: je koopt een woning van € 560.000 en de levering is in december 2026. De waarde ligt boven € 555.000, dus je betaalt 2% over € 560.000: € 11.200. Wordt dezelfde woning in januari 2027 geleverd, dan ligt de waarde onder de grens van € 615.000. Voldoe je aan de andere voorwaarden, dan betaal je € 0.
+Een voorbeeld: je koopt een woning van € 560.000 en de levering is in december 2026. De waarde ligt boven € 555.000, dus je betaalt 2% over € 560.000: € 11.200. Wordt dezelfde woning in januari 2027 geleverd, dan ligt de waarde onder de grens van € 615.000. Voldoe je aan de andere voorwaarden, dan betaal je € 0.
 
 Voor de grens kijkt de Belastingdienst naar de waarde van de woning. Meestal is dat de koopprijs. Twijfel je over de waarde die telt, bijvoorbeeld omdat je ook spullen van de verkoper overneemt? Leg het voor aan de notaris.
 
@@ -61,7 +61,7 @@ Voor de grens kijkt de Belastingdienst naar de waarde van de woning. Meestal is 
 
 Koop je samen met je partner of iemand anders, dan wordt **per koper** beoordeeld of je recht hebt op de vrijstelling. Ieder kijkt naar zijn of haar eigen aandeel. De woningwaardegrens geldt wel voor de hele woning, niet per persoon.
 
-Een voorbeeld: jullie kopen samen een woning van € 400.000, ieder voor de helft. Jij bent 31 en koopt voor het eerst. Je partner is 36. Over jouw helft van € 200.000 betaal je 0%. Over de helft van je partner geldt 2%, dus € 4.000, als je partner er ook zelf gaat wonen.
+Een voorbeeld: jullie kopen samen een woning van € 400.000, ieder voor de helft. Jij bent 31 en koopt voor het eerst. Je partner is 36. Over jouw helft van € 200.000 betaal je 0%. Over de helft van je partner geldt 2%, dus € 4.000, als je partner er ook zelf gaat wonen.
 
 > **Goed om te weten:** word je binnenkort 35? Dan telt je leeftijd op de dag van de akte van levering. Ligt je verjaardag vóór die datum, dan vervalt de vrijstelling. Bespreek in zo’n geval met de verkoper of een eerdere leveringsdatum mogelijk is, en zorg dat de notaris op tijd alle stukken heeft. Een overzicht van wat er op die dag gebeurt, lees je in [passeren en sleuteloverdracht](/kennisbank/passeren-en-sleuteloverdracht).
 
@@ -78,10 +78,10 @@ Voldoe je niet aan de voorwaarden, maar ga je er wel zelf wonen? Dan betaal je i
 | Situatie | Tarief 2026 |
 |---|---|
 | Starter, voldoet aan alle voorwaarden | 0% |
-| Starter, maar woningwaarde boven € 555.000 | 2% over het hele bedrag |
+| Starter, maar woningwaarde boven € 555.000 | 2% over het hele bedrag |
 | 35 jaar of ouder, eigen bewoning | 2% |
 | Woning wordt niet je hoofdverblijf | 8% |
 
 ## Zo regelt Akteloket dit voor je
 
-Bij Akteloket vragen we je de gegevens die nodig zijn om de startersvrijstelling te beoordelen, zoals je geboortedatum, of je er zelf gaat wonen en of je de vrijstelling al eens hebt gebruikt. Ook de verklaring volgens het model van de Belastingdienst lever je bij ons aan. De aangesloten, onafhankelijke notaris controleert alles en beslist of de vrijstelling kan worden toegepast. Een volledig aangeleverde verklaring betekent dus nog niet automatisch 0%. Onze vaste prijs voor [levering en hypotheekakte](/levering-en-hypotheekakte) is € 895 all-in; eventuele overdrachtsbelasting komt daar los bij.
+Bij Akteloket vragen we je de gegevens die nodig zijn om de startersvrijstelling te beoordelen, zoals je geboortedatum, of je er zelf gaat wonen en of je de vrijstelling al eens hebt gebruikt. Ook de verklaring volgens het model van de Belastingdienst lever je bij ons aan. De aangesloten, onafhankelijke notaris controleert alles en beslist of de vrijstelling kan worden toegepast. Een volledig aangeleverde verklaring betekent dus nog niet automatisch 0%. Onze vaste prijs voor [levering en hypotheekakte](/levering-en-hypotheekakte) is € 1.395 all-in; eventuele overdrachtsbelasting komt daar los bij.

@@ -32,7 +32,7 @@ Meestal is de waarborgsom 10% van de koopprijs. Dat percentage is gebruikelijk, 
 
 ### Rekenvoorbeeld
 
-Stel, je koopt een woning van € 350.000. Bij een waarborgsom van 10% gaat het om € 35.000. Stort je dat bedrag zelf, dan staat het geld vast tot de overdracht. Bij het passeren wordt het verrekend, maar tot die tijd kun je het niet gebruiken. Heb je dat bedrag niet vrij beschikbaar, bijvoorbeeld omdat je spaargeld nodig is voor de kosten koper of je geld nog vastzit in je huidige woning? Dan is een bankgarantie of een lagere waarborgsom het bespreken waard.
+Stel, je koopt een woning van € 350.000. Bij een waarborgsom van 10% gaat het om € 35.000. Stort je dat bedrag zelf, dan staat het geld vast tot de overdracht. Bij het passeren wordt het verrekend, maar tot die tijd kun je het niet gebruiken. Heb je dat bedrag niet vrij beschikbaar, bijvoorbeeld omdat je spaargeld nodig is voor de kosten koper of je geld nog vastzit in je huidige woning? Dan is een bankgarantie of een lagere waarborgsom het bespreken waard.
 
 ## Twee manieren: storten of bankgarantie
 
@@ -83,4 +83,4 @@ Je hypotheekadviseur kan je helpen bij de afweging.
 
 ## Zo regelt Akteloket de waarborgsom
 
-Bij Akteloket lezen we uit je koopovereenkomst af welke afspraak je hebt gemaakt over de waarborgsom of bankgarantie, en vóór welke datum. De aangesloten, onafhankelijke notaris beheert de kwaliteitsrekening, ontvangt de waarborgsom of bankgarantie en verwerkt die later op je nota van afrekening. De notariële afhandeling van [levering en hypotheekakte](/levering-en-hypotheekakte) kost bij ons € 895 all-in.
+Bij Akteloket lezen we uit je koopovereenkomst af welke afspraak je hebt gemaakt over de waarborgsom of bankgarantie, en vóór welke datum. De aangesloten, onafhankelijke notaris beheert de kwaliteitsrekening, ontvangt de waarborgsom of bankgarantie en verwerkt die later op je nota van afrekening. De notariële afhandeling van [levering en hypotheekakte](/levering-en-hypotheekakte) kost bij ons € 1.395 all-in.

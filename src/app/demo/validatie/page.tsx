@@ -23,7 +23,7 @@ const ITEMS: { key: string; title: string; now: string }[] = [
   { key: "Termijnen en herinneringen", title: "Termijnen en herinneringen", now: "Datumcheck 14 dagen vooraf, herinnering na 3 dagen, signaal aan notaris na nog 2 dagen; bankinstructie uiterlijk 10 dagen vooraf; herinneringen max. eens per 3 dagen." },
   { key: "Aflosnota's", title: "Aflosnota's, royement en nota van afrekening verkoper", now: "Hypotheken uit Kadaster → aflosnota op te vragen; verkoper vult leningnummer + toestemming; notaris verzendt verzoek met één klik, registreert bedrag; nota verkoper automatisch." },
   { key: "Dossieroverdracht", title: "Inhoud en moment van de dossieroverdracht", now: "Overdracht 1 als koperskant compleet en concept-leveringsakte klaar; aanvulling bij hypotheekakte; alle onderdelen uit hoofdstuk 11 + ZIP." },
-  { key: "DVO en tarieven", title: "Dienstverleningsovereenkomst, rolverdeling en tarieven", now: "Notaris als opdrachtnemer, Akteloket als verwerker; vaste all-in prijzen (€ 1.395 / € 995 / € 695), geen betaling vooraf, kosteloos annuleren tot concept-akte." },
+  { key: "DVO en tarieven", title: "Dienstverleningsovereenkomst, rolverdeling en tarieven", now: "Notaris als opdrachtnemer, Akteloket als verwerker; vaste all-in prijzen (€ 1.395 / € 995 / € 695), geen betaling vooraf, kosteloos annuleren tot concept-akte." },
 ];
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ opgeslagen?: string }> }) {

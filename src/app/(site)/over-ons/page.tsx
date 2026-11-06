@@ -2,16 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BRAND, NOTARY_OFFICE } from "@/lib/config";
 import { CtaBand } from "@/components/site/sections";
+import { Band } from "@/components/site/band";
 
 export const metadata: Metadata = { title: "Over ons", description: "Akteloket maakt de notariële afhandeling van je woningaankoop eenvoudiger, samen met een onafhankelijke notaris.", alternates: { canonical: "/over-ons" } };
 
 export default function Page() {
   return (
     <>
-      <section className="container-page max-w-3xl py-16 lg:py-20">
-        <p className="eyebrow">Over ons</p>
-        <h1 className="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">Notarieel werk verdient een moderne ervaring</h1>
-        <div className="prose-site mt-8">
+      <section className="bg-white">
+        <div className="container-page max-w-3xl py-16 lg:py-20">
+          <p className="eyebrow">Over ons</p>
+          <h1 className="mt-3 text-4xl leading-tight text-ink-900 sm:text-5xl">Notarieel werk verdient een moderne ervaring</h1>
+        </div>
+      </section>
+      <Band tone="paper" inner="max-w-3xl">
+        <div className="prose-site">
           <p>Een huis kopen is spannend genoeg. Toch voelt het notariële deel voor veel mensen als een zwarte doos: formulieren, kopieën mailen, afspraken op kantoor en weinig zicht op waar je dossier staat. Dat kan beter.</p>
           <p>{BRAND.name} is een online platform dat de notariële afhandeling van je woningaankoop voorbereidt en begeleidt. Wij lezen je koopovereenkomst uit, halen kadastrale stukken op, stellen concept-documenten op, bewaken termijnen en houden je bij elke stap op de hoogte.</p>
           <h2>Wij bereiden voor, de notaris beslist</h2>
@@ -24,7 +29,7 @@ export default function Page() {
             <li><strong>Privacy:</strong> we vragen alleen wat nodig is en slaan alles versleuteld op. Lees meer over <Link href="/veiligheid">veiligheid</Link>.</li>
           </ul>
         </div>
-      </section>
+      </Band>
       <CtaBand />
     </>
   );

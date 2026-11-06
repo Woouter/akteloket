@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <article>
       <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: a.title, description: a.description, dateModified: a.updated, author: { "@type": "Organization", name: BRAND.name }, publisher: { "@type": "Organization", name: BRAND.name }, mainEntityOfPage: `${BRAND.url}/kennisbank/${a.slug}` }} />
       {a.faq.length > 0 && <FaqJsonLd items={a.faq} />}
-      <header className="border-b border-ink-100">
+      <header className="bg-white">
         <div className="container-page max-w-6xl py-14"><div className="max-w-3xl">
           <nav className="text-sm text-ink-500"><Link href="/kennisbank" className="hover:text-ink-900">Kennisbank</Link> <span className="mx-1.5">/</span> {a.category}</nav>
           <h1 className="mt-4 text-4xl text-ink-900 sm:text-5xl">{a.title}</h1>
@@ -37,7 +37,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <p className="mt-5 flex items-center gap-4 text-sm text-ink-500"><span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" />{a.readingTime} min lezen</span><span>Bijgewerkt {dateNl(a.updated)}</span></p>
         </div></div>
       </header>
-      <div className="container-page mt-12 grid max-w-6xl gap-12 lg:grid-cols-[1fr_18rem]">
+      <div className="border-t border-ink-200/70 bg-paper py-14 lg:py-16">
+      <div className="container-page grid max-w-6xl gap-12 lg:grid-cols-[1fr_18rem]">
         <div className="min-w-0">
           {a.headings.length > 2 && (
             <details className="group mb-8 rounded-lg border border-ink-200 bg-white p-4 text-sm lg:hidden">
@@ -62,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           )}
           <div className="rounded-lg bg-ink-900 p-6 text-white">
             <p className="eyebrow !text-brass-300">{s.name}</p>
-            <p className="mt-2 font-serif text-4xl font-semibold tabular">€ {s.price.toLocaleString("nl-NL")}<span className="ml-1.5 font-sans text-sm font-normal text-ink-300">all-in</span></p>
+            <p className="mt-2 font-serif text-4xl font-semibold tabular">€ {s.price.toLocaleString("nl-NL")}<span className="ml-1.5 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <p className="mt-2 text-sm text-ink-300">{s.description}</p>
             <Link href={href} className="btn btn-brass mt-5 w-full">Meer over {s.short.toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>
           </div>
@@ -73,6 +74,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </div>
           )}
         </aside>
+      </div>
       </div>
     </article>
   );

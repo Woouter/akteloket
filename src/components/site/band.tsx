@@ -14,9 +14,9 @@ const TONE: Record<BandTone, string> = {
   navy: "bg-ink-900 text-white band-navy",
 };
 
-export function Band({ tone = "paper", children, className, inner, id, ...rest }: { tone?: BandTone; children: ReactNode; className?: string; inner?: string; id?: string } & Record<`data-${string}`, string>) {
+export function Band({ tone = "paper", pad = "default", border = tone !== "navy", children, className, inner, id, ...rest }: { tone?: BandTone; pad?: "default" | "compact"; border?: boolean; children: ReactNode; className?: string; inner?: string; id?: string } & Record<`data-${string}`, string>) {
   return (
-    <section id={id} className={cn("py-20 lg:py-24", TONE[tone], tone !== "navy" && "border-t border-ink-200/70", className)} {...rest}>
+    <section id={id} className={cn(pad === "compact" ? "py-14 lg:py-16" : "py-20 lg:py-24", TONE[tone], border && "border-t border-ink-200/70", className)} {...rest}>
       <div className={cn("container-page", inner)}>{children}</div>
     </section>
   );

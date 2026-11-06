@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Dienstverleningsovereenkomst", descr
 
 export default function Page() {
   return (
-    <section className="container-page max-w-3xl pt-16 lg:pt-20">
+    <section className="container-page max-w-3xl py-16 lg:py-20">
       <p className="eyebrow">Juridisch</p>
       <h1 className="mt-3 text-[2rem] leading-tight text-ink-900 sm:text-5xl">{"Dienstverlenings\u00ADovereenkomst"}</h1>
       <p className="mt-4 text-sm text-ink-500">Versie {DVO_VERSION.replace(/^v/, "")}. Dit is het voorbeeld voor de dienst levering + hypotheekakte. Bij je aanvraag zie je de versie voor jouw dienst.</p>

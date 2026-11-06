@@ -2,23 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, FileText, FileUp, Info, Landmark, Layers, Loader2, Lock, Plus, ScanLine, FileSignature, Trash2, Sparkles, Download, Eye, AlertTriangle, PenLine } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, FileText, FileUp, Info, Landmark, Layers, Loader2, Lock, Plus, ScanLine, FileSignature, Trash2, Download, Eye, AlertTriangle, PenLine } from "lucide-react";
 import { cn } from "@/lib/util/format";
+import { SERVICES } from "@/lib/config";
 import { AddressSearch } from "./address";
 import { RField, type FState } from "./fields";
 import type { ReviewPayload } from "@/lib/domain/aanvraag";
 import type { DvoSection } from "@/lib/docgen/dvo";
 import { appendFile } from "@/lib/client/upload";
+import { Glyph, type GlyphName } from "@/components/icons/glyphs";
 
 type Service = "beide" | "levering" | "hypotheek";
 type Step = "dienst" | "upload" | "scan" | "controle" | "handmatig" | "afronden";
 type Model = ReviewPayload["model"];
 type Party = Model["parties"][number];
 
-const SERVICE_CARDS: { key: Service; title: string; text: string; price: number; icon: typeof Layers; badge?: string }[] = [
-  { key: "beide", title: "Leveringsakte + hypotheekakte", text: "Je koopt een woning met een hypotheek.", price: 895, icon: Layers, badge: "Meest gekozen" },
-  { key: "levering", title: "Alleen leveringsakte", text: "Je koopt zonder hypotheek (of de hypotheek loopt elders).", price: 649, icon: FileSignature },
-  { key: "hypotheek", title: "Alleen hypotheekakte", text: "Bijvoorbeeld bij oversluiten of verhogen.", price: 449, icon: Landmark },
+const SERVICE_CARDS: { key: Service; title: string; text: string; price: number; glyph: GlyphName; badge?: string }[] = [
+  { key: "beide", title: "Leveringsakte + hypotheekakte", text: "Je koopt een woning met een hypotheek.", price: SERVICES.beide.price, glyph: "stack", badge: "Meest gekozen" },
+  { key: "levering", title: "Alleen leveringsakte", text: "Je koopt zonder hypotheek (of de hypotheek loopt elders).", price: SERVICES.levering.price, glyph: "key" },
+  { key: "hypotheek", title: "Alleen hypotheekakte", text: "Bijvoorbeeld bij oversluiten of verhogen.", price: SERVICES.hypotheek.price, glyph: "bank" },
 ];
 
 const SCAN_STAGES = ["Bestand controleren (type, leesbaarheid, pagina's)", "Tekst herkennen", "Partijen herkennen: kopers en verkopers", "Woning en kadastrale aanduiding", "Koopprijs, data en waarborgsom", "Ontbindende voorwaarden en bijzondere bepalingen"];
@@ -125,12 +127,11 @@ export function AanvraagFlow({ initialService, demo, dvo, checks }: { initialSer
           <p className="mt-3 text-lg text-ink-600">Het formulier past zich aan op je keuze. Je kunt dit later nog wijzigen.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {SERVICE_CARDS.map((c) => (
-              <button key={c.key} type="button" onClick={() => setService(c.key)} className={cn("relative flex flex-col rounded-2xl border-2 bg-white p-5 text-left transition", service === c.key ? "border-brand-500 shadow-[0_0_0_4px_rgb(31_63_110/0.12)]" : "border-ink-100 hover:border-ink-200")} aria-pressed={service === c.key}>
-                {c.badge && <span className="absolute -top-2.5 right-4 chip bg-brand-600 text-white">{c.badge}</span>}
-                <span className="flex items-center justify-between"><span className={cn("flex h-10 w-10 items-center justify-center rounded-xl", service === c.key ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-600")}><c.icon className="h-5 w-5" /></span><span className={cn("flex h-5 w-5 items-center justify-center rounded-full border-2", service === c.key ? "border-brand-600 bg-brand-600" : "border-ink-300")}>{service === c.key && <Check className="h-3 w-3 text-white" strokeWidth={3} />}</span></span>
-                <span className="mt-4 font-bold text-ink-900">{c.title}</span>
+              <button key={c.key} type="button" onClick={() => setService(c.key)} className={cn("relative flex flex-col rounded-lg border bg-white p-5 text-left transition", service === c.key ? "border-ink-900 shadow-[inset_0_3px_0_var(--color-brass-500)] ring-1 ring-ink-900" : "border-ink-200 hover:border-ink-400")} aria-pressed={service === c.key}>
+                <span className="flex items-center justify-between"><Glyph name={c.glyph} size={36} /><span className={cn("flex h-5 w-5 items-center justify-center rounded-full border-2", service === c.key ? "border-brand-600 bg-brand-600" : "border-ink-300")}>{service === c.key && <Check className="h-3 w-3 text-white" strokeWidth={3} />}</span></span>
+                <span className="mt-4 font-serif text-lg font-semibold leading-snug text-ink-900">{c.title}</span>{c.badge && <span className="chip mt-1 text-brass-700">{c.badge}</span>}
                 <span className="mt-1 flex-1 text-sm text-ink-600">{c.text}</span>
-                <span className="mt-4 font-serif text-xl font-semibold text-ink-900 tabular">€ {c.price.toLocaleString("nl-NL")} <span className="text-xs font-medium text-ink-500">all-in</span></span>
+                <span className="mt-4 font-serif text-xl font-semibold text-ink-900 tabular">€ {c.price.toLocaleString("nl-NL")} <span className="text-xs font-medium text-ink-500">all-in</span></span>
               </button>
             ))}
           </div>
@@ -186,7 +187,7 @@ function UploadStep({ demo, onFile, onBack, onNoKo }: { demo: boolean; onFile: (
       <p className="mt-3 text-lg text-ink-600">Upload de volledige overeenkomst, inclusief alle bijlagen en eventuele aanvullingen. Wij halen de gegevens er automatisch uit.</p>
       <div data-tour="aanvraag-upload" onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
         className={cn("mt-8 flex flex-col items-center rounded-3xl border-2 border-dashed px-6 py-14 text-center transition", drag ? "border-brand-500 bg-brand-50" : "border-ink-200 bg-white")}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><FileUp className="h-7 w-7" /></span>
+        <Glyph name="scan" size={52} />
         <p className="mt-5 text-lg font-semibold text-ink-900">Sleep je bestand hierheen</p>
         <p className="mt-1 text-sm text-ink-500">PDF of foto's (JPG/PNG), maximaal 25 MB</p>
         <button type="button" className="btn btn-primary mt-6" onClick={() => input.current?.click()}><FileUp className="h-4 w-4" />Kies bestand</button>
@@ -195,7 +196,7 @@ function UploadStep({ demo, onFile, onBack, onNoKo }: { demo: boolean; onFile: (
       </div>
       {demo && (
         <div className="mt-5 flex flex-col items-start justify-between gap-4 rounded-2xl border border-notaris-100 bg-notaris-50 p-5 sm:flex-row sm:items-center" data-tour="aanvraag-demo-ko">
-          <div className="flex gap-3"><Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-notaris-600" /><div><p className="font-semibold text-ink-900">Demo: probeer de scanner</p><p className="text-sm text-ink-600">Gebruik de fictieve koopovereenkomst van Bloesemlaan 14, of download hem en upload hem zelf.</p></div></div>
+          <div className="flex gap-3"><Glyph name="scan" size={28} /><div><p className="font-semibold text-ink-900">Demo: probeer de scanner</p><p className="text-sm text-ink-600">Gebruik de fictieve koopovereenkomst van Bloesemlaan 14, of download hem en upload hem zelf.</p></div></div>
           <div className="flex shrink-0 gap-2"><a href="/api/demo/koopovereenkomst" className="btn btn-secondary btn-sm"><Download className="h-4 w-4" />Download</a><button type="button" className="btn btn-dark btn-sm" onClick={() => onFile("demo")}><ScanLine className="h-4 w-4" />Gebruik voorbeeld</button></div>
         </div>
       )}
@@ -459,7 +460,7 @@ function FinishStep({ payload, service, dvo, checks, onBack, onDone, setError }:
           <div className="rounded-2xl bg-ink-900 p-6 text-white">
             <p className="text-sm text-ink-300">Je dienst</p>
             <p className="mt-1 text-lg font-semibold">{price.title}</p>
-            <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price.toLocaleString("nl-NL")}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
+            <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price.toLocaleString("nl-NL")}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <ul className="mt-4 space-y-2 text-sm text-ink-200">
               <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Geen betaling vooraf: je betaalt via de nota van afrekening</li>
               <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Kosteloos annuleren tot de concept-akte er is</li>

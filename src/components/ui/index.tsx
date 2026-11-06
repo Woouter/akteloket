@@ -73,14 +73,15 @@ export function Field({ label, hint, children, className, required }: { label: s
 
 export function Notice({ tone = "info", title, children, icon, className }: { tone?: "info" | "ok" | "warn" | "bad" | "demo"; title?: ReactNode; children?: ReactNode; icon?: ReactNode; className?: string }) {
   const t: Record<string, string> = {
-    info: "bg-brand-50 border-brand-100 text-ink-800",
-    ok: "bg-ok-50 border-ok-100 text-ink-800",
-    warn: "bg-warn-50 border-warn-100 text-ink-800",
-    bad: "bg-bad-50 border-bad-100 text-ink-800",
-    demo: "bg-notaris-50 border-notaris-100 text-ink-800",
+    info: "bg-brand-50/70 border-brand-600 text-ink-800",
+    ok: "bg-ok-50/70 border-ok-600 text-ink-800",
+    warn: "bg-warn-50/80 border-warn-600 text-ink-800",
+    bad: "bg-bad-50/80 border-bad-600 text-ink-800",
+    demo: "bg-notaris-50/80 border-notaris-500 text-ink-800",
   };
+  // Geen afgerond kadertje: een rustige band met een gekleurde lijn links.
   return (
-    <div className={cn("flex gap-3 rounded-xl border p-4 text-sm leading-relaxed", t[tone], className)}>
+    <div className={cn("flex gap-3 rounded-none border-0 border-l-[3px] px-4 py-3.5 text-sm leading-relaxed", t[tone], className)}>
       {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
       <div className="min-w-0">
         {title && <p className="font-semibold text-ink-900">{title}</p>}

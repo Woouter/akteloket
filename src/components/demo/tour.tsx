@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Compass, LayoutGrid, PlayCircle, Sparkles, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Compass, LayoutGrid, PlayCircle, X } from "lucide-react";
 import { SEEN_COOKIE, TOUR_COOKIE, TOURS, parseSeen, tourByKey, type Tour } from "@/lib/demo/tours";
 
 const KEY = "akteloket.tour";
@@ -210,7 +210,7 @@ export function TourProvider({ mainId }: { mainId?: string }) {
   if (!onPage) {
     return (
       <div className="no-print fixed bottom-4 left-1/2 z-[9999] flex w-[calc(100vw-2rem)] max-w-max -translate-x-1/2 items-center gap-3 rounded-lg bg-ink-900 px-4 py-3 text-sm text-white shadow-lift">
-        <Sparkles className="h-4 w-4 shrink-0 text-brass-300" />
+        <span aria-hidden className="h-1.5 w-1.5 shrink-0 rotate-45 bg-brass-400" />
         <span className="min-w-0 truncate">Tour “{tour.title}”, stap {state!.index + 1} van {tour.steps.length}</span>
         <button className="btn btn-sm shrink-0 bg-white text-ink-900 hover:bg-ink-50" onClick={() => router.push(resolve(step.path))}>Ga verder</button>
         <button className="shrink-0 text-ink-300 hover:text-white" onClick={() => stop(false)} aria-label="Tour stoppen"><X className="h-4 w-4" /></button>
@@ -232,7 +232,7 @@ export function TourProvider({ mainId }: { mainId?: string }) {
       <div ref={popRef} className="tour-popover no-print" style={{ top: pop.top, left: pop.left, width: pop.mobile ? "calc(100vw - 32px)" : Math.min(380, typeof window !== "undefined" ? window.innerWidth - 32 : 380) }} role="dialog" aria-label={step.title}>
         <div className="overflow-hidden rounded-lg bg-white shadow-lift ring-1 ring-ink-900/10">
           <div className="flex items-center justify-between bg-ink-900 px-4 py-2.5 text-xs text-ink-200">
-            <span className="flex items-center gap-1.5 font-semibold text-white"><Sparkles className="h-3.5 w-3.5 text-brass-300" />{tour.title}</span>
+            <span className="flex items-center gap-2 font-semibold text-white"><span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-brass-400" />{tour.title}</span>
             <span className="tabular">{state!.index + 1} / {tour.steps.length}</span>
           </div>
           <div className="p-4">

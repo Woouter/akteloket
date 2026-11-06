@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowRight, Check, Clock, FileText } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SERVICES, type ServiceKey } from "@/lib/config";
 import { FAQ, type Faq } from "@/lib/content/faq";
 import { allArticles } from "@/lib/content/kennisbank";
 import { CtaBand, FaqJsonLd, FaqList, JsonLd, PriceCards, TrustStrip } from "./sections";
 import { SectionTitle } from "@/components/ui";
+import { Band, Tick } from "./band";
+import { Glyph } from "@/components/icons/glyphs";
 import { BRAND } from "@/lib/config";
 
 export interface LandingProps {
@@ -35,7 +37,7 @@ export function Landing(p: LandingProps) {
       <JsonLd data={{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: BRAND.url }, { "@type": "ListItem", position: 2, name: s.name, item: `${BRAND.url}${p.path}` }] }} />
       <FaqJsonLd items={faq} />
 
-      <section className="relative overflow-hidden border-b border-ink-200 bg-white">
+      <section className="relative overflow-hidden bg-white">
         <div className="container-page relative grid gap-12 py-16 lg:grid-cols-[1.25fr_0.75fr] lg:py-20" data-tour="landing-hero">
           <div>
             <nav className="text-sm text-ink-500" aria-label="Kruimelpad"><Link href="/" className="hover:text-ink-900">Home</Link> <span className="mx-1.5">/</span> <span className="text-ink-700">{s.name}</span></nav>
@@ -43,7 +45,7 @@ export function Landing(p: LandingProps) {
             <h1 className="mt-3 text-4xl text-ink-900 sm:text-[3.3rem]">{p.h1}</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600">{p.intro}</p>
             <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
-              {p.heroPoints.map((h) => <li key={h} className="flex gap-2.5 text-ink-800"><Check className="mt-0.5 h-5 w-5 shrink-0 text-brass-500" />{h}</li>)}
+              {p.heroPoints.map((h) => <li key={h} className="flex gap-2.5 text-ink-800"><Tick />{h}</li>)}
             </ul>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={href} className="btn btn-primary btn-lg">{p.ctaLabel ?? "Start je aanvraag"} <ArrowRight className="h-4 w-4" /></Link>
@@ -52,21 +54,21 @@ export function Landing(p: LandingProps) {
             <TrustStrip className="mt-8" />
           </div>
           <aside className="self-start">
-            <div className="card p-7 shadow-lift">
+            <div className="border-t-[3px] border-brass-500 bg-paper p-7">
               <p className="eyebrow">{s.short}</p>
-              <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-5xl font-semibold text-ink-900 tabular">€ {s.price.toLocaleString("nl-NL")}</span><span className="text-ink-500">all-in</span></p>
+              <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-5xl font-semibold text-ink-900 tabular">€ {s.price.toLocaleString("nl-NL")}</span><span className="text-ink-500">all-in</span></p>
               <p className="text-sm text-ink-500">Inclusief btw{p.service !== "koopovereenkomst" ? " en kadasterinschrijving" : ""}</p>
               <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
-                {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" />{i}</li>)}
+                {s.includes.map((i) => <li key={i} className="flex gap-2.5"><Tick />{i}</li>)}
               </ul>
               <Link href={href} className="btn btn-dark mt-7 w-full">{p.ctaLabel ?? "Start je aanvraag"} <ArrowRight className="h-4 w-4" /></Link>
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-ink-500"><Clock className="h-3.5 w-3.5" />{p.service === "koopovereenkomst" ? "Vragenlijst in ongeveer een kwartier" : "Aanvraag in ongeveer 2 minuten"}</p>
+              <p className="mt-3 text-center text-xs text-ink-500">{p.service === "koopovereenkomst" ? "Vragenlijst in ongeveer een kwartier" : "Aanvraag in ongeveer 2 minuten"}</p>
             </div>
           </aside>
         </div>
       </section>
 
-      <section className="container-page mt-20 grid gap-14 lg:grid-cols-[1fr_20rem]">
+      <Band tone="paper" inner="grid gap-14 lg:grid-cols-[1fr_20rem]">
         <div className="space-y-12">
           {p.explainer.map((e) => (
             <div key={e.title}>
@@ -76,43 +78,41 @@ export function Landing(p: LandingProps) {
           ))}
         </div>
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-2xl border border-ink-100 bg-white p-6">
-            <p className="text-sm font-semibold text-ink-900">Lees ook</p>
+          <div className="border-t border-ink-900 pt-5">
+            <p className="eyebrow">Lees ook</p>
             <ul className="mt-4 space-y-3">
               {arts.map((a) => a && (
-                <li key={a.slug}><Link href={`/kennisbank/${a.slug}`} className="group flex gap-3 text-sm"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-brass-500" /><span className="font-medium text-ink-700 group-hover:text-brand-700">{a.title}</span></Link></li>
+                <li key={a.slug}><Link href={`/kennisbank/${a.slug}`} className="group flex gap-3 text-sm"><Glyph name="book" size={22} /><span className="font-medium text-ink-700 group-hover:text-ink-900 group-hover:underline group-hover:decoration-brass-400 group-hover:underline-offset-4">{a.title}</span></Link></li>
               ))}
             </ul>
           </div>
         </aside>
-      </section>
+      </Band>
 
-      <section className="mt-24 bg-white py-20">
-        <div className="container-page">
-          <SectionTitle eyebrow="Zo gaat het" title={`${s.short} in ${p.steps.length} stappen`} />
-          <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {p.steps.map((st, i) => (
-              <li key={st.title} className="rounded-2xl border border-ink-100 bg-paper p-6">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-brass-400 font-serif text-lg font-semibold text-brass-600">{i + 1}</span>
-                <p className="mt-4 font-serif text-lg font-semibold text-ink-900">{st.title}</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{st.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <Band tone="white">
+        <SectionTitle eyebrow="Zo gaat het" title={`${s.short} in ${p.steps.length} stappen`} />
+        <ol className="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+          {p.steps.map((st, i) => (
+            <li key={st.title} className="border-t-2 border-brass-400 pt-5">
+              <span className="font-serif text-4xl font-semibold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
+              <p className="mt-4 font-serif text-lg font-semibold text-ink-900">{st.title}</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{st.text}</p>
+            </li>
+          ))}
+        </ol>
+      </Band>
 
       {p.priceKeys && (
-        <section className="container-page mt-24">
+        <Band tone="sand">
           <SectionTitle center eyebrow="Tarieven" title="Kies wat bij je past" />
-          <div className="mt-10"><PriceCards keys={p.priceKeys} highlight={p.service} /></div>
-        </section>
+          <div className="mt-12"><PriceCards keys={p.priceKeys} highlight={p.service} /></div>
+        </Band>
       )}
 
-      <section className="container-page mt-24 grid gap-12 lg:grid-cols-[0.8fr_1.2fr]" data-tour="landing-faq">
+      <Band tone={p.priceKeys ? "paper" : "sand"} inner="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]" data-tour="landing-faq">
         <SectionTitle eyebrow="Veelgestelde vragen" title={`Vragen over ${s.short.toLowerCase()}`} />
         <FaqList items={faq} />
-      </section>
+      </Band>
 
       {p.service === "koopovereenkomst" ? (
         <CtaBand title="Je koopovereenkomst laten opstellen?" text="Beantwoord de vragen online. Wij stellen een sluitende koopovereenkomst op die koper en verkoper digitaal ondertekenen." href={href} note="Vaste prijs. Daarna ga je met één klik door naar je akte van levering." />

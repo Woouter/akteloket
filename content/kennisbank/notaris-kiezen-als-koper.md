@@ -79,4 +79,4 @@ Zo voorkom je dat je op het laatste moment, onder tijdsdruk, een keuze moet make
 
 ## Zo werkt kiezen voor Akteloket
 
-Kies je voor Akteloket, dan wordt de notariële afhandeling uitgevoerd door een aangesloten, onafhankelijke notaris. Akteloket verzamelt en structureert je gegevens en bereidt de akten voor; de notaris controleert en beslist. Je betaalt vaste all-in prijzen, zoals € 1.395 voor levering en hypotheekakte samen, inclusief btw en Kadasterinschrijving van de akten. Bekijk alle [tarieven](/tarieven) of lees op [hoe werkt het](/hoe-werkt-het) welke stappen je doorloopt.
+Kies je voor Akteloket, dan wordt de notariële afhandeling uitgevoerd door een aangesloten, onafhankelijke notaris. Akteloket verzamelt en structureert je gegevens en bereidt de akten voor; de notaris controleert en beslist. Je betaalt vaste all-in prijzen, zoals € 1.395 voor levering en hypotheekakte samen, inclusief btw en Kadasterinschrijving van de akten. Bekijk alle [tarieven](/tarieven) of lees op [hoe werkt het](/hoe-werkt-het) welke stappen je doorloopt.

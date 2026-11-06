@@ -19,7 +19,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (file instanceof File && file.size) docId = await saveDocument({ dossierId: id, kind: "aflosnota", filename: file.name, mime: file.type || "application/pdf", content: Buffer.from(await file.arrayBuffer()), source: "geldverstrekker", visibility: "intern", createdBy: user.id });
   const db = await getDb();
   await db.update(schema.payoffs).set({ status: "ontvangen", amount: amount ? Math.round(amount * 100) : null, validUntil: String(fd.get("validUntil") ?? "") || null, documentId: docId, receivedAt: new Date() }).where(eq(schema.payoffs.id, payoffId));
-  await logEvent({ dossierId: id, actorType: "notaris", actor: user, type: "aflosnota.ontvangen", message: `Aflosnota geregistreerd${amount ? ` (€ ${amount.toLocaleString("nl-NL")})` : ""}.`, visibleTo: "verkoper" });
+  await logEvent({ dossierId: id, actorType: "notaris", actor: user, type: "aflosnota.ontvangen", message: `Aflosnota geregistreerd${amount ? ` (€ ${amount.toLocaleString("nl-NL")})` : ""}.`, visibleTo: "verkoper" });
   await runAutomations(id, "aflosnota");
   return NextResponse.redirect(new URL(`/notaris/dossiers/${id}#aflosnotas`, req.url), 303);
 }

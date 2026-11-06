@@ -151,7 +151,7 @@ export async function saveBron(dossierId: string, fd: FormData) {
     d.wwft.status = d.wwft.status === "aanvullende_stukken_nodig" ? d.wwft.status : "uitvraag_open";
     d.wwft.ingediendOp = undefined;
   });
-  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "wwft.bron", message: `Geldbron "${bron.type}" vastgelegd (${bron.bedrag ? `€ ${bron.bedrag.toLocaleString("nl-NL")}` : "bedrag onbekend"}).` });
+  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "wwft.bron", message: `Geldbron "${bron.type}" vastgelegd (${bron.bedrag ? `€ ${bron.bedrag.toLocaleString("nl-NL")}` : "bedrag onbekend"}).` });
   revalidatePath(`/portaal/${dossierId}/stap/wwft`);
   redirect(`/portaal/${dossierId}/stap/wwft?opgeslagen=bron#bron-${id}`);
 }

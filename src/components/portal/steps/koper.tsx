@@ -103,7 +103,7 @@ export function StartersStep({ a }: { a: PartyAccess }) {
   return (
     <div className="space-y-5" data-tour="starters-uitkomst">
       <Card className="p-5 text-sm">
-        <p className="text-ink-700">Leveringsdatum <strong>{dateNl(d.transaction.leveringsdatum)}</strong>, woningwaardegrens {tax.year}: <strong>€ {tax.startersGrens.toLocaleString("nl-NL")}</strong>{tax.status === "onder voorbehoud" && <span className="text-warn-700"> (onder voorbehoud)</span>}, koopprijs <strong>{euro(d.transaction.koopprijs)}</strong></p>
+        <p className="text-ink-700">Leveringsdatum <strong>{dateNl(d.transaction.leveringsdatum)}</strong>, woningwaardegrens {tax.year}: <strong>€ {tax.startersGrens.toLocaleString("nl-NL")}</strong>{tax.status === "onder voorbehoud" && <span className="text-warn-700"> (onder voorbehoud)</span>}, koopprijs <strong>{euro(d.transaction.koopprijs)}</strong></p>
       </Card>
       {meFirst(a).map((p) => {
         const s = p.data.starters ?? {};

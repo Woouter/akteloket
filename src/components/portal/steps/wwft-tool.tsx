@@ -26,7 +26,7 @@ const GENERAL: { key: keyof WwftBron; label: string; options: [string, string][]
   { key: "overgemaakt", label: "Is het bedrag al overgemaakt naar de rekening voor de aankoop?", options: [["ja", "Ja"], ["nee", "Nee"], ["gedeeltelijk", "Gedeeltelijk"]] },
 ];
 
-const eur = (n?: number) => (n == null ? "–" : `€ ${n.toLocaleString("nl-NL")}`);
+const eur = (n?: number) => (n == null ? "–" : `€ ${n.toLocaleString("nl-NL")}`);
 
 export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { dossierId: string; bronnen: WwftBron[]; matrix: WwftRule[]; docs: { id: string; title: string; meta: Record<string, unknown> }[]; indicatie: number | null }) {
   const [edit, setEdit] = useState<string | "nieuw" | null>(bronnen.length ? null : "nieuw");

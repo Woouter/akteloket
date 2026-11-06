@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
         <Card className="min-w-0 p-5">
           <CardTitle>Termijnen en fiscale tabellen</CardTitle>
           <ul className="mt-3 space-y-1.5 text-sm text-ink-700">
-            <li>Datumcontrole: {TERMS.datumCheckDagenVooraf} dagen vóór levering · herinnering na {TERMS.herinneringNaDagen} dagen · signaal na nog {TERMS.signaalNotarisNaDagen} dagen</li>
+            <li>Datumcontrole: {TERMS.datumCheckDagenVooraf} dagen vóór levering, herinnering na {TERMS.herinneringNaDagen} dagen, signaal na nog {TERMS.signaalNotarisNaDagen} dagen</li>
             <li>Bankinstructie uiterlijk verwacht: {TERMS.bankinstructieUiterlijkDagenVooraf} dagen vóór passeren</li>
           </ul>
           <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[26rem] text-sm"><thead className="text-left text-xs text-ink-500"><tr><th className="py-1.5 pr-3 font-medium">Jaar</th><th className="pr-3 font-medium">Startersgrens</th><th className="pr-3 font-medium">Hoofdverblijf</th><th className="pr-3 font-medium">Overig</th><th className="font-medium">Status</th></tr></thead><tbody className="divide-y divide-ink-100">{TAX_YEARS.map((t) => <tr key={t.year}><td className="py-1.5 pr-3 font-semibold tabular">{t.year}</td><td className="pr-3 tabular">€ {numberNl(t.startersGrens, 0)}</td><td className="pr-3 tabular">{pctNl(t.tariefHoofdverblijf)}</td><td className="pr-3 tabular">{pctNl(t.tariefOverigeWoning)}</td><td>{t.status}</td></tr>)}</tbody></table></div>

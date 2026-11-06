@@ -35,7 +35,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       {isDemo() && (
         <div className="mt-6 w-full max-w-md rounded-2xl border border-notaris-100 bg-notaris-50 p-5">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink-900"><Sparkles className="h-4 w-4 text-notaris-600" />Demo: direct inloggen als</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">{PERSONAS.map((p) => <Link key={p.key} href={`/demo/als/${p.key}`} className="btn btn-secondary btn-sm justify-start"><span className="truncate">{p.name}</span><span className="text-ink-400">· {p.label}</span></Link>)}</div>
+          <div className="mt-3 grid grid-cols-2 gap-2">{PERSONAS.map((p) => <Link key={p.key} href={`/demo/als/${p.key}`} className="btn btn-secondary btn-sm justify-start"><span className="truncate">{p.name}</span><span className="text-ink-400">{p.label}</span></Link>)}</div>
         </div>
       )}
       <p className="mt-6 text-sm text-ink-500">Nog geen dossier? <Link href="/aanvraag" className="font-semibold text-brand-700">Start je aanvraag</Link></p>

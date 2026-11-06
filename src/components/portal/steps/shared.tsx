@@ -146,7 +146,7 @@ export function IbanStep({ a, error, draft }: { a: PartyAccess; error?: string; 
   const names = a.mine.map((p) => personName(p.data.person)).join(" en ");
   return (
     <Card className="p-6">
-      {error && <Notice tone="bad" className="mb-5" title="Dit IBAN klopt niet">{error}. Een Nederlands IBAN begint met NL, gevolgd door 2 cijfers, 4 letters (de bank) en 10 cijfers — bijvoorbeeld NL91 ABNA 0417 1643 00.</Notice>}
+      {error && <Notice tone="bad" className="mb-5" title="Dit IBAN klopt niet">{error}. Een Nederlands IBAN begint met NL, gevolgd door 2 cijfers, 4 letters (de bank) en 10 cijfers, bijvoorbeeld NL91 ABNA 0417 1643 00.</Notice>}
       <form action={saveIban.bind(null, a.view.dossier.id, null)} className="grid gap-4 sm:grid-cols-2">
         <label className="sm:col-span-2 block"><span className="label">{a.side === "koper" ? "Op welk IBAN mag de notaris een eventueel resterend bedrag na de overdracht aan je uitbetalen?" : "Op welk IBAN mag de notaris de netto verkoopopbrengst uitbetalen?"}</span><input className="input font-mono tracking-wide" name="iban" defaultValue={draft?.iban ?? formatIban(cur.iban)} placeholder="NL00 BANK 0123 4567 89" required aria-invalid={!!error} data-state={error ? "missing" : undefined} /></label>
         <label className="block"><span className="label">Naam rekeninghouder</span><input className="input" name="tenaamstelling" defaultValue={draft?.tenaam || cur.tenaamstelling || names} required /></label>
@@ -215,7 +215,7 @@ export async function VolmachtStep({ a, error }: { a: PartyAccess; error?: strin
                 <div><p className="font-semibold text-ink-900">{isMe ? "Je afspraak: " : `Afspraak van ${first}: `}{appt.startsAt.toLocaleString("nl-NL", { timeZone: "Europe/Amsterdam", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}</p><p className="text-ink-600">{appt.location}. {isMe ? "Neem je identiteitsbewijs mee (of houd het bij de hand)." : `${first} neemt een geldig identiteitsbewijs mee (of houdt het bij de hand).`}</p><a href={`/api/agenda/${appt.id}.ics`} className="mt-2 inline-flex items-center gap-1.5 font-semibold text-brand-700"><Download className="h-4 w-4" />Zet in je agenda</a></div>
               </div>
             )}
-            {(v.status === "ondertekend" || v.status === "verwerkt") && <p className="mt-5 flex items-start gap-2 rounded-xl bg-ok-50 p-4 text-sm text-ok-700"><Check className="mt-0.5 h-4 w-4 shrink-0" />Ondertekend op {dateNl(v.ondertekendOp)}{v.ondertekeningMethode ? ` (${v.ondertekeningMethode})` : ""}{v.status === "verwerkt" ? " — door de notaris geaccepteerd." : " — de notaris beoordeelt de volmacht."}</p>}
+            {(v.status === "ondertekend" || v.status === "verwerkt") && <p className="mt-5 flex items-start gap-2 rounded-xl bg-ok-50 p-4 text-sm text-ok-700"><Check className="mt-0.5 h-4 w-4 shrink-0" />Ondertekend op {dateNl(v.ondertekendOp)}{v.ondertekeningMethode ? ` (${v.ondertekeningMethode})` : ""}{v.status === "verwerkt" ? ". De notaris heeft de volmacht geaccepteerd." : ". De notaris beoordeelt de volmacht."}</p>}
             {a.side === "verkoper" && v.status === "te_plannen" && isMe && (
               <div className="mt-5 rounded-xl border border-ink-100 p-4 text-sm">
                 <p className="flex items-center gap-2 font-semibold text-ink-900"><Stamp className="h-4 w-4 text-notaris-600" />Liever zelf laten legaliseren?</p>

@@ -14,6 +14,6 @@ export async function POST(req: Request) {
   if (b.website) return NextResponse.json({ ok: true }); // honeypot
   const db = await getDb();
   await db.insert(schema.leads).values({ id: uid(), kind: b.kind, name: b.name, email: b.email, phone: b.phone ?? null, message: b.message ?? "", meta: { company: b.company } });
-  await sendMail({ to: BRAND.email, template: `lead.${b.kind}`, subject: `Nieuwe ${b.kind}-aanvraag: ${b.name}`, heading: `Nieuwe ${b.kind}-aanvraag`, intro: `${b.name} (${b.email}${b.phone ? `, ${b.phone}` : ""})${b.company ? ` — ${b.company}` : ""}`, paragraphs: b.message ? [b.message] : [] });
+  await sendMail({ to: BRAND.email, template: `lead.${b.kind}`, subject: `Nieuwe ${b.kind}-aanvraag: ${b.name}`, heading: `Nieuwe ${b.kind}-aanvraag`, intro: `${b.name} (${b.email}${b.phone ? `, ${b.phone}` : ""})${b.company ? ` van ${b.company}` : ""}`, paragraphs: b.message ? [b.message] : [] });
   return NextResponse.json({ ok: true });
 }

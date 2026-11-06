@@ -23,7 +23,7 @@ export function AanmeldenStep({ a }: { a: PartyAccess }) {
       {dvo ? (
         <>
           <h3 className="flex items-center gap-2 text-lg text-ok-700"><Check className="h-5 w-5" />Dienstverleningsovereenkomst digitaal getekend</h3>
-          <KV className="mt-4" rows={[["Versie", dvo.version], ["Getekend door", dvo.signatureName], ["Tijdstip", dateTimeNl(dvo.acceptedAt)], ["Bevestigingen", `${dvo.checks.length} van 4 aangevinkt`], ["Akkoordbewijs", dvo.hash ? <span className="font-mono text-xs">{dvo.hash.slice(0, 16)}…</span> : "—"]]} />
+          <KV className="mt-4" rows={[["Versie", dvo.version], ["Getekend door", dvo.signatureName], ["Tijdstip", dateTimeNl(dvo.acceptedAt)], ["Bevestigingen", `${dvo.checks.length} van 4 aangevinkt`], ["Akkoordbewijs", dvo.hash ? <span className="font-mono text-xs">{dvo.hash.slice(0, 16)}…</span> : "–"]]} />
           {doc && <a href={`/api/documenten/${doc.id}`} className="btn btn-secondary btn-sm mt-4">Download akkoordbewijs</a>}
         </>
       ) : <p>De dienstverleningsovereenkomst ({DVO_VERSION}) is nog niet getekend.</p>}
@@ -39,7 +39,7 @@ export function KoStep({ a }: { a: PartyAccess }) {
       <Card className="p-6">
         {doc ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex gap-3"><FileCheck2 className="h-6 w-6 shrink-0 text-ok-600" /><div><p className="font-semibold text-ink-900">{doc.filename}</p><p className="text-sm text-ink-500">Ontvangen {dateNl(doc.createdAt)} · gegevens automatisch uitgelezen</p></div></div>
+            <div className="flex gap-3"><FileCheck2 className="h-6 w-6 shrink-0 text-ok-600" /><div><p className="font-semibold text-ink-900">{doc.filename}</p><p className="text-sm text-ink-500">Ontvangen op {dateNl(doc.createdAt)}, gegevens automatisch uitgelezen</p></div></div>
             <div className="flex gap-2"><Link href={`/portaal/${a.view.dossier.id}/document/${doc.id}`} className="btn btn-secondary btn-sm"><Eye className="h-4 w-4" />Bekijk</Link><UploadButton dossierId={a.view.dossier.id} kind="koopovereenkomst" label="Nieuwe versie" /></div>
           </div>
         ) : (
@@ -51,16 +51,16 @@ export function KoStep({ a }: { a: PartyAccess }) {
           <h3 className="text-lg text-ink-900">Wat we eruit hebben gehaald</h3>
           <KV className="mt-3" rows={[
             ["Woning", propertyLine(d.property)],
-            ["Kadastraal", d.property.kadastraal?.perceel ? `${d.property.kadastraal.gemeente} ${d.property.kadastraal.sectie} ${d.property.kadastraal.perceel}` : "—"],
+            ["Kadastraal", d.property.kadastraal?.perceel ? `${d.property.kadastraal.gemeente} ${d.property.kadastraal.sectie} ${d.property.kadastraal.perceel}` : "–"],
             ["Koopprijs", euro(d.transaction.koopprijs)],
             ["Roerende zaken", euro(d.transaction.roerendeZaken)],
             ["Datum ondertekening", dateNl(d.transaction.datumOndertekening)],
             ["Leveringsdatum (oorspronkelijk)", dateNl(d.transaction.leveringsdatumOrigineel)],
-            ["Waarborgsom", d.transaction.waarborgsom?.bedrag ? `${euro(d.transaction.waarborgsom.bedrag)} uiterlijk ${dateNl(d.transaction.waarborgsom.uiterlijk)}` : "—"],
-            ["Financieringsvoorbehoud", d.transaction.financieringsvoorbehoud?.datum ? `${euro(d.transaction.financieringsvoorbehoud.bedrag)} tot ${dateNl(d.transaction.financieringsvoorbehoud.datum)}` : "—"],
-            ["Gekozen notaris", d.transaction.notarisInKo ?? "—"],
+            ["Waarborgsom", d.transaction.waarborgsom?.bedrag ? `${euro(d.transaction.waarborgsom.bedrag)} uiterlijk ${dateNl(d.transaction.waarborgsom.uiterlijk)}` : "–"],
+            ["Financieringsvoorbehoud", d.transaction.financieringsvoorbehoud?.datum ? `${euro(d.transaction.financieringsvoorbehoud.bedrag)} tot ${dateNl(d.transaction.financieringsvoorbehoud.datum)}` : "–"],
+            ["Gekozen notaris", d.transaction.notarisInKo ?? "–"],
           ]} />
-          {(d.transaction.bijzondereBepalingen ?? []).length > 0 && <p className="mt-4 text-sm text-ink-600">Bijzondere bepalingen: {(d.transaction.bijzondereBepalingen ?? []).map((b) => b.titel).join(", ")} — de notaris beoordeelt deze.</p>}
+          {(d.transaction.bijzondereBepalingen ?? []).length > 0 && <p className="mt-4 text-sm text-ink-600">Bijzondere bepalingen: {(d.transaction.bijzondereBepalingen ?? []).map((b) => b.titel).join(", ")}. De notaris beoordeelt deze.</p>}
         </Card>
       )}
     </div>
@@ -78,7 +78,7 @@ export function WoningStep({ a }: { a: PartyAccess }) {
     <form action={saveWoning.bind(null, a.view.dossier.id)} className="space-y-6">
       <Card className="p-6">
         <h3 className="flex items-center gap-2 text-lg text-ink-900"><Map className="h-5 w-5 text-brand-600" />De woning</h3>
-        <KV className="mt-3" rows={[["Adres", propertyLine(d.property)], ["Kadastrale aanduiding", d.property.kadastraal?.perceel ? `${d.property.kadastraal.gemeente} ${d.property.kadastraal.sectie} ${d.property.kadastraal.perceel}${d.property.kadastraal.grootte ? `, groot ${d.property.kadastraal.grootte}` : ""}` : "Wordt opgezocht"], ["Bouwjaar / oppervlakte", d.property.bouwjaar ? `${d.property.bouwjaar} · ${d.property.oppervlakte ?? "?"} m²` : "—"], ["Koopprijs", euro(d.transaction.koopprijs)]]} />
+        <KV className="mt-3" rows={[["Adres", propertyLine(d.property)], ["Kadastrale aanduiding", d.property.kadastraal?.perceel ? `${d.property.kadastraal.gemeente} ${d.property.kadastraal.sectie} ${d.property.kadastraal.perceel}${d.property.kadastraal.grootte ? `, groot ${d.property.kadastraal.grootte}` : ""}` : "Wordt opgezocht"], ["Bouwjaar / oppervlakte", d.property.bouwjaar ? `${d.property.bouwjaar}, ${d.property.oppervlakte ?? "?"} m²` : "–"], ["Koopprijs", euro(d.transaction.koopprijs)]]} />
         <label className="mt-4 block max-w-xs"><span className="label">Soort woning</span>{sel("soort", d.property.soort ?? "woning", [["woning", "Woonhuis"], ["appartement", "Appartement(srecht)"], ["overig", "Anders"]])}</label>
       </Card>
       <Card className="p-6">
@@ -103,7 +103,7 @@ export function StartersStep({ a }: { a: PartyAccess }) {
   return (
     <div className="space-y-5" data-tour="starters-uitkomst">
       <Card className="p-5 text-sm">
-        <p className="text-ink-700">Leveringsdatum <strong>{dateNl(d.transaction.leveringsdatum)}</strong> · woningwaardegrens {tax.year}: <strong>€ {tax.startersGrens.toLocaleString("nl-NL")}</strong>{tax.status === "onder voorbehoud" && <span className="text-warn-700"> (onder voorbehoud)</span>} · koopprijs <strong>{euro(d.transaction.koopprijs)}</strong></p>
+        <p className="text-ink-700">Leveringsdatum <strong>{dateNl(d.transaction.leveringsdatum)}</strong>, woningwaardegrens {tax.year}: <strong>€ {tax.startersGrens.toLocaleString("nl-NL")}</strong>{tax.status === "onder voorbehoud" && <span className="text-warn-700"> (onder voorbehoud)</span>}, koopprijs <strong>{euro(d.transaction.koopprijs)}</strong></p>
       </Card>
       {meFirst(a).map((p) => {
         const s = p.data.starters ?? {};
@@ -118,7 +118,7 @@ export function StartersStep({ a }: { a: PartyAccess }) {
               <span className={`chip ${s.preselectie === "mogelijk" ? "bg-ok-100 text-ok-700" : s.preselectie === "niet" ? "bg-ink-100 text-ink-600" : "bg-warn-100 text-warn-700"}`}>{s.verklaringGetekendOp ? "Verklaring getekend" : s.preselectie === "mogelijk" ? "Komt mogelijk in aanmerking" : s.preselectie === "niet" ? "Niet van toepassing" : "Nog niet te beoordelen"}</span>
             </div>
             <p className="mt-2 text-sm text-ink-600">Automatische toets: {s.reden ?? "wacht op geboortedatum, koopprijs en leveringsdatum"}.</p>
-            {regel && <p className="mt-1 text-sm text-ink-600">Indicatie overdrachtsbelasting over {isMe ? "jouw aandeel" : `het aandeel van ${first}`} ({Math.round(regel.aandeel * 100)}%): <strong className="text-ink-900">{euro(regel.bedrag)}</strong> — {regel.grond}.</p>}
+            {regel && <p className="mt-1 text-sm text-ink-600">Indicatie overdrachtsbelasting over {isMe ? "jouw aandeel" : `het aandeel van ${first}`} ({Math.round(regel.aandeel * 100)}%): <strong className="text-ink-900">{euro(regel.bedrag)}</strong>, {regel.grond}.</p>}
             {s.preselectie === "mogelijk" && (
               <form action={saveStarters.bind(null, a.view.dossier.id, p.id)} className="mt-5 space-y-4 border-t border-ink-100 pt-5">
                 <div><p className="label">1. Ga je de woning zelf, anders dan tijdelijk, als hoofdverblijf gebruiken?</p><Radio name="hoofdverblijf" value={s.hoofdverblijf} options={[["ja", "Ja"], ["nee", "Nee"]]} required /></div>
@@ -159,7 +159,7 @@ export async function WwftStep({ a }: { a: PartyAccess }) {
         <div className="mt-4 space-y-3">
           {meFirst(a).map((p) => (
             <form key={p.id} action={savePep.bind(null, a.view.dossier.id, p.id)} className="flex flex-col gap-3 rounded-xl bg-ink-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <span className="flex min-w-0 items-center gap-2 font-medium text-ink-900"><StateIcon state={p.data.pep?.antwoord ? "done" : "todo"} size="sm" />{p.displayName}{p.id === a.me.id && <span className="chip bg-white text-ink-600">jij</span>}{p.data.pep?.antwoord && <span className="text-xs font-normal text-ink-500">· beantwoord</span>}</span>
+              <span className="flex min-w-0 items-center gap-2 font-medium text-ink-900"><StateIcon state={p.data.pep?.antwoord ? "done" : "todo"} size="sm" />{p.displayName}{p.id === a.me.id && <span className="chip bg-white text-ink-600">jij</span>}{p.data.pep?.antwoord && <span className="text-xs font-normal text-ink-500">beantwoord</span>}</span>
               <div className="flex items-center gap-3"><Radio name="pep" value={p.data.pep?.antwoord} options={[["nee", "Nee"], ["ja", "Ja"]]} required /><span className="h-6 w-px bg-ink-200" aria-hidden /><button className="btn btn-ghost btn-sm text-ink-900 underline-offset-2 hover:underline"><Check className="h-4 w-4" />Opslaan</button></div>
             </form>
           ))}
@@ -180,7 +180,7 @@ export async function WwftStep({ a }: { a: PartyAccess }) {
       )}
       <WhyBox>
         <p>De notaris is op grond van de Wet ter voorkoming van witwassen en financieren van terrorisme (Wwft) verplicht om te weten waar het geld voor je aankoop vandaan komt.</p>
-        <p>Deze vragenlijst is gestructureerde voorinformatie. Hij vervangt niet het onderzoek van de notaris; die kan altijd aanvullende stukken vragen. Na indienen is de status ‘Wwft-informatie aangeleverd’ — niet ‘goedgekeurd’.</p>
+        <p>Deze vragenlijst is gestructureerde voorinformatie. Hij vervangt niet het onderzoek van de notaris; die kan altijd aanvullende stukken vragen. Na indienen wordt de status ‘Wwft-informatie aangeleverd’ (dus nog niet ‘goedgekeurd’).</p>
       </WhyBox>
     </div>
   );
@@ -191,9 +191,9 @@ export function DossierStep({ a }: { a: PartyAccess }) {
   const k = d.kadaster;
   const items = [
     { t: "Kadastrale gegevens", s: k.status === "op_te_halen" ? "Op te halen" : k.status === "nader_onderzoek" ? "Nader onderzoek" : `Opgehaald ${dateNl(k.opgehaaldOp, { short: true })}`, ok: k.status === "opgehaald" },
-    { t: "Kadastrale kaart", s: a.view.documents.some((x) => x.kind === "kadaster_kaart") ? "Opgehaald" : "—", ok: a.view.documents.some((x) => x.kind === "kadaster_kaart") },
+    { t: "Kadastrale kaart", s: a.view.documents.some((x) => x.kind === "kadaster_kaart") ? "Opgehaald" : "–", ok: a.view.documents.some((x) => x.kind === "kadaster_kaart") },
     { t: "Erfdienstbaarheden en kwalitatieve verplichtingen", s: `${(k.registraties ?? []).filter((r) => r.type === "erfdienstbaarheid" || r.type === "kwalitatieve_verplichting").length} gevonden`, ok: k.status === "opgehaald" },
-    { t: "Eerdere leveringsakte", s: k.vorigeAkte?.deel ? `Hyp4 ${k.vorigeAkte.deel}/${k.vorigeAkte.nummer}` : "—", ok: !!k.vorigeAkte?.deel },
+    { t: "Eerdere leveringsakte", s: k.vorigeAkte?.deel ? `Hyp4 ${k.vorigeAkte.deel}/${k.vorigeAkte.nummer}` : "–", ok: !!k.vorigeAkte?.deel },
     { t: "Concept-leveringsakte", s: d.akteLevering ? { in_voorbereiding: "In voorbereiding", gegenereerd: "Gegenereerd", ter_controle_notaris: "Ter controle notaris", goedgekeurd: "Goedgekeurd door notaris", definitief: "Definitief" }[d.akteLevering.status] : "In voorbereiding", ok: !!d.akteLevering },
   ];
   const kaart = a.view.documents.find((x) => x.kind === "kadaster_kaart");
@@ -221,7 +221,7 @@ export function HypotheekStep({ a }: { a: PartyAccess }) {
       <Card className="p-6">
         <p className="text-sm text-ink-600">Hypotheekinstructie van <strong className="text-ink-900">{f.bankinstructie?.geldverstrekker ?? f.geldverstrekker ?? "je geldverstrekker"}</strong></p>
         <ol className="mt-4 grid grid-cols-4 gap-2">{milestones.map((m, i) => <li key={m} className="text-center"><div className={`h-1.5 rounded-full ${i <= reached ? "bg-ok-600" : "bg-ink-100"}`} /><p className={`mt-2 text-xs font-medium ${i <= reached ? "text-ink-900" : "text-ink-400"}`}>{m}</p></li>)}</ol>
-        {f.bankinstructie?.hypotheekbedrag && <KV className="mt-5" rows={[["Hypotheekbedrag", euro(f.bankinstructie.hypotheekbedrag)], ["Leningdelen", (f.bankinstructie.leningdelen ?? []).map((l) => `${l.soort}: ${euro(l.bedrag)}`).join(" · ") || "—"], ["Concept-hypotheekakte", a.view.data.akteHypotheek ? `Versie ${a.view.data.akteHypotheek.version} — ter controle bij de notaris` : "Volgt"]]} />}
+        {f.bankinstructie?.hypotheekbedrag && <KV className="mt-5" rows={[["Hypotheekbedrag", euro(f.bankinstructie.hypotheekbedrag)], ["Leningdelen", (f.bankinstructie.leningdelen ?? []).map((l) => `${l.soort}: ${euro(l.bedrag)}`).join(", ") || "–"], ["Concept-hypotheekakte", a.view.data.akteHypotheek ? `Versie ${a.view.data.akteHypotheek.version}, ter controle bij de notaris` : "Volgt"]]} />}
         {st !== "ontvangen" && st !== "in_behandeling" && lev && <p className="mt-4 flex items-center gap-2 text-sm text-ink-600"><Clock className="h-4 w-4" />We verwachten de instructie uiterlijk {dateNl(addDays(lev, -TERMS.bankinstructieUiterlijkDagenVooraf))}. Blijft hij uit, dan sturen we je en je adviseur een seintje.</p>}
       </Card>
       <WhyBox title="Wat moet ik doen?"><p>Niets, behalve je adviseur laten weten welke notaris de akten passeert: <strong>{NOTARY_OFFICE.notaryShort}, {NOTARY_OFFICE.officeName}</strong>, dossiernummer <strong>{a.view.dossier.reference}</strong>.</p></WhyBox>
@@ -239,7 +239,7 @@ export function LaatsteCheckStep({ a }: { a: PartyAccess }) {
         <h3 className="flex items-center gap-2 text-lg text-ink-900"><CalendarCheck className="h-5 w-5 text-brand-600" />Overdrachtsdatum</h3>
         <p className="mt-2 text-ink-800">In onze gegevens staat dat de overdracht van je woning gepland staat op <strong className="text-ink-900">{dateNl(lev, { weekday: true })}</strong>.</p>
         {d.datumCheck.antwoord ? (
-          <p className="mt-4 flex items-center gap-2 rounded-xl bg-ok-50 p-4 text-sm text-ok-700"><Check className="h-4 w-4" />{d.datumCheck.antwoord === "ja" ? `Bevestigd op ${dateNl(d.datumCheck.beantwoordOp)}.` : d.datumCheck.antwoord === "nee_nieuwe_datum" ? `Nieuwe datum doorgegeven: ${dateNl(d.datumCheck.nieuweDatum)}. De oorspronkelijke datum (${dateNl(d.transaction.leveringsdatumOrigineel)}) is bewaard en de notaris is geïnformeerd.` : "Nieuwe datum nog niet bekend — we vragen het later opnieuw."}</p>
+          <p className="mt-4 flex items-center gap-2 rounded-xl bg-ok-50 p-4 text-sm text-ok-700"><Check className="h-4 w-4" />{d.datumCheck.antwoord === "ja" ? `Bevestigd op ${dateNl(d.datumCheck.beantwoordOp)}.` : d.datumCheck.antwoord === "nee_nieuwe_datum" ? `Nieuwe datum doorgegeven: ${dateNl(d.datumCheck.nieuweDatum)}. De oorspronkelijke datum (${dateNl(d.transaction.leveringsdatumOrigineel)}) is bewaard en de notaris is geïnformeerd.` : "Nieuwe datum nog niet bekend. We vragen het later opnieuw."}</p>
         ) : (
           <form action={answerDatumCheck.bind(null, a.view.dossier.id)} className="mt-5 space-y-4">
             <p className="label">Is dit nog steeds de afgesproken datum?</p>
@@ -261,7 +261,7 @@ export function LaatsteCheckStep({ a }: { a: PartyAccess }) {
       </Card>
       <Card className="p-6">
         <h3 className="text-lg text-ink-900">Laatste controle van je gegevens</h3>
-        <KV className="mt-3" rows={[["Kopers", a.mine.map((p) => p.displayName).join(", ")], ["Uitbetalingsrekening", d.koperIban.iban ? `${formatIban(d.koperIban.iban)} t.n.v. ${d.koperIban.tenaamstelling}` : "—"], ["Volmachten", a.mine.map((p) => `${p.data.person.roepnaam ?? p.displayName.split(" ")[0]}: ${{ te_plannen: "te plannen", gepland: "afspraak gepland", ondertekend: "ondertekend", verwerkt: "verwerkt door notaris" }[p.data.volmacht?.status ?? "te_plannen"]}`).join(" · ")], ["Documenten", `${a.view.documents.filter((x) => x.visibility !== "intern").length} in je dossier`]]} />
+        <KV className="mt-3" rows={[["Kopers", a.mine.map((p) => p.displayName).join(", ")], ["Uitbetalingsrekening", d.koperIban.iban ? `${formatIban(d.koperIban.iban)} t.n.v. ${d.koperIban.tenaamstelling}` : "–"], ["Volmachten", a.mine.map((p) => `${p.data.person.roepnaam ?? p.displayName.split(" ")[0]}: ${{ te_plannen: "te plannen", gepland: "afspraak gepland", ondertekend: "ondertekend", verwerkt: "verwerkt door notaris" }[p.data.volmacht?.status ?? "te_plannen"]}`).join(", ")], ["Documenten", `${a.view.documents.filter((x) => x.visibility !== "intern").length} in je dossier`]]} />
         <p className="mt-3 text-sm text-ink-500">Klopt er iets niet? Pas het aan in de betreffende stap of neem contact met ons op.</p>
       </Card>
     </div>

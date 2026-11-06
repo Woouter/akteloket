@@ -21,8 +21,8 @@ const koper = [
   ["Herkomst eigen geld", "Breng je eigen geld in? Dan geef je per bron aan waar het vandaan komt en upload je direct het juiste bewijs.", "We vragen alleen de stukken die de notaris nodig heeft."],
   ["Digitaal identificeren", "Via iDIN met je eigen bank of met de chip van je paspoort.", "We verwerken de ID-check en leggen die vast."],
   ["Eén volmacht", "Je plant een korte video-afspraak (of op kantoor) en tekent één volmacht voor alle akten.", "We zetten de volmacht klaar en registreren de ondertekening."],
-  ["Dossiervoorbereiding", "Niets — dit doen wij.", "We halen kadastrale stukken en de vorige akte op en maken de concept-leveringsakte."],
-  ["Bankinstructie", "Niets — je bank stuurt de instructie rechtstreeks aan de notaris.", "We bewaken de ontvangst en maken de concept-hypotheekakte."],
+  ["Dossiervoorbereiding", "Niets, dit doen wij.", "We halen kadastrale stukken en de vorige akte op en maken de concept-leveringsakte."],
+  ["Bankinstructie", "Niets. Je bank stuurt de instructie rechtstreeks aan de notaris.", "We bewaken de ontvangst en maken de concept-hypotheekakte."],
   ["Laatste check", `Circa ${TERMS.datumCheckDagenVooraf} dagen vooraf bevestig je de overdrachtsdatum en bekijk je de nota van afrekening.`, "We bewaken de termijnen en herinneren je vriendelijk."],
 ];
 
@@ -31,7 +31,7 @@ const verkoper = [
   ["Gegevens controleren", "Ook van eventuele mede-eigenaren."],
   ["Identificeren", "Digitaal, net als de koper."],
   ["IBAN voor uitbetaling", "Waarop de notaris de netto verkoopopbrengst overmaakt."],
-  ["Verkoopvolmacht", "Een eenvoudige volmacht voor de levering — zo hoef je niet langs."],
+  ["Verkoopvolmacht", "Een eenvoudige volmacht voor de levering, zodat je niet langs hoeft te komen."],
   ["Bestaande hypotheek", "Je bevestigt je geldverstrekker en leningnummer; de notaris vraagt de aflosnota op."],
   ["Nota van afrekening", "Je ziet precies wat je ontvangt. Na de inschrijving wordt het uitbetaald."],
 ];
@@ -55,7 +55,7 @@ export default function Page() {
       </section>
 
       <section className="container-page mt-20">
-        <SectionTitle eyebrow="De koper" title="Twaalf stappen — waarvan je er een paar niet eens merkt" />
+        <SectionTitle eyebrow="De koper" title="Twaalf stappen, waarvan je er een paar niet eens merkt" />
         <ol className="mt-10 overflow-hidden rounded-3xl border border-ink-100 bg-white">
           {koper.map(([t, jij, wij], i) => (
             <li key={t} className="grid gap-4 border-b border-ink-100 p-5 last:border-0 md:grid-cols-[3rem_1fr_1.2fr_1.2fr] md:items-start md:gap-6 md:p-6">
@@ -87,7 +87,7 @@ export default function Page() {
           </ul>
           <div className="mt-8 rounded-2xl bg-ink-900 p-6 text-ink-200">
             <p className="font-semibold text-white">Het resultaat</p>
-            <p className="mt-2 text-sm leading-relaxed">Een compleet en compliant dossier, juiste Wwft-onderbouwing, geldige volmachten, gecontroleerde akten, een financieel correcte afwikkeling — en een snelle, foutarme overdracht.</p>
+            <p className="mt-2 text-sm leading-relaxed">Een compleet dossier met een juiste Wwft-onderbouwing, geldige volmachten, gecontroleerde akten en een financieel correcte afwikkeling. Zo verloopt de overdracht snel en zonder fouten.</p>
             <Link href="/aanvraag" className="btn btn-brass mt-5">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>

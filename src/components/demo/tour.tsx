@@ -211,7 +211,7 @@ export function TourProvider({ mainId }: { mainId?: string }) {
     return (
       <div className="no-print fixed bottom-4 left-1/2 z-[9999] flex w-[calc(100vw-2rem)] max-w-max -translate-x-1/2 items-center gap-3 rounded-lg bg-ink-900 px-4 py-3 text-sm text-white shadow-lift">
         <Sparkles className="h-4 w-4 shrink-0 text-brass-300" />
-        <span className="min-w-0 truncate">Tour “{tour.title}” · stap {state!.index + 1}/{tour.steps.length}</span>
+        <span className="min-w-0 truncate">Tour “{tour.title}”, stap {state!.index + 1} van {tour.steps.length}</span>
         <button className="btn btn-sm shrink-0 bg-white text-ink-900 hover:bg-ink-50" onClick={() => router.push(resolve(step.path))}>Ga verder</button>
         <button className="shrink-0 text-ink-300 hover:text-white" onClick={() => stop(false)} aria-label="Tour stoppen"><X className="h-4 w-4" /></button>
       </div>

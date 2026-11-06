@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Akteloket — je akte van levering en hypotheekakte, volledig online";
+export const alt = "Akteloket: je akte van levering en hypotheekakte volledig online geregeld";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -16,7 +16,7 @@ export default function Image() {
           <div style={{ fontSize: 22, letterSpacing: 4, textTransform: "uppercase", color: "#c6a676" }}>Notariële akten voor je woning</div>
           <div style={{ marginTop: 20, fontSize: 64, lineHeight: 1.1, fontWeight: 600, maxWidth: 900 }}>Je akte van levering en hypotheekakte, volledig online geregeld</div>
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: "#bdb7ab" }}>Vaste all-in prijs · onafhankelijke notaris · akte-loket.nl</div>
+        <div style={{ display: "flex", gap: 40, fontSize: 26, color: "#bdb7ab" }}><span>Vaste all-in prijs</span><span>Onafhankelijke notaris</span><span>akte-loket.nl</span></div>
       </div>
     ),
     size,

@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
                 <textarea name="comment" rows={1} className="textarea" placeholder="Toelichting (optioneel)" aria-label={`Toelichting bij ${it.title}`} />
                 <button className="btn btn-dark btn-sm">Opslaan</button>
               </form>
-              {mine.length > 0 && <ul className="mt-4 space-y-2 border-t border-ink-100 pt-3">{mine.map((f) => <li key={f.id} className="flex gap-2 text-xs text-ink-600"><MessageSquareText className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span><strong>{f.author}</strong> · {f.verdict} · {dateTimeNl(f.createdAt)}{f.comment ? ` — ${f.comment}` : ""}</span></li>)}</ul>}
+              {mine.length > 0 && <ul className="mt-4 space-y-2 border-t border-ink-100 pt-3">{mine.map((f) => <li key={f.id} className="flex gap-2 text-xs text-ink-600"><MessageSquareText className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span><strong>{f.author}</strong>, {f.verdict}, {dateTimeNl(f.createdAt)}{f.comment ? `: ${f.comment}` : ""}</span></li>)}</ul>}
             </Card>
           );
         })}

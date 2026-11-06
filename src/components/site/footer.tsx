@@ -33,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-ink-200">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.address}{BRAND.kvk ? ` · ${BRAND.kvk}` : ""}</p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1"><span>© {new Date().getFullYear()} {BRAND.name}</span><span>{BRAND.address}</span>{BRAND.kvk && <span>{BRAND.kvk}</span>}</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="inline-block py-1.5 hover:text-ink-900">Privacy</Link>
             <Link href="/voorwaarden" className="inline-block py-1.5 hover:text-ink-900">Voorwaarden</Link>

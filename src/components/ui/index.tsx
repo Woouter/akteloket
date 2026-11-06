@@ -96,7 +96,7 @@ export function KV({ rows, className }: { rows: [ReactNode, ReactNode][]; classN
       {rows.map(([k, v], i) => (
         <div key={i} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 py-2.5">
           <dt className="text-ink-500">{k}</dt>
-          <dd className="min-w-0 break-words font-medium text-ink-900">{v ?? "—"}</dd>
+          <dd className="min-w-0 break-words font-medium text-ink-900">{v ?? "–"}</dd>
         </div>
       ))}
     </dl>

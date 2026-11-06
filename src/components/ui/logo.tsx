@@ -15,7 +15,7 @@ export function LogoMark({ className }: { className?: string }) {
 /** Woordmerk: serif "Akteloket" met messing punt — rustig en notarieel. */
 export function Logo({ href = "/", className, tone = "dark" }: { href?: string; className?: string; tone?: "dark" | "light" }) {
   return (
-    <Link href={href} className={cn("group inline-flex items-baseline", className)} aria-label="Akteloket — naar de homepage">
+    <Link href={href} className={cn("group inline-flex items-baseline", className)} aria-label="Akteloket, naar de homepage">
       <span className={cn("font-serif text-[1.55rem] font-semibold leading-none tracking-[-0.01em]", tone === "light" ? "text-white" : "text-ink-900")}>Akteloket</span>
       <span className="font-serif text-[1.55rem] font-semibold leading-none text-brass-500">.</span>
     </Link>

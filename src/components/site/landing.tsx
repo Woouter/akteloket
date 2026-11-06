@@ -115,7 +115,7 @@ export function Landing(p: LandingProps) {
       </section>
 
       {p.service === "koopovereenkomst" ? (
-        <CtaBand title="Je koopovereenkomst laten opstellen?" text="Beantwoord de vragen online. Wij stellen een sluitende koopovereenkomst op die koper en verkoper digitaal ondertekenen." href={href} note="Vaste prijs · Daarna met één klik door naar je akte van levering" />
+        <CtaBand title="Je koopovereenkomst laten opstellen?" text="Beantwoord de vragen online. Wij stellen een sluitende koopovereenkomst op die koper en verkoper digitaal ondertekenen." href={href} note="Vaste prijs. Daarna ga je met één klik door naar je akte van levering." />
       ) : (
         <CtaBand service={p.service} />
       )}

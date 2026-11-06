@@ -188,10 +188,10 @@ function UploadStep({ demo, onFile, onBack, onNoKo }: { demo: boolean; onFile: (
         className={cn("mt-8 flex flex-col items-center rounded-3xl border-2 border-dashed px-6 py-14 text-center transition", drag ? "border-brand-500 bg-brand-50" : "border-ink-200 bg-white")}>
         <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><FileUp className="h-7 w-7" /></span>
         <p className="mt-5 text-lg font-semibold text-ink-900">Sleep je bestand hierheen</p>
-        <p className="mt-1 text-sm text-ink-500">PDF, of foto's (JPG/PNG) · maximaal 25 MB</p>
+        <p className="mt-1 text-sm text-ink-500">PDF of foto's (JPG/PNG), maximaal 25 MB</p>
         <button type="button" className="btn btn-primary mt-6" onClick={() => input.current?.click()}><FileUp className="h-4 w-4" />Kies bestand</button>
         <input ref={input} type="file" accept="application/pdf,image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); }} />
-        <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-500"><Lock className="h-3.5 w-3.5" />Versleuteld opgeslagen · alleen zichtbaar voor jou, de notaris en ons dossierteam</p>
+        <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-500"><Lock className="h-3.5 w-3.5" />Versleuteld opgeslagen en alleen zichtbaar voor jou, de notaris en ons dossierteam</p>
       </div>
       {demo && (
         <div className="mt-5 flex flex-col items-start justify-between gap-4 rounded-2xl border border-notaris-100 bg-notaris-50 p-5 sm:flex-row sm:items-center" data-tour="aanvraag-demo-ko">
@@ -253,7 +253,7 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
               <RField className="sm:col-span-2" label="Sectie" value={model.property.kadastraal?.sectie} onChange={(v) => setK("sectie", v)} s={m["property.kadastraal.sectie"]} />
               <RField className="sm:col-span-2" label="Perceelnummer" value={model.property.kadastraal?.perceel} onChange={(v) => setK("perceel", v)} s={m["property.kadastraal.perceel"]} />
             </div>
-            <p className="hint mt-3">Weet je de kadastrale aanduiding niet? Laat het leeg — wij zoeken hem op.</p>
+            <p className="hint mt-3">Weet je de kadastrale aanduiding niet? Laat het leeg, dan zoeken wij hem op.</p>
           </div>
 
           <div className="card p-6">
@@ -268,8 +268,8 @@ function ReviewStep({ payload, model, setModel, scan, busy, onBack, onNext }: { 
             {(payload.voorbehouden.length > 0 || payload.bijzondereBepalingen.length > 0 || payload.notaris) && (
               <div className="mt-6 space-y-3 rounded-xl bg-ink-50 p-4 text-sm">
                 {payload.notaris && <p><span className="text-ink-500">Notaris in koopovereenkomst:</span> <strong className="text-ink-900">{payload.notaris}</strong></p>}
-                {payload.voorbehouden.length > 0 && <div><p className="text-ink-500">Ontbindende voorwaarden — wij bewaken deze termijnen</p><ul className="mt-1 space-y-1">{payload.voorbehouden.map((v) => <li key={v.omschrijving} className="flex justify-between gap-4 font-medium text-ink-800"><span>{v.omschrijving}</span><span className="shrink-0 text-right tabular text-ink-600">{v.datum ? new Date(v.datum + "T12:00").toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" }) : "—"}{v.datum && v.datum < new Date().toISOString().slice(0, 10) && <span className="block text-xs font-normal text-warn-700">termijn verstreken</span>}</span></li>)}</ul></div>}
-                {payload.bijzondereBepalingen.length > 0 && <div><p className="text-ink-500">Bijzondere bepalingen — de notaris beoordeelt deze</p><ul className="mt-1 flex flex-wrap gap-1.5">{payload.bijzondereBepalingen.map((b) => <li key={b.titel} className="chip bg-white text-ink-700 ring-1 ring-ink-200">{b.titel}</li>)}</ul></div>}
+                {payload.voorbehouden.length > 0 && <div><p className="text-ink-500">Ontbindende voorwaarden (wij bewaken deze termijnen)</p><ul className="mt-1 space-y-1">{payload.voorbehouden.map((v) => <li key={v.omschrijving} className="flex justify-between gap-4 font-medium text-ink-800"><span>{v.omschrijving}</span><span className="shrink-0 text-right tabular text-ink-600">{v.datum ? new Date(v.datum + "T12:00").toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" }) : "–"}{v.datum && v.datum < new Date().toISOString().slice(0, 10) && <span className="block text-xs font-normal text-warn-700">termijn verstreken</span>}</span></li>)}</ul></div>}
+                {payload.bijzondereBepalingen.length > 0 && <div><p className="text-ink-500">Bijzondere bepalingen (de notaris beoordeelt deze)</p><ul className="mt-1 flex flex-wrap gap-1.5">{payload.bijzondereBepalingen.map((b) => <li key={b.titel} className="chip bg-white text-ink-700 ring-1 ring-ink-200">{b.titel}</li>)}</ul></div>}
               </div>
             )}
           </div>
@@ -461,7 +461,7 @@ function FinishStep({ payload, service, dvo, checks, onBack, onDone, setError }:
             <p className="mt-1 text-lg font-semibold">{price.title}</p>
             <p className="mt-3 font-serif text-3xl font-semibold tabular">€ {price.price.toLocaleString("nl-NL")}<span className="ml-1 font-sans text-sm font-normal text-ink-300">all-in</span></p>
             <ul className="mt-4 space-y-2 text-sm text-ink-200">
-              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Geen betaling vooraf — via de nota van afrekening</li>
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Geen betaling vooraf: je betaalt via de nota van afrekening</li>
               <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Kosteloos annuleren tot de concept-akte er is</li>
               {service !== "hypotheek" && <li className="flex gap-2"><Info className="mt-0.5 h-4 w-4 shrink-0 text-brass-300" />Excl. overdrachtsbelasting</li>}
             </ul>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BRAND, NOTARY_OFFICE } from "@/lib/config";
 import { CtaBand } from "@/components/site/sections";
 
-export const metadata: Metadata = { title: "Over ons", description: "Akteloket maakt de notariële afhandeling van je woningaankoop snel, online en begrijpelijk — samen met een onafhankelijke notaris.", alternates: { canonical: "/over-ons" } };
+export const metadata: Metadata = { title: "Over ons", description: "Akteloket maakt de notariële afhandeling van je woningaankoop eenvoudiger, samen met een onafhankelijke notaris.", alternates: { canonical: "/over-ons" } };
 
 export default function Page() {
   return (
@@ -18,10 +18,10 @@ export default function Page() {
           <p>De notariële werkzaamheden worden uitgevoerd door {NOTARY_OFFICE.officeName} ({NOTARY_OFFICE.notaryShort}, notaris te {NOTARY_OFFICE.city}). De notaris is onafhankelijk en blijft verantwoordelijk voor alles wat juridisch telt: de identificatie en het cliëntenonderzoek, de controle en vaststelling van de akten, het passeren, de inschrijving in het Kadaster en de geldstromen via de kwaliteitsrekening.</p>
           <h2>Waar we voor staan</h2>
           <ul>
-            <li><strong>Snelheid</strong> — je koopovereenkomst is je intake, en je rondt de meeste stappen af wanneer het jou uitkomt.</li>
-            <li><strong>Duidelijkheid</strong> — we leggen alles uit in gewone taal en tonen altijd wat de volgende stap is.</li>
-            <li><strong>Zorgvuldigheid</strong> — automatisering helpt, maar de notaris controleert. We nemen nooit iets aan.</li>
-            <li><strong>Privacy</strong> — we vragen alleen wat nodig is en slaan alles versleuteld op. Lees meer over <Link href="/veiligheid">veiligheid</Link>.</li>
+            <li><strong>Snelheid:</strong> je koopovereenkomst is je intake, en je rondt de meeste stappen af wanneer het jou uitkomt.</li>
+            <li><strong>Duidelijkheid:</strong> we leggen alles uit in gewone taal en tonen altijd wat de volgende stap is.</li>
+            <li><strong>Zorgvuldigheid:</strong> automatisering helpt, maar de notaris controleert. We nemen nooit iets aan.</li>
+            <li><strong>Privacy:</strong> we vragen alleen wat nodig is en slaan alles versleuteld op. Lees meer over <Link href="/veiligheid">veiligheid</Link>.</li>
           </ul>
         </div>
       </section>

@@ -13,7 +13,7 @@ function R({ r, marks }: { r: Run; marks: boolean }) {
 export function DocView({ ir, marks = true, className }: { ir: DocIR; marks?: boolean; className?: string }) {
   return (
     <div className={cn("prose-akte mx-auto max-w-[46rem] rounded-sm bg-white px-6 py-10 shadow-card ring-1 ring-ink-100 sm:px-14 sm:py-14", className)}>
-      {ir.concept && <p className="mb-6 text-right font-sans text-[11px] font-bold uppercase tracking-wider text-warn-700">Concept — ter controle en vaststelling door de notaris</p>}
+      {ir.concept && <p className="mb-6 text-right font-sans text-[11px] font-bold uppercase tracking-wider text-warn-700">Concept, ter controle en vaststelling door de notaris</p>}
       {ir.blocks.map((b, i) => {
         switch (b.type) {
           case "title": return <p key={i} className="text-center text-2xl font-bold tracking-wide">{b.text}</p>;

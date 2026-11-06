@@ -32,7 +32,7 @@ export async function decideCheck(dossierId: string, key: CheckKey, status: "akk
   if (key === "volmachten" && status === "akkoord") for (const p of view.parties) if (p.data.volmacht?.status === "ondertekend") await updateParty(p.id, (d) => { d.volmacht = { ...d.volmacht!, status: "verwerkt" }; });
   if (key === "leveringsakte" && view.data.akteLevering) await updateDossier(dossierId, (d) => { if (d.akteLevering) d.akteLevering.status = status === "akkoord" ? "goedgekeurd" : "ter_controle_notaris"; });
   if (key === "hypotheekakte" && view.data.akteHypotheek) await updateDossier(dossierId, (d) => { if (d.akteHypotheek) d.akteHypotheek.status = status === "akkoord" ? "goedgekeurd" : "ter_controle_notaris"; });
-  await logEvent({ dossierId, actorType: "notaris", actor: user, type: `check.${status}`, message: `${CHECK_TITLES[key]}: ${status === "akkoord" ? "akkoord" : "heropend"}${comment ? ` — ${comment}` : ""}.`, visibleTo: status === "akkoord" && (key === "volmachten") ? "partijen" : "intern" });
+  await logEvent({ dossierId, actorType: "notaris", actor: user, type: `check.${status}`, message: `${CHECK_TITLES[key]}: ${status === "akkoord" ? "akkoord" : "heropend"}${comment ? ` (${comment})` : ""}.`, visibleTo: status === "akkoord" && (key === "volmachten") ? "partijen" : "intern" });
   await runAutomations(dossierId, "notaris");
   back(dossierId, `#${key}`);
 }
@@ -74,7 +74,7 @@ export async function sendAflosnotaVerzoek(dossierId: string, payoffId: string) 
   if (!p) back(dossierId);
   const db = await getDb();
   await db.update(schema.payoffs).set({ status: "aangevraagd", requestedAt: new Date() }).where(eq(schema.payoffs.id, payoffId));
-  await sendMail({ to: `aflossingen@${p!.lender.split(" ")[0].toLowerCase().replace(/[^a-z]/g, "")}.example.com`, dossierId, template: "aflosnota.verzoek", subject: `Verzoek aflosnota ${p!.loanNumbers ?? ""} — ${propertyLine(view!.data.property)}`, heading: "Verzoek aflosnota", intro: `Namens ${user.name} verzoeken wij u om een aflosnota voor leningnummer ${p!.loanNumbers ?? "(zie bijlage)"}, geldig tot en met ${dateNl(view!.data.transaction.leveringsdatum)}.`, paragraphs: ["De schuldenaren hebben toestemming gegeven. Het verzoek is als bijlage in het dossier opgenomen."] });
+  await sendMail({ to: `aflossingen@${p!.lender.split(" ")[0].toLowerCase().replace(/[^a-z]/g, "")}.example.com`, dossierId, template: "aflosnota.verzoek", subject: `Verzoek aflosnota ${p!.loanNumbers ?? ""} voor ${propertyLine(view!.data.property)}`, heading: "Verzoek aflosnota", intro: `Namens ${user.name} verzoeken wij u om een aflosnota voor leningnummer ${p!.loanNumbers ?? "(zie bijlage)"}, geldig tot en met ${dateNl(view!.data.transaction.leveringsdatum)}.`, paragraphs: ["De schuldenaren hebben toestemming gegeven. Het verzoek is als bijlage in het dossier opgenomen."] });
   await logEvent({ dossierId, actorType: "notaris", actor: user, type: "aflosnota.aangevraagd", message: `Aflosnota opgevraagd bij ${p!.lender}.`, visibleTo: "verkoper" });
   back(dossierId, "#aflosnotas");
 }
@@ -93,7 +93,7 @@ async function publishNotaDoc(dossierId: string, side: "koper" | "verkoper", sta
   const nota = side === "koper" ? notaKoper(view) : notaVerkoper(view);
   const state = { ...nota, status, goedgekeurdOp: new Date().toISOString() };
   const ir = buildNota(view, side, state);
-  const docx = await irToDocx(ir, `${view.dossier.reference} · ${ir.title}`);
+  const docx = await irToDocx(ir, `${ir.title} (${view.dossier.reference})`);
   const docId = await saveDocument({ dossierId, kind: side === "koper" ? "nota_koper" : "nota_verkoper", title: `Nota van afrekening ${side}${status === "definitief" ? " (definitief)" : ""}`, filename: `nota-van-afrekening-${side}-${view.dossier.reference}.docx`, mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", content: docx, source: "notaris", visibility: side, meta: { ir }, replaceKind: true, createdBy: userName });
   await updateDossier(dossierId, (d) => { const n = { ...state, documentId: docId }; if (side === "koper") d.notaKoper = n; else d.notaVerkoper = n; });
   for (const p of view.parties.filter((x) => x.side === side && x.email && x.isPrimary)) await sendMail({ to: p.email!, dossierId, template: `nota.${side}`, subject: `Je nota van afrekening staat klaar`, heading: "Je nota van afrekening staat klaar", intro: `De notaris heeft de nota van afrekening voor ${propertyLine(view.data.property)} ${status === "definitief" ? "definitief vastgesteld" : "opgesteld"}.`, paragraphs: [side === "koper" ? (nota.saldo > 0 ? `Het te voldoen bedrag is € ${nota.saldo.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}.` : "Je ontvangt na de overdracht een tegoed.") : `Na de overdracht ontvang je € ${nota.saldo.toLocaleString("nl-NL", { minimumFractionDigits: 2 })} op je opgegeven rekening.`], cta: { label: "Bekijk de nota", href: `${siteUrl()}/portaal/${dossierId}` } });

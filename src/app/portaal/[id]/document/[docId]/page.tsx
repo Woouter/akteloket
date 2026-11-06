@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ id: string; d
         <div className="min-w-0">
           <Link href={`/portaal/${id}/documenten`} className="btn btn-ghost btn-sm -ml-2"><ArrowLeft className="h-4 w-4" />Documenten</Link>
           <h2 className="mt-2 text-xl text-ink-900">{doc.title}</h2>
-          <p className="text-xs text-ink-500">{DOCUMENT_KINDS[doc.kind]} · {dateNl(doc.createdAt, { short: true })}{doc.version > 1 ? ` · versie ${doc.version}` : ""}</p>
+          <p className="text-xs text-ink-500">{DOCUMENT_KINDS[doc.kind]}, {dateNl(doc.createdAt, { short: true })}{doc.version > 1 ? `, versie ${doc.version}` : ""}</p>
         </div>
         <a href={`/api/documenten/${doc.id}`} className="btn btn-secondary btn-sm"><Download className="h-4 w-4" />Download</a>
       </div>

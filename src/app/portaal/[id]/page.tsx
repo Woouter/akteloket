@@ -92,7 +92,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </div>
         )}
         {!next && !gepasseerd && (!koOntbreekt || isKo) && (
-          <Notice tone="info" icon={<CheckCircle2 className="h-5 w-5 text-brand-600" />} title="Je bent helemaal bij">Er staat op dit moment niets voor je klaar. Wij en de notaris ronden de rest af — je hoort het zodra er iets van je nodig is.</Notice>
+          <Notice tone="info" icon={<CheckCircle2 className="h-5 w-5 text-brand-600" />} title="Je bent helemaal bij">Er staat op dit moment niets voor je klaar. Wij en de notaris ronden de rest af. Je hoort het zodra we iets van je nodig hebben.</Notice>
         )}
 
         <div>

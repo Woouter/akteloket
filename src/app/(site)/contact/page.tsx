@@ -16,7 +16,7 @@ export default function Page() {
         <ul className="mt-8 space-y-4 text-ink-800">
           <li className="flex items-center gap-3"><Mail className="h-5 w-5 text-brass-500" /><a href={`mailto:${BRAND.email}`} className="font-medium hover:text-brand-700">{BRAND.email}</a></li>
           <li className="flex items-center gap-3"><Phone className="h-5 w-5 text-brass-500" /><a href={BRAND.phoneHref} className="font-medium hover:text-brand-700">{BRAND.phone}</a></li>
-          <li className="flex items-center gap-3"><Clock className="h-5 w-5 text-brass-500" />Ma t/m vr 08:30 – 18:00 · reactie binnen één werkdag</li>
+          <li className="flex items-center gap-3"><Clock className="h-5 w-5 text-brass-500" />Ma t/m vr 08:30 – 18:00, reactie binnen één werkdag</li>
         </ul>
       </div>
       <div className="card p-7"><LeadForm kind="contact" /></div>

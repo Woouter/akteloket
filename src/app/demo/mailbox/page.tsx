@@ -39,7 +39,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
             <Card key={m.id} className="p-0">
               <details className="group">
                 <summary className="flex cursor-pointer list-none flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden">
-                  <span className="flex min-w-0 items-start gap-2"><ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-ink-400 transition-transform group-open:rotate-90" aria-hidden /><span className="min-w-0"><span className="block truncate font-semibold text-ink-900">{m.subject}</span><span className="block truncate text-xs text-ink-500">Aan {m.to} · {dateTimeNl(m.createdAt)}</span></span></span>
+                  <span className="flex min-w-0 items-start gap-2"><ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-ink-400 transition-transform group-open:rotate-90" aria-hidden /><span className="min-w-0"><span className="block truncate font-semibold text-ink-900">{m.subject}</span><span className="block truncate text-xs text-ink-500">Aan {m.to}, {dateTimeNl(m.createdAt)}</span></span></span>
                   <span className="flex shrink-0 flex-wrap items-center gap-2 pl-6 sm:pl-0"><span title={m.template}><Badge>{audience(m.template)}</Badge></span>{href && <a href={href} className="btn btn-primary btn-sm"><ExternalLink className="h-3.5 w-3.5" />{cta![2]}</a>}</span>
                 </summary>
                 <iframe title={m.subject} srcDoc={previewHtml(m.html)} sandbox="allow-top-navigation-by-user-activation" className="h-[26rem] w-full border-t border-ink-100 bg-white" />

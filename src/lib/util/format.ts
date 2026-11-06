@@ -1,8 +1,8 @@
 const eur = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR", minimumFractionDigits: 2 });
 const eur0 = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 
-export const euro = (n: number | undefined | null) => (n == null || Number.isNaN(n) ? "—" : eur.format(n));
-export const euro0 = (n: number | undefined | null) => (n == null || Number.isNaN(n) ? "—" : eur0.format(n));
+export const euro = (n: number | undefined | null) => (n == null || Number.isNaN(n) ? "–" : eur.format(n));
+export const euro0 = (n: number | undefined | null) => (n == null || Number.isNaN(n) ? "–" : eur0.format(n));
 
 export function parseEuro(input: string | number | undefined | null): number | undefined {
   if (input == null) return undefined;
@@ -26,17 +26,17 @@ export const TZ = "Europe/Amsterdam";
 const toDate = (iso: string | Date) => (typeof iso === "string" ? new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso) : iso);
 
 export function dateNl(iso: string | Date | undefined | null, opts: { weekday?: boolean; short?: boolean } = {}): string {
-  if (!iso) return "—";
+  if (!iso) return "–";
   const d = toDate(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "–";
   if (opts.short) return d.toLocaleDateString("nl-NL", { timeZone: TZ, day: "numeric", month: "short", year: "numeric" });
   return d.toLocaleDateString("nl-NL", { timeZone: TZ, weekday: opts.weekday ? "long" : undefined, day: "numeric", month: "long", year: "numeric" });
 }
 
 export function dateTimeNl(iso: string | Date | undefined | null): string {
-  if (!iso) return "—";
+  if (!iso) return "–";
   const d = toDate(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "–";
   return d.toLocaleString("nl-NL", { timeZone: TZ, day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 

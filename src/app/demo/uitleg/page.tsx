@@ -23,7 +23,7 @@ const automation = [
 ];
 
 const integrations = [
-  { icon: Map, t: "Kadaster", d: "Adapter met twee implementaties: een demo-koppeling met fictieve data en een koppeling met uw eigen Kadaster-aansluiting. Het verwachte gegevensformaat is vastgelegd, zodat die koppeling zonder aanpassingen aan het platform kan worden aangesloten.", s: "Demo: gesimuleerd · Productie: eigen aansluiting" },
+  { icon: Map, t: "Kadaster", d: "Adapter met twee implementaties: een demo-koppeling met fictieve data en een koppeling met uw eigen Kadaster-aansluiting. Het verwachte gegevensformaat is vastgelegd, zodat die koppeling zonder aanpassingen aan het platform kan worden aangesloten.", s: "Gesimuleerd in de demo, eigen aansluiting in productie" },
   { icon: Globe, t: "PDOK Locatieserver (BAG)", d: "Publieke, gratis API: adres-autocomplete en het gekoppelde kadastrale perceel bij een aanvraag zonder koopovereenkomst.", s: "Echt, ook in de demo" },
   { icon: Bot, t: "Claude (AI-extractie)", d: "Leest de koopovereenkomst en bankinstructie als PDF (ook scans en foto's) met gestructureerde uitvoer. Zonder sleutel valt het systeem terug op de regelgebaseerde scanner.", s: "Optioneel (met eigen API-sleutel)" },
   { icon: Fingerprint, t: "Identificatie", d: "iDIN (via een iDIN-acquirer) of een NFC-ID-app. In de demo gesimuleerd. Er worden geen kopieën van ID-bewijzen opgeslagen zonder vastgesteld beveiligd proces.", s: "Demo: gesimuleerd" },

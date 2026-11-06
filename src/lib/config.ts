@@ -13,11 +13,11 @@ export const BRAND = {
   demoUrl: "https://demo.akte-loket.nl",
   tagline: "Je notaris voor je woning, volledig online geregeld.",
   email: "hallo@akte-loket.nl",
-  phone: "085 – 060 42 10",
+  phone: "085 060 42 10",
   phoneHref: "tel:+31850604210",
   /** KvK-nummer; zet NEXT_PUBLIC_KVK zodra bekend (wordt anders niet getoond). */
   kvk: process.env.NEXT_PUBLIC_KVK ? `KvK ${process.env.NEXT_PUBLIC_KVK}` : "",
-  address: "Online · werkzaam in heel Nederland",
+  address: "Online, werkzaam in heel Nederland",
 } as const;
 
 /**

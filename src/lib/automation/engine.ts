@@ -59,7 +59,7 @@ async function run(dossierId: string, _reason: string) {
 }
 
 async function saveIr(view: DossierView, ir: DocIR, kind: DocumentKind, filenameBase: string, visibility: Visibility, extraMeta: Record<string, unknown> = {}, partyId?: string) {
-  const docx = await irToDocx(ir, `${view.dossier.reference} · ${ir.title}`);
+  const docx = await irToDocx(ir, `${ir.title} (${view.dossier.reference})`);
   return saveDocument({
     dossierId: view.dossier.id,
     partyId: partyId ?? null,
@@ -79,7 +79,7 @@ async function saveIr(view: DossierView, ir: DocIR, kind: DocumentKind, filename
 async function statusFromKo(view: DossierView) {
   if (view.dossier.status === "wacht_op_ko" && (view.data.koStatus === "verwerkt" || view.data.koStatus === "ontvangen")) {
     await updateDossier(view.dossier.id, () => ({ status: "intake" }));
-    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "dossier.gestart", message: "Getekende koopovereenkomst ontvangen — inhoudelijke dossierbehandeling gestart.", visibleTo: "koper" });
+    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "dossier.gestart", message: "Getekende koopovereenkomst ontvangen. De inhoudelijke behandeling van het dossier is gestart.", visibleTo: "koper" });
   }
 }
 
@@ -111,7 +111,7 @@ async function koProduct(view: DossierView) {
   const ko = view.data.koopovereenkomst ?? { status: "concept" as const };
   if (ko.status === "bedenktijd" && view.data.transaction.bedenktijdEinde && daysBetween(view.data.transaction.bedenktijdEinde, todayIso()) > 0) {
     await updateDossier(view.dossier.id, (x) => { x.koopovereenkomst = { ...ko, status: "definitief" }; });
-    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "ko.definitief", message: "Bedenktijd verstreken — koopovereenkomst is definitief.", visibleTo: "partijen" });
+    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "ko.definitief", message: "Bedenktijd verstreken, de koopovereenkomst is definitief.", visibleTo: "partijen" });
     return;
   }
   if (!["concept", "ter_controle"].includes(ko.status)) return;
@@ -138,7 +138,7 @@ async function fetchKadaster(view: DossierView) {
     hintPlaats: p.plaats,
   });
   if (!res) {
-    await updateDossier(view.dossier.id, (x) => { x.kadaster.status = "nader_onderzoek"; x.kadaster.signaleringen = ["Object niet gevonden in kadastrale registratie — handmatig onderzoek nodig."]; });
+    await updateDossier(view.dossier.id, (x) => { x.kadaster.status = "nader_onderzoek"; x.kadaster.signaleringen = ["Object niet gevonden in de kadastrale registratie, handmatig onderzoek nodig."]; });
     return;
   }
   const raadpleeg = new Date().toISOString();
@@ -149,7 +149,7 @@ async function fetchKadaster(view: DossierView) {
   }
   const signal = view.verkopers.length ? compareOwners(res.rechthebbenden, view.verkopers.map((v) => personName(v.data.person))) : [];
   if (res.registraties.some((r) => r.type === "beslag")) signal.push("Er staat een beslag ingeschreven op het registergoed.");
-  if (!res.documents.some((x) => x.kind === "kadaster_akte")) signal.push("Vorige leveringsakte niet digitaal beschikbaar — aktenketen handmatig beoordelen.");
+  if (!res.documents.some((x) => x.kind === "kadaster_akte")) signal.push("Vorige leveringsakte niet digitaal beschikbaar: aktenketen handmatig beoordelen.");
   await updateDossier(view.dossier.id, (x) => {
     x.kadaster = {
       status: signal.some((s) => /niet voor|beslag|niet gevonden/.test(s)) ? "nader_onderzoek" : "opgehaald",
@@ -289,7 +289,7 @@ async function aflosnotaVerzoeken(view: DossierView) {
     if (p.status !== "op_te_vragen" || p.requestDocumentId || !p.toestemmingVerkoper) continue;
     const id = await saveIr(view, buildAflosnotaVerzoek(view, p), "aflosnota_verzoek", `verzoek-aflosnota-${p.lender.split(" ")[0].toLowerCase()}`, "intern");
     await db.update(schema.payoffs).set({ requestDocumentId: id }).where(eq(schema.payoffs.id, p.id));
-    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "aflosnota.voorbereid", message: `Verzoek aflosnota aan ${p.lender} voorbereid — klaar voor verzending door de notaris.` });
+    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "aflosnota.voorbereid", message: `Verzoek aflosnota aan ${p.lender} voorbereid en klaar voor verzending door de notaris.` });
   }
 }
 
@@ -325,19 +325,19 @@ export function buildManifest(view: DossierView) {
   const items = [
     { label: "Dienstverleningsovereenkomst en bewijs van digitaal akkoord", status: d.dvo ? `Getekend ${dateNl(d.dvo.acceptedAt)} (versie ${d.dvo.version})` : "Ontbreekt", documentIds: docs("dvo") },
     { label: "Koopovereenkomst met bijlagen en addenda", status: d.koStatus, documentIds: docs("koopovereenkomst") },
-    { label: "Geëxtraheerde koopgegevens, bronverwijzing en onzekere velden", status: d.extractie ? `${d.extractie.methode} · ${d.extractie.onzeker.length} onzeker · ${d.extractie.ontbrekend.length} ontbrekend` : "—" },
+    { label: "Geëxtraheerde koopgegevens, bronverwijzing en onzekere velden", status: d.extractie ? `${d.extractie.methode}, ${d.extractie.onzeker.length} onzeker, ${d.extractie.ontbrekend.length} ontbrekend` : "–" },
     { label: "Persoonsgegevens en partner-/eigendomsinformatie per betrokkene", status: `${view.parties.filter((p) => p.data.gegevensBevestigd).length}/${view.parties.length} bevestigd` },
     { label: "Identificatiestatus", status: view.parties.map((p) => `${p.displayName}: ${p.data.idcheck?.status ?? "te_starten"}`).join(", ") },
     { label: "Uitbetalings-IBAN koper en klantbevestiging", status: d.koperIban.bevestigd ? "Vastgelegd" : "Open" },
-    { label: "Financieringsstatus en hypotheekinstructie", status: `${FIN_LABEL[d.financing.status ?? ""] ?? "—"} · instructie: ${BI_LABEL[d.financing.bankinstructieStatus ?? ""] ?? "—"}`, documentIds: docs("bankinstructie") },
+    { label: "Financieringsstatus en hypotheekinstructie", status: `${FIN_LABEL[d.financing.status ?? ""] ?? "–"}, instructie: ${BI_LABEL[d.financing.bankinstructieStatus ?? ""] ?? "–"}`, documentIds: docs("bankinstructie") },
     { label: "Herkomst eigen middelen (bronnen, bedragen, bewijsstukken)", status: d.wwft.ingediendOp ? `${d.wwft.bronnen.length} bron(nen) aangeleverd` : d.financing.eigenMiddelen === "nee" ? "Geen eigen middelen" : "Open", documentIds: docs("wwft_bewijs") },
     { label: "Status gecombineerde volmacht (incl. afspraken)", status: view.parties.map((p) => `${p.displayName}: ${p.data.volmacht?.status ?? "te_plannen"}`).join(", "), documentIds: [...docs("volmacht_koper"), ...docs("volmacht_verkoper")] },
     { label: "Oorspronkelijke en actuele overdrachtsdatum", status: `${dateNl(d.transaction.leveringsdatumOrigineel)} → ${dateNl(d.transaction.leveringsdatum)} (${d.transaction.leveringsdatumStatus ?? "voorlopig"})` },
-    { label: "Kadastrale gegevens en kaart (bron en raadpleegdatum)", status: `${d.kadaster.status}${d.kadaster.opgehaaldOp ? ` · ${dateNl(d.kadaster.opgehaaldOp)}` : ""}`, documentIds: [...docs("kadaster_eigendom"), ...docs("kadaster_kaart")] },
+    { label: "Kadastrale gegevens en kaart (bron en raadpleegdatum)", status: `${d.kadaster.status}${d.kadaster.opgehaaldOp ? ` (${dateNl(d.kadaster.opgehaaldOp)})` : ""}`, documentIds: [...docs("kadaster_eigendom"), ...docs("kadaster_kaart")] },
     { label: "Eerdere leveringsakte(n), erfdienstbaarheden en kwalitatieve verplichtingen", status: `${(d.kadaster.registraties ?? []).filter((r) => r.type !== "hypotheek").length} bepalingen`, documentIds: docs("kadaster_akte") },
-    { label: "Concept-leveringsakte met bronnen en controlepunten", status: d.akteLevering ? `Versie ${d.akteLevering.version} · ${d.akteLevering.controlepunten.length} controlepunten` : "n.v.t.", documentIds: docs("concept_leveringsakte") },
+    { label: "Concept-leveringsakte met bronnen en controlepunten", status: d.akteLevering ? `Versie ${d.akteLevering.version}, ${d.akteLevering.controlepunten.length} controlepunten` : "n.v.t.", documentIds: docs("concept_leveringsakte") },
     { label: "Concept-hypotheekakte met bronnen en controlepunten", status: d.akteHypotheek ? `Versie ${d.akteHypotheek.version}` : "Volgt na bankinstructie", documentIds: docs("concept_hypotheekakte") },
-    { label: "Verkopersdossier (gekoppeld)", status: view.verkopers.length ? `${view.verkopers.length} verkoper(s) · aflosnota's: ${view.payoffs.map((p) => p.status).join(", ") || "geen"}` : "n.v.t." },
+    { label: "Verkopersdossier (gekoppeld)", status: view.verkopers.length ? `${view.verkopers.length} verkoper(s), aflosnota's: ${view.payoffs.map((p) => p.status).join(", ") || "geen"}` : "n.v.t." },
   ];
   const openPunten = [
     ...d.aandachtspunten.filter((a) => !a.opgelost).map((a) => a.tekst),
@@ -397,7 +397,7 @@ async function readyForPassing(view: DossierView) {
   const keys = CHECK_KEYS.filter((k) => k !== "passeren").filter((k) => (k !== "hypotheekakte" || needsHypotheek(view)) && (k !== "leveringsakte" && k !== "aflosnotas" ? true : needsLevering(view)));
   if (keys.every((k) => view.checks.find((c) => c.key === k)?.status === "akkoord")) {
     await updateDossier(view.dossier.id, () => ({ status: "gereed_voor_passeren" }));
-    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "dossier.gereed", message: "Alle controles akkoord — dossier gereed om te passeren.", visibleTo: "partijen" });
+    await logEvent({ dossierId: view.dossier.id, actorType: "systeem", type: "dossier.gereed", message: "Alle controles akkoord, het dossier is gereed om te passeren.", visibleTo: "partijen" });
   }
 }
 

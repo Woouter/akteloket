@@ -36,7 +36,7 @@ export function KoProductStep({ a, stepKey }: { a: PartyAccess; stepKey: string 
               const self = p.id === a.me.id;
               return (
                 <div key={p.id} className="flex items-center justify-between gap-3 p-4">
-                  <span className="flex items-center gap-2 text-sm"><StateIcon state={signed ? "done" : "todo"} size="sm" /><span className="font-medium text-ink-900">{p.displayName}</span><span className="text-ink-500">· {p.side}</span></span>
+                  <span className="flex items-center gap-2 text-sm"><StateIcon state={signed ? "done" : "todo"} size="sm" /><span className="font-medium text-ink-900">{p.displayName}</span><span className="text-ink-500">({p.side})</span></span>
                   {signed ? <span className="text-xs text-ok-700">Getekend {dateTimeNl(signed.confirmedAt)}</span> : self && ko.status === "verzonden" ? <form action={koSign.bind(null, id, p.id)}><button className="btn btn-primary btn-sm"><FileSignature className="h-4 w-4" />Digitaal tekenen</button></form> : <span className="text-xs text-ink-500">Wacht op handtekening</span>}
                 </div>
               );

@@ -73,7 +73,7 @@ export function JsonLd({ data }: { data: unknown }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }
 
-export function CtaBand({ title = "Klaar om te beginnen?", text = "Upload je koopovereenkomst en zie binnen een minuut welke gegevens we al voor je hebben ingevuld.", service, href, note = "Geen betaling vooraf · Nog geen koopovereenkomst? Je kunt toch al starten." }: { title?: string; text?: string; service?: ServiceKey; href?: string; note?: string }) {
+export function CtaBand({ title = "Klaar om te beginnen?", text = "Upload je koopovereenkomst en zie binnen een minuut welke gegevens we al voor je hebben ingevuld.", service, href, note = "Geen betaling vooraf. Nog geen koopovereenkomst? Je kunt toch al starten." }: { title?: string; text?: string; service?: ServiceKey; href?: string; note?: string }) {
   return (
     <section className="container-page mt-24">
       <div className="relative overflow-hidden rounded-xl bg-ink-900 px-6 py-14 text-center sm:px-12">
@@ -99,8 +99,8 @@ export function ScanVisual() {
     ["Adres", "Bloesemlaan 14, Amersfoort"],
     ["Kadastraal", "Amersfoort K 4821"],
     ["Koopprijs", "€ 485.000,00"],
-    ["Kopers", "S.M. de Vries · D.P. Bakker"],
-    ["Verkopers", "H.J. Jansen · M.E. Visser"],
+    ["Kopers", "S.M. de Vries en D.P. Bakker"],
+    ["Verkopers", "H.J. Jansen en M.E. Visser"],
     ["Leveringsdatum", "Over 13 dagen"],
     ["Waarborgsom", "€ 48.500 (10%)"],
     ["Financieringsvoorbehoud", "€ 440.000"],
@@ -110,7 +110,7 @@ export function ScanVisual() {
       <div className="absolute -inset-4 -z-10 rounded-xl bg-gradient-to-br from-brass-100 via-paper to-brand-50 blur-xl" />
       <div className="card overflow-hidden p-0 shadow-lift">
         <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50/60 px-4 py-3">
-          <span className="eyebrow">Stap 1 · Koopovereenkomst uitlezen</span>
+          <span className="eyebrow">Stap 1: koopovereenkomst uitlezen</span>
           <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-ink-500"><span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-ok-600" />Live herkenning</span>
         </div>
         <div className="grid gap-0 sm:grid-cols-[0.8fr_1.2fr]">
@@ -131,7 +131,7 @@ export function ScanVisual() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 flex items-center gap-2 text-xs text-ink-500"><FileCheck2 className="h-4 w-4 text-brass-500" />Jij controleert alleen nog — en vult aan wat ontbreekt.</p>
+            <p className="mt-4 flex items-center gap-2 text-xs text-ink-500"><FileCheck2 className="h-4 w-4 text-brass-500" />Jij controleert alleen nog en vult aan wat ontbreekt.</p>
           </div>
         </div>
       </div>

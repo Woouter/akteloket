@@ -10,7 +10,7 @@ import { Notice } from "@/components/ui";
 import { BRAND, NOTARY_OFFICE } from "@/lib/config";
 import { euro } from "@/lib/util/format";
 
-export const metadata: Metadata = { title: "Demo — kies een tour", robots: { index: false } };
+export const metadata: Metadata = { title: "Demo: kies een tour", robots: { index: false } };
 
 const RECOMMENDED = "notaris";
 
@@ -55,7 +55,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
                 <li key={t.key} className={`relative flex flex-col rounded-lg border bg-white p-6 transition hover:shadow-lift ${rec ? "border-brass-400 ring-1 ring-brass-300" : "border-ink-200"}`}>
                   {rec && <span className="chip absolute -top-3 left-6 bg-brass-500 text-ink-950">Aanbevolen voor de notaris</span>}
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="chip bg-ink-50 text-ink-600">{t.minutes} min · {t.steps.length} stappen</span>
+                    <span className="chip bg-ink-50 text-ink-600">{t.minutes} minuten, {t.steps.length} stappen</span>
                     {done && <span className="chip bg-ok-50 text-ok-700"><Check className="h-3 w-3" />Bekeken</span>}
                   </div>
                   <h2 className="mt-4 text-xl text-ink-900">{t.title}</h2>

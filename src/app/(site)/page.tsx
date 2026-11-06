@@ -32,7 +32,7 @@ const automation = [
 ];
 
 const compare: [string, string, string][] = [
-  ["Intake", "Formulieren en kopieën mailen", "Koopovereenkomst uploaden — wij lezen hem uit"],
+  ["Intake", "Formulieren en kopieën mailen", "Koopovereenkomst uploaden, wij lezen hem uit"],
   ["Afspraken op kantoor", "Meestal één of twee", "Meestal geen: één volmacht via video"],
   ["Status van je dossier", "Bellen of mailen", "Live in je portaal, per stap"],
   ["Herkomst eigen geld", "Losse vragen per e-mail", "Slimme vragenlijst met direct de juiste stukken"],
@@ -51,7 +51,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-b border-ink-200 bg-white">
         <div className="container-page relative grid items-center gap-14 pb-20 pt-14 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
           <div data-tour="home-hero">
-            <p className="eyebrow">Notariële akten voor je woning · volledig online</p>
+            <p className="eyebrow">Notariële akten voor je woning</p>
             <h1 className="mt-5 text-[2.6rem] text-ink-900 sm:text-[3.6rem]">
               Je akte van levering en hypotheekakte, <span className="italic text-brass-600">volledig online</span> geregeld
             </h1>
@@ -62,7 +62,7 @@ export default function HomePage() {
               <Link href="/aanvraag" className="btn btn-primary btn-lg">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
               <Link href="/hoe-werkt-het" className="btn btn-secondary btn-lg">Bekijk hoe het werkt</Link>
             </div>
-            <p className="mt-4 text-sm text-ink-500">Levering + hypotheekakte <strong className="text-ink-900">€ {SERVICES.beide.price.toLocaleString("nl-NL")} all-in</strong> · geen betaling vooraf</p>
+            <p className="mt-4 text-sm text-ink-500">Levering + hypotheekakte voor <strong className="text-ink-900">€ {SERVICES.beide.price.toLocaleString("nl-NL")} all-in</strong>, zonder betaling vooraf</p>
             <TrustStrip className="mt-8" />
           </div>
           <ScanVisual />
@@ -70,7 +70,7 @@ export default function HomePage() {
       </section>
 
       <section className="container-page mt-24" data-tour="home-usp">
-        <SectionTitle eyebrow="Waarom Akteloket" title="Notarieel net zo zorgvuldig. Voor jou een stuk eenvoudiger." intro="De notaris blijft verantwoordelijk voor alles wat juridisch telt. Wij zorgen dat al het voorwerk al gedaan is — snel, digitaal en duidelijk." />
+        <SectionTitle eyebrow="Waarom Akteloket" title="Notarieel net zo zorgvuldig. Voor jou een stuk eenvoudiger." intro="De notaris blijft verantwoordelijk voor alles wat juridisch telt. Wij zorgen dat het voorwerk al gedaan is." />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {usps.map((u) => (
             <div key={u.title} className="card p-6">
@@ -106,7 +106,7 @@ export default function HomePage() {
       <section className="mt-28 bg-white py-24">
         <div className="container-page grid gap-14 lg:grid-cols-2 lg:items-center">
           <div>
-            <SectionTitle eyebrow="Wat wij voor je regelen" title="Jij doet een paar dingen. Wij doen de rest." intro="Achter de schermen zetten we alles klaar, zodat de notaris alleen nog hoeft te controleren. Dat scheelt tijd — voor jou én voor de notaris." />
+            <SectionTitle eyebrow="Wat wij voor je regelen" title="Jij doet een paar dingen. Wij doen de rest." intro="Achter de schermen zetten we alles klaar, zodat de notaris alleen nog hoeft te controleren. Dat scheelt tijd, voor jou én voor de notaris." />
             <Link href="/aanvraag" className="btn btn-primary mt-8">Start je aanvraag <ArrowRight className="h-4 w-4" /></Link>
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">

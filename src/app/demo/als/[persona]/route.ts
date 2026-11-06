@@ -16,7 +16,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ persona:
   if (!p) return new Response("Onbekende rol", { status: 404 });
   const db = await getDb();
   const [u] = await db.select().from(schema.users).where(eq(schema.users.email, p.email)).limit(1);
-  if (!u) return new Response("Demo-gebruiker niet gevonden — reset de demo", { status: 404 });
+  if (!u) return new Response("Demo-gebruiker niet gevonden. Reset de demo.", { status: 404 });
   await destroySession();
   await createSession(u.id);
   const main = await mainDemoDossierId();

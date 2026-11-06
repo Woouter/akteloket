@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const items = [
   { icon: Activity, t: "Live status met toestemming van je klant", d: "Je klant kan je een meekijklink geven: je ziet de fase van het dossier, nooit de persoonlijke of financiële details." },
-  { icon: BellRing, t: "Geen gebel meer over de instructie", d: "We bewaken de hypotheekinstructie en signaleren tijdig als die uitblijft — met de geplande passeerdatum erbij." },
+  { icon: BellRing, t: "Geen gebel meer over de instructie", d: "We bewaken de hypotheekinstructie en signaleren tijdig als die uitblijft, met de geplande passeerdatum erbij." },
   { icon: FileCheck2, t: "Koopovereenkomst = intake", d: "De koopovereenkomst van je klant wordt automatisch uitgelezen. Niemand hoeft iets dubbel in te vullen." },
   { icon: ShieldCheck, t: "Een onafhankelijke notaris", d: "De notariële controles, de akten en de geldstromen liggen bij een onafhankelijk notariskantoor." },
   { icon: Link2, t: "Eigen doorverwijslink", d: "Met een persoonlijke link start je klant direct met de juiste dienst. Wij melden je wanneer het dossier is gestart." },

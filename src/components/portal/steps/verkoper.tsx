@@ -33,7 +33,7 @@ export function ZekerhedenStep({ a }: { a: PartyAccess }) {
             {pos.map((p) => (
               <div key={p.id} className="rounded-xl border border-ink-100 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2"><p className="font-semibold text-ink-900">{p.lender}</p><span className={`chip ${p.status === "gecontroleerd" || p.status === "ontvangen" ? "bg-ok-100 text-ok-700" : "bg-ink-100 text-ink-600"}`}>Aflosnota: {label[p.status]}</span></div>
-                <p className="text-xs text-ink-500">{p.inschrijving} · bron: {p.source === "kadaster" ? "kadastrale registratie" : "opgave verkoper"}</p>
+                <p className="text-xs text-ink-500">{p.inschrijving} (bron: {p.source === "kadaster" ? "kadastrale registratie" : "opgave verkoper"})</p>
                 <label className="mt-3 block max-w-sm"><span className="label">Leningnummer(s)</span><input className="input" name={`lening_${p.id}`} defaultValue={p.loanNumbers ?? ""} placeholder="Staat op je jaaroverzicht" /></label>
                 {p.amount && <p className="mt-2 text-sm text-ink-700">Af te lossen volgens aflosnota: <strong>{euro(p.amount / 100)}</strong>{p.validUntil ? ` (geldig t/m ${dateNl(p.validUntil)})` : ""}</p>}
               </div>
@@ -73,7 +73,7 @@ export function NotaVerkoperStep({ a }: { a: PartyAccess }) {
           <>
             <p className="mt-2 text-sm text-ink-600">De notaris stelt de nota op kort voor de overdracht. Dit is de voorlopige berekening op basis van de gegevens die er nu zijn:</p>
             {nota && <NotaTable nota={nota} side="verkoper" />}
-            <p className="mt-3 text-xs text-ink-400">Status: in voorbereiding · bedragen kunnen nog wijzigen.</p>
+            <p className="mt-3 text-xs text-ink-400">Status: in voorbereiding. De bedragen kunnen nog wijzigen.</p>
           </>
         )}
       </Card>

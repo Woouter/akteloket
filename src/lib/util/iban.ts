@@ -11,7 +11,7 @@ export function validateIban(input: string): { valid: boolean; reason?: string; 
   const numeric = rearranged.replace(/[A-Z]/g, (c) => String(c.charCodeAt(0) - 55));
   let remainder = 0;
   for (const ch of numeric) remainder = (remainder * 10 + Number(ch)) % 97;
-  if (remainder !== 1) return { valid: false, reason: "Controlecijfer klopt niet — controleer het nummer" };
+  if (remainder !== 1) return { valid: false, reason: "Het controlecijfer klopt niet, controleer het nummer" };
   const bankCode = iban.startsWith("NL") ? iban.slice(4, 8) : undefined;
   return { valid: true, bank: bankCode ? NL_BANKS[bankCode] : undefined };
 }

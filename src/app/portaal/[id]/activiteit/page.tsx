@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <li key={e.id} className="relative pb-6 last:pb-0">
               <span className={`absolute -left-[31px] top-1 h-3 w-3 rounded-full ring-4 ring-white ${dot(e)}`} />
               <p className="text-sm text-ink-800">{e.message}</p>
-              <p className="text-xs text-ink-400">{dateTimeNl(e.createdAt)} · {e.actorName ?? (e.actorType === "systeem" ? "Akteloket (automatisch)" : e.actorType)}</p>
+              <p className="text-xs text-ink-400">{dateTimeNl(e.createdAt)}, {e.actorName ?? (e.actorType === "systeem" ? "Akteloket (automatisch)" : e.actorType)}</p>
             </li>
           ))}
         </ol>

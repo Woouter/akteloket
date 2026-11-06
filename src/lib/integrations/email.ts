@@ -36,7 +36,7 @@ ${paras.map((p) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;col
 ${m.cta ? `<p style="margin:22px 0"><a href="${m.cta.href}" style="display:inline-block;background:#0b1f3a;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:5px">${esc(m.cta.label)}</a></p>` : ""}
 ${m.footnote ? `<p style="margin:18px 0 0;font-size:13px;color:#5a6572">${esc(m.footnote)}</p>` : ""}
 </td></tr>
-<tr><td style="padding:18px 28px;border-top:1px solid #ebe7de;font-size:12px;color:#858d97">${BRAND.name} · ${BRAND.domain} · Deze e-mail is automatisch verstuurd vanuit je beveiligde dossier.</td></tr>
+<tr><td style="padding:18px 28px;border-top:1px solid #ebe7de;font-size:12px;color:#858d97">${BRAND.name}, ${BRAND.domain}<br>Deze e-mail is automatisch verstuurd vanuit je beveiligde dossier.</td></tr>
 </table></td></tr></table></body></html>`;
   const text = [m.heading, "", ...paras, m.cta ? `\n${m.cta.label}: ${m.cta.href}` : "", m.footnote ? `\n${m.footnote}` : ""].join("\n");
   return { html, text };

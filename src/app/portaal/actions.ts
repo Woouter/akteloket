@@ -54,7 +54,7 @@ export async function saveGegevens(dossierId: string, partyId: string, fd: FormD
     for (const k of changed) d.meta = { ...(d.meta ?? {}), [k]: { ...(d.meta?.[k] ?? { source: "klant" }), source: "klant", changedFrom: String((p.data.person as Record<string, unknown>)[k] ?? ""), confirmedBy: a.user.name, confirmedAt: new Date().toISOString() } };
     return { displayName: personName(person) || p.displayName, email: s(fd, "email") ?? p.email };
   });
-  if (s(fd, "priveOfOnderneming") === "onderneming") await updateDossier(dossierId, (d) => { d.aandachtspunten.push({ id: uid(), tekst: `${personName(person)} koopt via een onderneming — zakelijke route beoordelen (niet volledig geautomatiseerd).`, ernst: "let_op", bron: "Klantopgave" }); });
+  if (s(fd, "priveOfOnderneming") === "onderneming") await updateDossier(dossierId, (d) => { d.aandachtspunten.push({ id: uid(), tekst: `${personName(person)} koopt via een onderneming: zakelijke route beoordelen (niet volledig geautomatiseerd).`, ernst: "let_op", bron: "Klantopgave" }); });
   await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "gegevens.bevestigd", message: `Persoonsgegevens ${personName(person)} bevestigd${changed.length ? ` (${changed.length} wijziging${changed.length > 1 ? "en" : ""} t.o.v. koopovereenkomst)` : ""}.`, visibleTo: a.side });
   await done(dossierId, true, "gegevens");
 }
@@ -79,7 +79,7 @@ export async function saveWoning(dossierId: string, fd: FormData) {
     };
     if (d.financing.hypotheek === "nee") d.financing.bankinstructieStatus = "nog_niet_verwacht";
     if (d.financing.eigenMiddelen === "nee") d.wwft.status = "niet_van_toepassing";
-    if (d.financing.overbrugging === "ja" || d.financing.meerdereGeldverstrekkers === "ja") d.aandachtspunten.push({ id: uid(), tekst: d.financing.overbrugging === "ja" ? "Er is een overbruggingshypotheek — tweede hypotheekakte/instructie verwachten." : `Meerdere geldverstrekkers: ${d.financing.andereGeldverstrekkers ?? "onbekend"}.`, ernst: "let_op", bron: "Klantopgave" });
+    if (d.financing.overbrugging === "ja" || d.financing.meerdereGeldverstrekkers === "ja") d.aandachtspunten.push({ id: uid(), tekst: d.financing.overbrugging === "ja" ? "Er is een overbruggingshypotheek: tweede hypotheekakte en instructie verwachten." : `Meerdere geldverstrekkers: ${d.financing.andereGeldverstrekkers ?? "onbekend"}.`, ernst: "let_op", bron: "Klantopgave" });
   });
   await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "financiering", message: `Woning en financiering bevestigd (hypotheek: ${{ ja: "ja", nee: "nee", onbekend: "nog niet bekend" }[s(fd, "hypotheek") ?? ""] ?? "-"}${s(fd, "geldverstrekker") ? `, ${s(fd, "geldverstrekker")}` : ""}).`, visibleTo: "koper" });
   await done(dossierId, true, "woning");
@@ -92,8 +92,8 @@ export async function saveStarters(dossierId: string, partyId: string, fd: FormD
   const next = { ...(p.data.starters ?? {}), hoofdverblijf: s(fd, "hoofdverblijf") as never, eerderGebruikt: s(fd, "eerderGebruikt") as never, wilGebruiken: s(fd, "wilGebruiken") as never };
   const uitkomst = startersUitkomst(next);
   await updateParty(p.id, (d) => { d.starters = { ...next, uitkomst, controlepunt: uitkomst === "controle_notaris" ? "Antwoorden startersvrijstelling onbekend/tegenstrijdig" : next.controlepunt }; });
-  if (uitkomst === "controle_notaris") await updateDossier(dossierId, (d) => { d.aandachtspunten.push({ id: uid(), tekst: `Startersvrijstelling ${p.displayName}: onbekende of tegenstrijdige antwoorden — beoordeling notaris.`, ernst: "let_op", bron: "Startertoets" }); });
-  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "starters.antwoord", message: `Startersvrijstelling ${p.displayName}: ${uitkomst === "vrijstelling" ? "komt mogelijk in aanmerking — verklaring klaargezet" : uitkomst ?? "beantwoord"}.`, visibleTo: "koper" });
+  if (uitkomst === "controle_notaris") await updateDossier(dossierId, (d) => { d.aandachtspunten.push({ id: uid(), tekst: `Startersvrijstelling ${p.displayName}: onbekende of tegenstrijdige antwoorden, beoordeling door de notaris.`, ernst: "let_op", bron: "Startertoets" }); });
+  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "starters.antwoord", message: `Startersvrijstelling ${p.displayName}: ${uitkomst === "vrijstelling" ? "komt mogelijk in aanmerking, verklaring klaargezet" : uitkomst ?? "beantwoord"}.`, visibleTo: "koper" });
   await done(dossierId, false);
   redirect(`/portaal/${dossierId}/stap/starters?opgeslagen=starters`);
 }
@@ -123,7 +123,7 @@ export async function saveIban(dossierId: string, partyId: string | null, fd: Fo
     for (const t of targets) await updateParty(t.id, (d) => { d.iban = data; });
     if (derde) await updateDossier(dossierId, (d) => { d.aandachtspunten.push({ id: uid(), tekst: `Uitbetalingsrekening verkoper t.n.v. "${tenaam}" lijkt niet op naam van de verkoper(s) te staan.`, ernst: "let_op", bron: "IBAN-controle" }); });
   }
-  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "iban", message: `Uitbetalingsrekening vastgelegd (${v.bank ?? "bank onbekend"})${derde ? " — mogelijk rekening van een derde" : ""}.`, visibleTo: a.side });
+  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "iban", message: `Uitbetalingsrekening vastgelegd (${v.bank ?? "bank onbekend"})${derde ? ", mogelijk rekening van een derde" : ""}.`, visibleTo: a.side });
   await done(dossierId, true, "iban");
 }
 
@@ -199,7 +199,7 @@ export async function bookVolmacht(dossierId: string, partyId: string, fd: FormD
   const id = uid();
   await db.insert(schema.appointments).values({ id, dossierId, partyId: p.id, kind: "volmacht", mode, startsAt, location: mode === "video" ? "Videogesprek (beveiligde link volgt per e-mail)" : NOTARY_OFFICE.address });
   await updateParty(p.id, (d) => { d.volmacht = { ...(d.volmacht ?? { status: "te_plannen" }), status: "gepland", afspraakId: id }; });
-  if (p.email) await sendMail({ to: p.email, dossierId, template: "volmacht.afspraak", subject: "Bevestiging volmachtafspraak", heading: "Je volmachtafspraak staat gepland", intro: `${startsAt.toLocaleString("nl-NL", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })} · ${mode === "video" ? "Videogesprek — je ontvangt de beveiligde link een dag van tevoren" : NOTARY_OFFICE.address}.`, paragraphs: ["Neem je paspoort of identiteitskaart mee (of houd het bij de hand). De afspraak duurt ongeveer 15 minuten. Je tekent één volmacht voor alle akten van je dossier."] });
+  if (p.email) await sendMail({ to: p.email, dossierId, template: "volmacht.afspraak", subject: "Bevestiging volmachtafspraak", heading: "Je volmachtafspraak staat gepland", intro: `${startsAt.toLocaleString("nl-NL", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}, ${mode === "video" ? "via een beveiligd videogesprek. Je ontvangt de link een dag van tevoren" : `op kantoor (${NOTARY_OFFICE.address})`}.`, paragraphs: ["Neem je paspoort of identiteitskaart mee (of houd het bij de hand). De afspraak duurt ongeveer 15 minuten. Je tekent één volmacht voor alle akten van je dossier."] });
   await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "volmacht.gepland", message: `Volmachtafspraak ${p.displayName} gepland (${mode}).`, visibleTo: a.side });
   await done(dossierId, false);
   redirect(`/portaal/${dossierId}/stap/volmacht?opgeslagen=afspraak`);
@@ -246,7 +246,7 @@ export async function answerDatumCheck(dossierId: string, fd: FormData) {
     }
     if (antwoord === "onbekend") { d.transaction.leveringsdatumStatus = "nog_te_bepalen"; d.datumCheck.gevraagdOp = addDays(todayIso(), 0); }
   });
-  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "datum.antwoord", message: antwoord === "ja" ? "Overdrachtsdatum bevestigd." : antwoord === "nee_nieuwe_datum" ? `Nieuwe overdrachtsdatum doorgegeven: ${nieuwe}.` : "Nieuwe datum nog niet bekend — later opnieuw controleren.", visibleTo: "partijen" });
+  await logEvent({ dossierId, actorType: "klant", actor: a.user, type: "datum.antwoord", message: antwoord === "ja" ? "Overdrachtsdatum bevestigd." : antwoord === "nee_nieuwe_datum" ? `Nieuwe overdrachtsdatum doorgegeven: ${nieuwe}.` : "Nieuwe datum nog niet bekend, later opnieuw controleren.", visibleTo: "partijen" });
   await done(dossierId, true, "datum");
 }
 

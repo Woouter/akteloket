@@ -24,7 +24,7 @@ export default function Page() {
         <h2>Cookies</h2>
         <p>We gebruiken alleen functionele cookies (om je ingelogd te houden). Geen tracking- of advertentiecookies, en geen externe lettertypen of scripts die je gedrag volgen.</p>
         <h2>Je rechten</h2>
-        <p>Je hebt recht op inzage, correctie en — waar de wet het toelaat — verwijdering van je gegevens. Mail daarvoor naar {BRAND.email}. Je kunt ook een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
+        <p>Je hebt recht op inzage en correctie van je gegevens, en op verwijdering waar de wet dat toelaat. Mail daarvoor naar {BRAND.email}. Je kunt ook een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
       </div>
     </section>
   );

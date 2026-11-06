@@ -72,7 +72,7 @@ export function KoForm() {
           <label><span className="label">Roerende zaken (€, optioneel)</span><input className="input" inputMode="numeric" value={f.roerendeZaken ?? ""} onChange={(e) => set("roerendeZaken", e.target.value)} /></label>
           <label><span className="label">Leveringsdatum</span><input className="input" type="date" value={f.leveringsdatum} onChange={(e) => set("leveringsdatum", e.target.value)} /></label>
           <label><span className="label">Zekerheid koper</span><select className="select" value={f.waarborgType} onChange={(e) => set("waarborgType", e.target.value)}><option value="waarborgsom">Waarborgsom bij de notaris</option><option value="bankgarantie">Bankgarantie</option></select></label>
-          <label><span className="label">Bedrag (€) — standaard 10%</span><input className="input" inputMode="numeric" placeholder={prijs ? Math.round(prijs * 0.1).toLocaleString("nl-NL") : ""} value={f.waarborgsom ?? ""} onChange={(e) => set("waarborgsom", e.target.value)} /></label>
+          <label><span className="label">Bedrag (€), standaard 10%</span><input className="input" inputMode="numeric" placeholder={prijs ? Math.round(prijs * 0.1).toLocaleString("nl-NL") : ""} value={f.waarborgsom ?? ""} onChange={(e) => set("waarborgsom", e.target.value)} /></label>
           <label><span className="label">Uiterlijk storten/stellen op</span><input className="input" type="date" value={f.waarborgUiterlijk} onChange={(e) => set("waarborgUiterlijk", e.target.value)} /></label>
         </div>
         <div className="mt-6 space-y-4 border-t border-ink-100 pt-5">

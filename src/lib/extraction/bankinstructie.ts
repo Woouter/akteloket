@@ -42,7 +42,7 @@ export async function scanBankinstructie(buf: Buffer): Promise<{ data: Bankinstr
   if (!x) x = rules((await pdfText(buf)).pages.join("\n"));
   const controlepunten: string[] = [];
   if (!x.hypotheekbedrag) controlepunten.push("Hoofdsom niet gevonden in de instructie.");
-  if (!x.inschrijvingsbedrag) controlepunten.push("Inschrijvingsbedrag niet gevonden — controleer instructie.");
+  if (!x.inschrijvingsbedrag) controlepunten.push("Inschrijvingsbedrag niet gevonden, controleer de instructie.");
   if (!x.algemeneVoorwaarden) controlepunten.push("Toepasselijke algemene voorwaarden van de geldverstrekker niet gevonden.");
   if (x.leningdelen.length && x.hypotheekbedrag && Math.abs(x.leningdelen.reduce((s, l) => s + l.bedrag, 0) - x.hypotheekbedrag) > 1) controlepunten.push("Som van de leningdelen wijkt af van de hoofdsom.");
   return {

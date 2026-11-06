@@ -26,7 +26,7 @@ const GENERAL: { key: keyof WwftBron; label: string; options: [string, string][]
   { key: "overgemaakt", label: "Is het bedrag al overgemaakt naar de rekening voor de aankoop?", options: [["ja", "Ja"], ["nee", "Nee"], ["gedeeltelijk", "Gedeeltelijk"]] },
 ];
 
-const eur = (n?: number) => (n == null ? "—" : `€ ${n.toLocaleString("nl-NL")}`);
+const eur = (n?: number) => (n == null ? "–" : `€ ${n.toLocaleString("nl-NL")}`);
 
 export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { dossierId: string; bronnen: WwftBron[]; matrix: WwftRule[]; docs: { id: string; title: string; meta: Record<string, unknown> }[]; indicatie: number | null }) {
   const [edit, setEdit] = useState<string | "nieuw" | null>(bronnen.length ? null : "nieuw");
@@ -56,8 +56,8 @@ export function WwftTool({ dossierId, bronnen, matrix, docs, indicatie }: { doss
           <div key={b.id} id={`bron-${b.id}`} className="card p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="flex items-center gap-2 font-semibold text-ink-900"><Euro className="h-4 w-4 text-brand-600" />{rule?.label ?? b.type} · {eur(b.bedrag)}</p>
-                <p className="mt-1 text-sm text-ink-500">{[b.details.opbouw, b.details.van, b.details.relatie, b.details.onderneming].filter(Boolean).join(" · ")}</p>
+                <p className="flex items-center gap-2 font-semibold text-ink-900"><Euro className="h-4 w-4 text-brand-600" />{rule?.label ?? b.type}: {eur(b.bedrag)}</p>
+                <p className="mt-1 text-sm text-ink-500">{[b.details.opbouw, b.details.van, b.details.relatie, b.details.onderneming].filter(Boolean).join(", ")}</p>
                 {(b.eigenaarGeld === "derde" || b.rekening === "iemand_anders" || b.rekening === "onderneming") && <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-warn-700"><AlertTriangle className="h-3.5 w-3.5" />Aandachtspunt voor de notaris: geld van een derde of via een onderneming</p>}
               </div>
               <div className="flex gap-1"><button className="btn btn-ghost btn-sm" onClick={() => setEdit(b.id)}><Pencil className="h-4 w-4" />Wijzig</button><form action={deleteBron.bind(null, dossierId, b.id)}><button className="btn btn-ghost btn-sm text-bad-700"><Trash2 className="h-4 w-4" /></button></form></div>

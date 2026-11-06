@@ -7,7 +7,7 @@ const items = [
   { icon: FileLock2, t: "Versleutelde opslag", d: "Documenten worden versleuteld opgeslagen (AES-256) en alleen ontsleuteld voor wie er toegang toe heeft." },
   { icon: KeyRound, t: "Inloggen zonder wachtwoord", d: "Je logt in met een eenmalige, persoonlijke link per e-mail. Geen wachtwoorden die kunnen uitlekken." },
   { icon: Eye, t: "Toegang per rol", d: "Koper en verkoper zien elkaars persoonlijke en financiële gegevens niet. Wwft-stukken zijn alleen zichtbaar voor de notaris." },
-  { icon: ScrollText, t: "Alles gelogd", d: "Akkoordmomenten, wijzigingen, uploads en dossieroverdrachten worden vastgelegd — met tijdstip en wie het deed." },
+  { icon: ScrollText, t: "Alles gelogd", d: "Akkoordmomenten, wijzigingen, uploads en dossieroverdrachten worden vastgelegd, met tijdstip en wie het deed." },
   { icon: Lock, t: "Dataminimalisatie", d: "We vragen alleen wat nodig is en vragen geen kopie van je paspoort per e-mail. Niet-afgeronde aanvragen worden na 7 dagen verwijderd." },
   { icon: ServerCog, t: "Gehost in de EU", d: "Onze systemen en back-ups draaien bij Europese aanbieders. Met elke dienstverlener sluiten we een verwerkersovereenkomst." },
 ];

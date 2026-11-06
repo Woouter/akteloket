@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, notLike } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { DEMO, demoDates } from "./scenario";
 import { aflosnotaPdf, bankafschriftPdf, bankinstructiePdf, genericKoPdf, koopovereenkomstPdf, schenkingPdf } from "./pdfs";
@@ -13,7 +13,7 @@ import { token, uid } from "@/lib/util/ids";
 import { addDays, todayIso } from "@/lib/util/format";
 import type { Role } from "@/lib/domain/types";
 import { PERSONAS } from "./personas";
-import { DVO_VERSION } from "@/lib/config";
+import { DVO_VERSION, NOTARY_OFFICE } from "@/lib/config";
 export { PERSONAS };
 
 export async function ensureBaseSettings() {
@@ -31,30 +31,53 @@ export async function ensureBaseSettings() {
   }
 }
 
+/**
+ * Versie van het demoscenario. Verhoog dit bij elke wijziging in seed, scenario of
+ * demo-notaris: een bestaande demodatabase (bijv. op Vercel/Supabase) wordt dan bij de
+ * eerstvolgende start automatisch één keer opnieuw opgebouwd. Feedback blijft bewaard.
+ */
+export const DEMO_SEED_VERSION = "2026-11-06.1";
+const MARKER = "demo_seed";
+
 export async function ensureDemoSeed() {
   const db = await getDb();
   const any = await db.select({ id: schema.dossiers.id }).from(schema.dossiers).limit(1);
   await ensureBaseSettings();
-  if (any.length) return;
-  // Claim: op serverless kunnen meerdere instances tegelijk starten — maar één mag seeden.
-  const claimed = await db.insert(schema.settings).values({ key: "demo_seed", value: { status: "bezig", op: new Date().toISOString() } }).onConflictDoNothing().returning({ key: schema.settings.key });
+  const [marker] = await db.select().from(schema.settings).where(eq(schema.settings.key, MARKER)).limit(1);
+  const versie = (marker?.value as { versie?: string } | undefined)?.versie;
+  if (any.length && versie === DEMO_SEED_VERSION) return;
+  // Claim per versie: op serverless kunnen meerdere instances tegelijk starten — maar één mag (her)bouwen.
+  const claimKey = `${MARKER}:${DEMO_SEED_VERSION}`;
+  const claimed = await db.insert(schema.settings).values({ key: claimKey, value: { status: "bezig", op: new Date().toISOString() } }).onConflictDoNothing().returning({ key: schema.settings.key });
   if (!claimed.length) return;
   try {
-    await seedDemo();
-    await db.update(schema.settings).set({ value: { status: "klaar", op: new Date().toISOString() } }).where(eq(schema.settings.key, "demo_seed"));
+    if (any.length) await resetDemo();
+    else await seedDemo();
+    await markSeeded();
+    await db.update(schema.settings).set({ value: { status: "klaar", op: new Date().toISOString() } }).where(eq(schema.settings.key, claimKey));
   } catch (e) {
-    await db.delete(schema.settings).where(eq(schema.settings.key, "demo_seed"));
+    await db.delete(schema.settings).where(eq(schema.settings.key, claimKey));
     throw e;
   }
 }
 
+async function markSeeded() {
+  const db = await getDb();
+  const value = { status: "klaar", versie: DEMO_SEED_VERSION, op: new Date().toISOString() };
+  await db.insert(schema.settings).values({ key: MARKER, value }).onConflictDoUpdate({ target: schema.settings.key, set: { value } });
+}
+
+/** Zet de demo terug naar de beginsituatie (knop op /demo en bij een nieuwe scenarioversie). */
 export async function resetDemo() {
   const db = await getDb();
-  for (const t of [schema.events, schema.emails, schema.handovers, schema.payoffs, schema.appointments, schema.requests, schema.checks, schema.documents, schema.parties, schema.dossiers, schema.sessions, schema.loginTokens, schema.users, schema.settings]) {
+  for (const t of [schema.events, schema.emails, schema.handovers, schema.payoffs, schema.appointments, schema.requests, schema.checks, schema.documents, schema.parties, schema.dossiers, schema.sessions, schema.loginTokens, schema.users]) {
     await db.delete(t);
   }
+  // Instellingen leeg, behalve de seed-markering en -claims (anders start een andere instance opnieuw).
+  await db.delete(schema.settings).where(notLike(schema.settings.key, `${MARKER}%`));
   await ensureBaseSettings();
   await seedDemo();
+  await markSeeded();
 }
 
 async function user(email: string, name: string, role: Role) {
@@ -143,7 +166,7 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
   const a1 = uid(); const a2 = uid();
   await db.insert(schema.appointments).values([
     { id: a1, dossierId: id, partyId: sanne.id, kind: "volmacht", mode: "video", startsAt: past, status: "afgerond", location: "Videogesprek (beveiligde link)" },
-    { id: a2, dossierId: id, partyId: daan.id, kind: "volmacht", mode: "kantoor", startsAt: future, status: "gepland", location: "Stationsplein 8, Amersfoort" },
+    { id: a2, dossierId: id, partyId: daan.id, kind: "volmacht", mode: "kantoor", startsAt: future, status: "gepland", location: NOTARY_OFFICE.address },
   ]);
   await updateParty(sanne.id, (d) => { d.volmacht = { status: "ondertekend", afspraakId: a1, ondertekendOp: past.toISOString(), ondertekeningMethode: "video" }; });
   await updateParty(daan.id, (d) => { d.volmacht = { status: "gepland", afspraakId: a2 }; });
@@ -187,8 +210,8 @@ async function seedMain(users: Record<string, { id: string; name: string }>) {
 
   // Notaris heeft N1 al akkoord gegeven; de rest staat open voor de demo
   const n1 = (await db.select().from(schema.checks).where(eq(schema.checks.dossierId, id))).find((c) => c.key === "wwft_id");
-  if (n1) await db.update(schema.checks).set({ status: "akkoord", decidedBy: "Lotte van Dam", decidedAt: new Date(Date.now() - 86400_000), comment: "ID's en Wwft-stukken gecontroleerd. Schenking ouders voldoende onderbouwd." }).where(eq(schema.checks.id, n1.id));
-  await logEvent({ dossierId: id, actorType: "notaris", actorName: "Lotte van Dam", type: "check.akkoord", message: "N1 Wwft-uitvraag en identificatie: akkoord." });
+  if (n1) await db.update(schema.checks).set({ status: "akkoord", decidedBy: NOTARY_OFFICE.notaryShort, decidedAt: new Date(Date.now() - 86400_000), comment: "ID's en Wwft-stukken gecontroleerd. Schenking ouders voldoende onderbouwd." }).where(eq(schema.checks.id, n1.id));
+  await logEvent({ dossierId: id, actorType: "notaris", actorName: NOTARY_OFFICE.notaryShort, type: "check.akkoord", message: "N1 Wwft-uitvraag en identificatie: akkoord." });
 
   await spreadTimeline(id, 33);
   await alignWithTimeline(id);
@@ -361,7 +384,7 @@ async function seedPipeline() {
         await db.update(schema.payoffs).set({ status: "gecontroleerd", toestemmingVerkoper: true, loanNumbers: "4400 7788 12", amount: Math.round(e.prijs * 0.42) * 100, validUntil: lev, requestedAt: levTs(10, -16), receivedAt: levTs(15, -9) }).where(eq(schema.payoffs.id, po.id));
       }
       await runAutomations(id, "seed");
-      await db.update(schema.checks).set({ status: "akkoord", decidedBy: "Lotte van Dam", decidedAt: levTs(16, -3) }).where(eq(schema.checks.dossierId, id));
+      await db.update(schema.checks).set({ status: "akkoord", decidedBy: NOTARY_OFFICE.notaryShort, decidedAt: levTs(16, -3) }).where(eq(schema.checks.dossierId, id));
       await updateDossier(id, (d) => {
         d.gepasseerdOp = levTs(10).toISOString(); d.ingeschrevenOp = levTs(12).toISOString(); d.afgewikkeldOp = afgewikkeld.toISOString();
         if (d.notaKoper) d.notaKoper.status = "definitief";
@@ -375,7 +398,7 @@ async function seedPipeline() {
     await alignWithTimeline(id);
     if (passed) {
       for (const [type, message, at] of [["akte.gepasseerd", "Akte van levering gepasseerd bij de notaris.", levTs(10)], ["kadaster.ingeschreven", "Akte ingeschreven in het Kadaster.", levTs(12)], ["dossier.afgewikkeld", "Dossier financieel afgewikkeld: verkoopopbrengst uitbetaald.", afgewikkeld]] as const) {
-        await logEvent({ dossierId: id, actorType: type === "akte.gepasseerd" ? "notaris" : "systeem", actorName: type === "akte.gepasseerd" ? "Lotte van Dam" : undefined, type, message, visibleTo: "partijen" });
+        await logEvent({ dossierId: id, actorType: type === "akte.gepasseerd" ? "notaris" : "systeem", actorName: type === "akte.gepasseerd" ? NOTARY_OFFICE.notaryShort : undefined, type, message, visibleTo: "partijen" });
         const [ev] = await db.select().from(schema.events).where(and(eq(schema.events.dossierId, id), eq(schema.events.type, type)));
         if (ev) await db.update(schema.events).set({ createdAt: at }).where(eq(schema.events.id, ev.id));
       }

@@ -4,6 +4,7 @@
  * Datums zijn relatief t.o.v. vandaag zodat de demo altijd "actueel" is.
  */
 import { addDays, todayIso } from "@/lib/util/format";
+import { NOTARY_OFFICE } from "@/lib/config";
 
 /** Eerstvolgende werkdag: er wordt niet gepasseerd in het weekend. */
 function werkdag(iso: string): string {
@@ -120,7 +121,7 @@ export const DEMO = {
     },
   ],
   makelaarVerkoper: "Eemland Makelaardij (fictief)",
-  notarisInKo: "mr. L.M. van Dam, notaris te Amersfoort",
+  notarisInKo: `${NOTARY_OFFICE.notaryShort}, notaris te ${NOTARY_OFFICE.city}`,
   bijzondereBepalingen: [
     { titel: "Ouderdomsclausule", tekst: "Koper is ermee bekend dat de woning omstreeks 1987 is gebouwd, zodat de eisen die aan de bouwkwaliteit en installaties worden gesteld lager liggen dan bij een nieuwe woning. Verkoper staat er niet voor in dat de woning voldoet aan de eisen die aan nieuwbouw worden gesteld.", page: 3 },
     { titel: "Asbestclausule", tekst: "In de woning kunnen asbesthoudende materialen zijn verwerkt. Koper vrijwaart verkoper voor alle aansprakelijkheid ter zake van de eventuele aanwezigheid van asbest.", page: 3 },

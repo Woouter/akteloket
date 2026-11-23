@@ -142,7 +142,7 @@ export const TOUR_COOKIE = "ak_tour";
 export const SEEN_COOKIE = "ak_seen";
 
 /** Altijd bereikbaar: de tourkeuze, uitleg, beoordelingskader, mailbox en inloggen. */
-export const ALWAYS_OPEN = ["/demo", "/inloggen", "/uitloggen", "/uitnodiging"];
+export const ALWAYS_OPEN = ["/demo", "/inloggen", "/uitloggen", "/uitnodiging", "/afmelden"];
 
 const under = (path: string, prefix: string) => (prefix === "/" ? path === "/" : path === prefix || path.startsWith(prefix + "/"));
 

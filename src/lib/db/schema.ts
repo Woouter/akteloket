@@ -173,7 +173,7 @@ export const emails = pgTable("emails", {
   text: text("text").notNull(),
   html: text("html").notNull(),
   template: text("template").notNull(),
-  status: text("status").$type<"wachtrij" | "verzonden" | "mislukt" | "gesimuleerd">().notNull().default("wachtrij"),
+  status: text("status").$type<"wachtrij" | "verzonden" | "mislukt" | "gesimuleerd" | "afgemeld">().notNull().default("wachtrij"),
   error: text("error"),
   createdAt: ts("created_at").notNull().defaultNow(),
   sentAt: ts("sent_at"),

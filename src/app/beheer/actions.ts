@@ -19,3 +19,22 @@ export async function runCronAction() {
   revalidatePath("/beheer", "layout");
   redirect("/beheer/automatisering?gedraaid=1");
 }
+
+/** E-mailadres afmelden: het platform stuurt dan geen e-mail meer naar dit adres. */
+export async function afmeldenAction(fd: FormData) {
+  await requireStaff();
+  const { afmelden } = await import("@/lib/integrations/afmeldingen");
+  const email = String(fd.get("email") ?? "").trim();
+  if (!email.includes("@")) redirect("/beheer/emails?fout=adres");
+  await afmelden(email, "beheer", String(fd.get("reden") ?? ""));
+  revalidatePath("/beheer/emails");
+  redirect(`/beheer/emails?afgemeld=${encodeURIComponent(email.toLowerCase())}`);
+}
+
+export async function weerAanmeldenAction(email: string) {
+  await requireStaff();
+  const { weerAanmelden } = await import("@/lib/integrations/afmeldingen");
+  await weerAanmelden(email);
+  revalidatePath("/beheer/emails");
+  redirect("/beheer/emails");
+}

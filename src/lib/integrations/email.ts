@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { uid } from "@/lib/util/ids";
 import { BRAND, isDemo } from "@/lib/config";
+import { afmeldOneClickUrl, afmeldUrl, isAfgemeld } from "./afmeldingen";
 
 /**
  * E-mail: alles gaat via de outbox-tabel (auditbaar).
@@ -23,7 +24,11 @@ export interface MailInput {
   footnote?: string;
 }
 
+/** Een zelf aangevraagde inloglink gaat altijd, ook naar een afgemeld adres; verder geldt de afmeldlijst. */
+const ALTIJD = new Set(["login"]);
+
 export function renderMail(m: MailInput): { html: string; text: string } {
+  const unsub = ALTIJD.has(m.template) ? null : afmeldUrl(m.to);
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const paras = [m.intro, ...(m.paragraphs ?? [])];
   const html = `<!doctype html><html lang="nl"><body style="margin:0;background:#f7f5f0;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#0b1f3a">
@@ -36,9 +41,9 @@ ${paras.map((p) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;col
 ${m.cta ? `<p style="margin:22px 0"><a href="${m.cta.href}" style="display:inline-block;background:#0b1f3a;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:5px">${esc(m.cta.label)}</a></p>` : ""}
 ${m.footnote ? `<p style="margin:18px 0 0;font-size:13px;color:#5a6572">${esc(m.footnote)}</p>` : ""}
 </td></tr>
-<tr><td style="padding:18px 28px;border-top:1px solid #ebe7de;font-size:12px;color:#858d97">${BRAND.name}, ${BRAND.domain}<br>Deze e-mail is automatisch verstuurd vanuit je beveiligde dossier.</td></tr>
+<tr><td style="padding:18px 28px;border-top:1px solid #ebe7de;font-size:12px;color:#858d97">${BRAND.name}, ${BRAND.domain}<br>Deze e-mail is automatisch verstuurd vanuit je beveiligde dossier.${unsub ? `<br>Geen e-mail meer ontvangen? <a href="${unsub}" style="color:#858d97;text-decoration:underline">Afmelden</a>` : ""}</td></tr>
 </table></td></tr></table></body></html>`;
-  const text = [m.heading, "", ...paras, m.cta ? `\n${m.cta.label}: ${m.cta.href}` : "", m.footnote ? `\n${m.footnote}` : ""].join("\n");
+  const text = [m.heading, "", ...paras, m.cta ? `\n${m.cta.label}: ${m.cta.href}` : "", m.footnote ? `\n${m.footnote}` : "", unsub ? `\nGeen e-mail meer ontvangen? Afmelden: ${unsub}` : ""].join("\n");
   return { html, text };
 }
 
@@ -47,6 +52,11 @@ export async function sendMail(m: MailInput): Promise<string> {
   const { html, text } = renderMail(m);
   const id = uid();
   await db.insert(schema.emails).values({ id, dossierId: m.dossierId ?? null, to: m.to, subject: m.subject, text, html, template: m.template, status: "wachtrij" });
+  if (!ALTIJD.has(m.template) && (await isAfgemeld(m.to))) {
+    // Afgemeld: wel gelogd, niet verzonden.
+    await db.update(schema.emails).set({ status: "afgemeld" }).where(eq(schema.emails.id, id));
+    return id;
+  }
   if (isDemo() || (!process.env.SMTP_URL && !process.env.RESEND_API_KEY)) {
     await db.update(schema.emails).set({ status: "gesimuleerd", sentAt: new Date() }).where(eq(schema.emails.id, id));
     return id;
@@ -57,7 +67,7 @@ export async function sendMail(m: MailInput): Promise<string> {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "content-type": "application/json" },
-        body: JSON.stringify({ from, to: [m.to], subject: m.subject, html, text, reply_to: process.env.MAIL_REPLY_TO || undefined }),
+        body: JSON.stringify({ from, to: [m.to], subject: m.subject, html, text, reply_to: process.env.MAIL_REPLY_TO || undefined, headers: ALTIJD.has(m.template) ? undefined : { "List-Unsubscribe": `<${afmeldOneClickUrl(m.to)}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } }),
       });
       if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
       await db.update(schema.emails).set({ status: "verzonden", sentAt: new Date() }).where(eq(schema.emails.id, id));
@@ -69,7 +79,7 @@ export async function sendMail(m: MailInput): Promise<string> {
   try {
     const nodemailer = await import("nodemailer");
     const transport = nodemailer.default.createTransport(process.env.SMTP_URL);
-    await transport.sendMail({ from, to: m.to, subject: m.subject, text, html });
+    await transport.sendMail({ from, to: m.to, subject: m.subject, text, html, headers: ALTIJD.has(m.template) ? undefined : { "List-Unsubscribe": `<${afmeldOneClickUrl(m.to)}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
     await db.update(schema.emails).set({ status: "verzonden", sentAt: new Date() }).where(eq(schema.emails.id, id));
   } catch (err) {
     await db.update(schema.emails).set({ status: "mislukt", error: String(err) }).where(eq(schema.emails.id, id));
